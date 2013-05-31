@@ -5,6 +5,7 @@ import java.util.List;
 import javax.xml.transform.Result;
 
 import android.net.wifi.ScanResult;
+import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.app.Activity;
@@ -61,8 +62,16 @@ public class MainActivity extends Activity {
 				 List<ScanResult> results=mWifiHelper.getScanResultList();
 				
 				 for (ScanResult scanResult : results) {
-					int security=AccessPoint.getSecurity(scanResult); 
-					Log.d(TAG, "scanResult,SSID="+scanResult.SSID+",security="+security+",id="+scanResult.capabilities);
+					AccessPoint accessPoint=new AccessPoint(context,scanResult);
+					 
+					 //int security=AccessPoint.getSecurity(scanResult); 
+					//Log.d(TAG, "scanResult,SSID="+scanResult.SSID+",security="+security+",id="+scanResult.capabilities);
+				}
+				 
+				 List<WifiConfiguration> configs=mWifiHelper.getConfiguredNetworks();
+				 
+				 for (WifiConfiguration config : configs) {
+					AccessPoint accessPoint=new AccessPoint(context, config);
 				}
 				 
 			}

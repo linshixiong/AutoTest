@@ -1,18 +1,3 @@
-/*
- * Copyright (C) 2010 The Android Open Source Project
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 
 package com.emdoor.autotest;
 
@@ -34,7 +19,6 @@ class AccessPoint {
 	private static final String KEY_SCANRESULT = "key_scanresult";
 	private static final String KEY_CONFIG = "key_config";
 
-	private static final int[] STATE_NONE = {};
 
 	/**
 	 * These values are matched in string arrays -- changes must be kept in sync
@@ -74,7 +58,7 @@ class AccessPoint {
 		return (config.wepKeys[0] != null) ? SECURITY_WEP : SECURITY_NONE;
 	}
 
-	public static int getSecurity(ScanResult result) {
+	private static int getSecurity(ScanResult result) {
 		if (result.capabilities.contains("WEP")) {
 			return SECURITY_WEP;
 		} else if (result.capabilities.contains("PSK")) {
@@ -100,9 +84,33 @@ class AccessPoint {
 		}
 	}
 
+	AccessPoint(Context context, WifiConfiguration config) {
+
+		loadConfig(config);
+
+	}
+
 	AccessPoint(Context context, ScanResult result) {
 
 		loadResult(result);
+
+	}
+
+	AccessPoint(Context context, Bundle savedState) {
+
+		mConfig = savedState.getParcelable(KEY_CONFIG);
+		if (mConfig != null) {
+			loadConfig(mConfig);
+		}
+		mScanResult = (ScanResult) savedState.getParcelable(KEY_SCANRESULT);
+		if (mScanResult != null) {
+			loadResult(mScanResult);
+		}
+		mInfo = (WifiInfo) savedState.getParcelable(KEY_WIFIINFO);
+		if (savedState.containsKey(KEY_DETAILEDSTATE)) {
+			mState = DetailedState.valueOf(savedState
+					.getString(KEY_DETAILEDSTATE));
+		}
 
 	}
 
@@ -115,35 +123,13 @@ class AccessPoint {
 		}
 	}
 
-
-	@Override
-	protected Object clone() throws CloneNotSupportedException {
-		// TODO Auto-generated method stub
-		return super.clone();
-	}
-
-	@Override
-	public boolean equals(Object o) {
-		// TODO Auto-generated method stub
-		return super.equals(o);
-	}
-
-	@Override
-	protected void finalize() throws Throwable {
-		// TODO Auto-generated method stub
-		super.finalize();
-	}
-
-	@Override
-	public int hashCode() {
-		// TODO Auto-generated method stub
-		return super.hashCode();
-	}
-
-	@Override
-	public String toString() {
-		// TODO Auto-generated method stub
-		return super.toString();
+	private void loadConfig(WifiConfiguration config) {
+		ssid = (config.SSID == null ? "" : removeDoubleQuotes(config.SSID));
+		bssid = config.BSSID;
+		security = getSecurity(config);
+		networkId = config.networkId;
+		mRssi = Integer.MAX_VALUE;
+		mConfig = config;
 	}
 
 	private void loadResult(ScanResult result) {
@@ -157,6 +143,17 @@ class AccessPoint {
 		networkId = -1;
 		mRssi = result.level;
 		mScanResult = result;
+	}
+
+	@Override
+	public int hashCode() {
+		int result = 0;
+		if (mInfo != null)
+			result += 13 * mInfo.hashCode();
+		result += 19 * mRssi;
+		result += 23 * networkId;
+		result += 29 * ssid.hashCode();
+		return result;
 	}
 
 	int getLevel() {

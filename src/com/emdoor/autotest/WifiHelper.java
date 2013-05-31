@@ -62,7 +62,10 @@ public class WifiHelper {
 	public List<ScanResult> getScanResultList(){
 		return mWifiManager.getScanResults();
 	}
-
+	
+	public List<WifiConfiguration> getConfiguredNetworks(){
+		return mWifiManager.getConfiguredNetworks();
+	}
 	/**
 	 * Description 连接指定热点
 	 * 
