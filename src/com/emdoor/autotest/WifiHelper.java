@@ -34,6 +34,10 @@ public class WifiHelper {
 				.getSystemService(Context.WIFI_SERVICE);
 	}
 
+	public WifiManager getWifiManager(){
+		return mWifiManager;
+	}
+	
 	// ´ò¿ªWIFI
 	public void turnOnWifi() {
 		if (!mWifiManager.isWifiEnabled()) {
