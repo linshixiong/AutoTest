@@ -1,26 +1,31 @@
 package com.emdoor.autotest;
 
+import java.util.HashMap;
 import java.util.List;
 
 import android.content.Context;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiConfiguration;
+import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.util.Log;
 
 public class WifiHelper {
+	/**
+	 * These values are matched in string arrays -- changes must be kept in sync
+	 */
+	static final int SECURITY_NONE = 0;
+	static final int SECURITY_WEP = 1;
+	static final int SECURITY_PSK = 2;
+	static final int SECURITY_EAP = 3;
 
 	private static final String TAG = "WifiHelper";
 	private static WifiHelper wifiHelper;
 	private WifiManager mWifiManager;
 	private Context mContext;
-	/** 指定热点SSID **/
-	private final String wifiSSID = "\"TP-LINK_585034\"";
-	/** 指定热点名称 **/
-	private final String wifiName = "TP-LINK_585034";
-
-	private int networkId;
-
+	private HashMap<String, AccessPoint> apMap;
+	private String targetSSID;
+	private int securityType=-1;
 	public static WifiHelper getInstance(Context context) {
 		if (wifiHelper == null) {
 			wifiHelper = new WifiHelper(context);
@@ -32,6 +37,8 @@ public class WifiHelper {
 		this.mContext = context;
 		mWifiManager = (WifiManager) mContext
 				.getSystemService(Context.WIFI_SERVICE);
+		apMap = new HashMap<String, AccessPoint>();
+		targetSSID=mContext.getString(R.string.def_wifi_ssid);
 	}
 
 	public WifiManager getWifiManager(){
@@ -45,16 +52,22 @@ public class WifiHelper {
 		}
 	}
 
+	public int getWifiState(){
+		return mWifiManager.getWifiState();
+	}
+	
 	public boolean isWifiEnabled() {
 		boolean isWifiEnabled = mWifiManager.isWifiEnabled();
 		Log.d(TAG, "isWifiEnabled=" + isWifiEnabled);
 		return isWifiEnabled;
 	}
 
-	public boolean isWifiConnected() {
-		boolean isWifiConnected = (mWifiManager.getConnectionInfo() == null);
-		Log.d(TAG, "isWifiConnected=" + isWifiConnected);
-		return isWifiConnected;
+	public boolean isTargetWifiConnected() {
+		WifiInfo wifiInfo= mWifiManager.getConnectionInfo();
+		if(wifiInfo==null){
+			return false;
+		}
+		return targetSSID.equals(wifiInfo.getSSID());
 	}
 
 	
@@ -70,41 +83,70 @@ public class WifiHelper {
 	public List<WifiConfiguration> getConfiguredNetworks(){
 		return mWifiManager.getConfiguredNetworks();
 	}
-	/**
-	 * Description 连接指定热点
-	 * 
-	 * @return
-	 */
-	public boolean connectTargetWifi() {
-		WifiConfiguration wc=new WifiConfiguration();
+	
+	public boolean isTargetAPExist(){
+		List<ScanResult> scanResults=  mWifiManager.getScanResults();
+		if(scanResults==null){
+			return false;
+		}
+		for (ScanResult scanResult : scanResults) {
+			if(targetSSID.equals( scanResult.SSID)){
+				securityType=getSecurity(scanResult);
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	
+	public boolean connectWifi() {
 		
-		wc.SSID = "\"emdoor_soft\"";
+	
 
-		wc.preSharedKey = "password";
+		WifiConfiguration config=new WifiConfiguration();
+		
+		config.SSID="\""+targetSSID+"\"";
+		Log.d(TAG, "connecting to "+targetSSID+"securityType is "+securityType);
 
-		wc.hiddenSSID = false;
 
-		wc.status = WifiConfiguration.Status.ENABLED;
+		String password = "\""+mContext.getString(R.string.def_wifi_pwd)+"\"";
+		
+		config.preSharedKey = password;
+		config.hiddenSSID = true;
 
-		wc.allowedGroupCiphers.set(WifiConfiguration.GroupCipher.TKIP);
+		config.status = WifiConfiguration.Status.ENABLED;
 
-		wc.allowedGroupCiphers.set(WifiConfiguration.GroupCipher.CCMP);
+		config.allowedGroupCiphers.set(WifiConfiguration.GroupCipher.TKIP);
 
-		wc.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.WPA_PSK);
+		config.allowedGroupCiphers.set(WifiConfiguration.GroupCipher.CCMP);
 
-		wc.allowedPairwiseCiphers.set(WifiConfiguration.PairwiseCipher.TKIP);
+		config.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.WPA_PSK);
 
-		wc.allowedPairwiseCiphers.set(WifiConfiguration.PairwiseCipher.CCMP);
+		config.allowedPairwiseCiphers.set(WifiConfiguration.PairwiseCipher.TKIP);
 
-		wc.allowedProtocols.set(WifiConfiguration.Protocol.RSN);
+		config.allowedPairwiseCiphers.set(WifiConfiguration.PairwiseCipher.CCMP);
 
-		int res = mWifiManager.addNetwork(wc);
-
-		Log.d(TAG, "add Network returned " + res );
-
-		boolean b = mWifiManager.enableNetwork(res, true);
-
-		Log.d(TAG, "enableNetwork returned " + b );
-		return b;
+		config.allowedProtocols.set(WifiConfiguration.Protocol.RSN);
+		int netId= mWifiManager.addNetwork(config);
+		Log.d(TAG, "add network id="+netId);
+		mWifiManager.saveConfiguration();
+		boolean success = mWifiManager.enableNetwork(
+				netId, true);
+		
+		
+		Log.d(TAG, "connect success=" + success);
+		return success;
+	}
+	
+	
+	private static int getSecurity(ScanResult result) {
+		if (result.capabilities.contains("WEP")) {
+			return SECURITY_WEP;
+		} else if (result.capabilities.contains("PSK")) {
+			return SECURITY_PSK;
+		} else if (result.capabilities.contains("EAP")) {
+			return SECURITY_EAP;
+		}
+		return SECURITY_NONE;
 	}
 }

@@ -1,70 +1,77 @@
 package com.emdoor.autotest;
 
-import java.util.HashMap;
 import java.util.List;
-
-import javax.xml.transform.Result;
 
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiConfiguration;
-import android.net.wifi.WifiConfiguration.KeyMgmt;
+import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.app.Activity;
+import android.app.KeyguardManager;
+import android.app.KeyguardManager.KeyguardLock;
+import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.res.Resources;
+import android.content.DialogInterface.OnCancelListener;
 import android.graphics.Color;
+
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
-public class MainActivity extends Activity {
+public class MainActivity extends Activity implements OnCancelListener {
 	protected static final String TAG = "MainActivity";
 	private WifiHelper mWifiHelper;
-	private HashMap<String, AccessPoint> apMap;
+
 	private TextView mTextOutput;
 	private ScrollView mScrollView;
-
+	private ProgressDialog progress;
+	private KeyguardManager keyguardManager;
+	private KeyguardLock keyguardLock;
+	private boolean isTargetAPExist;
+	private TCPClient client;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		IntentFilter filter = new IntentFilter();
 		filter.addAction(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION);
+		filter.addAction(WifiManager.WIFI_STATE_CHANGED_ACTION);
 		this.registerReceiver(wifiBroadcastReceiver, filter);
 		mWifiHelper = WifiHelper.getInstance(this);
 		mTextOutput = (TextView) findViewById(R.id.text_output);
 		mScrollView = (ScrollView) findViewById(R.id.SCROLLER_ID);
-		apMap = new HashMap<String, AccessPoint>();
-		/*
-		 * if (!mWifiHelper.isWifiEnabled()) { mWifiHelper.turnOnWifi(); } else
-		 * { mWifiHelper.scanAPList(); }
-		 */
-
+		keyguardManager = (KeyguardManager) getSystemService(KEYGUARD_SERVICE);
+		keyguardLock = keyguardManager.newKeyguardLock(TAG);
+		progress = new ProgressDialog(this);
+		progress.setTitle("正在连接网络");
+		progress.setCanceledOnTouchOutside(false);
+		progress.setCancelable(true);
+		progress.setOnCancelListener(this);
+		this.connectWifi();
 	}
 
 	@Override
 	protected void onResume() {
-		View v = findViewById(R.id.status_image);
-		// v.setAlpha(1);
-		/*
-		 * int titleId = Resources.getSystem().getIdentifier(
-		 * "action_bar_title", "id", "android"); TextView yourTextView =
-		 * (TextView) findViewById(titleId); yourTextView.setText("hello");
-		 * yourTextView.setTextColor(Color.RED);
-		 */
+
+		keyguardLock.disableKeyguard();
+
 		super.onResume();
 	}
 
 	@Override
 	protected void onDestroy() {
 		this.unregisterReceiver(wifiBroadcastReceiver);
+
+		// keyguardLock.reenableKeyguard();
 		super.onDestroy();
 	}
 
@@ -79,13 +86,21 @@ public class MainActivity extends Activity {
 	public boolean onMenuItemSelected(int featureId, MenuItem item) {
 		switch (item.getItemId()) {
 		case R.id.menu_connect:
-			connect();
+			this.connectWifi();
+
+			// mWifiHelper.scanAPList();
+			// connectNewAP();
 			// mScrollView.scrollTo(0, mScrollView.getBottom());
 			break;
 		case R.id.menu_clean:
 			mTextOutput.setText("");
 			break;
 		case R.id.menu_settings:
+			Intent intent = new Intent();
+			intent.setClass(this, BlankActivity.class);
+			intent.putExtra("background_color", Color.BLACK);
+
+			startActivity(intent);
 			break;
 		default:
 			break;
@@ -93,46 +108,82 @@ public class MainActivity extends Activity {
 		return super.onMenuItemSelected(featureId, item);
 	}
 
-	private void connect() {
-		AccessPoint accessPoint = apMap.get("emdoor_soft");
+	private void showInstallProgress() {
 
-		if (accessPoint == null) {
+		progress.show();
+	}
+
+	@Override
+	public void onCancel(DialogInterface arg0) {
+
+		this.finish();
+	}
+
+	private void connectWifi() {
+
+		if (!mWifiHelper.isWifiEnabled()) {
+			progress.setTitle("正在打开WFI");
+			progress.show();
+			mWifiHelper.turnOnWifi();
 			return;
 		}
-
-		WifiConfiguration config = accessPoint.getConfig();
-		if (config == null) {
-			config=new WifiConfiguration();
+		boolean isTargetWifiConnected = mWifiHelper.isTargetWifiConnected();
+		if (isTargetWifiConnected) {
+			progress.dismiss();
+			connectServer();
+			return;
 		}
-		config.SSID="\"emdoor_soft\"";
-		Log.d(TAG, "connecting to emdoor_soft");
+		isTargetAPExist = mWifiHelper.isTargetAPExist();
+		progress.show();
+		if (!isTargetAPExist) {
+			mWifiHelper.scanAPList();
+			return;
+		}
+		if (mWifiHelper.getWifiState() != WifiManager.WIFI_STATE_ENABLING) {
+			progress.setTitle("正在连接到指定热点");
 
-
-		String password = "\"emdoor1234567890\"";
-		
-		config.preSharedKey = password;
-		config.hiddenSSID = true;
-
-		config.status = WifiConfiguration.Status.ENABLED;
-
-		config.allowedGroupCiphers.set(WifiConfiguration.GroupCipher.TKIP);
-
-		config.allowedGroupCiphers.set(WifiConfiguration.GroupCipher.CCMP);
-
-		config.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.WPA_PSK);
-
-		config.allowedPairwiseCiphers.set(WifiConfiguration.PairwiseCipher.TKIP);
-
-		config.allowedPairwiseCiphers.set(WifiConfiguration.PairwiseCipher.CCMP);
-
-		config.allowedProtocols.set(WifiConfiguration.Protocol.RSN);
-		int netId= mWifiHelper.getWifiManager().addNetwork(config);
-		Log.d(TAG, "add network id="+netId);
-		boolean success = mWifiHelper.getWifiManager().enableNetwork(
-				netId, true);
-		Log.d(TAG, "success=" + success);
-
+			mWifiHelper.connectWifi();
+		}
 	}
+
+	
+	private void connectServer()
+	{
+		new Thread(){
+
+
+
+			@Override
+			public  void run() {
+				if(client==null){
+					client=new TCPClient("192.168.1.100", 8080);
+				}
+				client.WriteString("Hello,I'm ready!");
+			}
+			
+			
+		}.start();
+		
+	}
+	
+	private Handler handler = new Handler() {
+
+		@Override
+		public void handleMessage(Message msg) {
+
+			switch (msg.what) {
+			case Messages.MSG_WIFI_ENABLED:
+
+				break;
+
+			default:
+				break;
+			}
+
+			super.handleMessage(msg);
+		}
+
+	};
 
 	private BroadcastReceiver wifiBroadcastReceiver = new BroadcastReceiver() {
 
@@ -140,25 +191,16 @@ public class MainActivity extends Activity {
 		public void onReceive(Context context, Intent intent) {
 			if (WifiManager.SCAN_RESULTS_AVAILABLE_ACTION.equals(intent
 					.getAction())) {
+				isTargetAPExist = mWifiHelper.isTargetAPExist();
+				MainActivity.this.connectWifi();
 
-				List<ScanResult> results = mWifiHelper.getScanResultList();
+			} else if (WifiManager.WIFI_STATE_CHANGED_ACTION.equals(intent
+					.getAction())) {
 
-				for (ScanResult scanResult : results) {
-					AccessPoint accessPoint = new AccessPoint(context,
-							scanResult);
-					apMap.put(accessPoint.ssid, accessPoint);
+				if (mWifiHelper.getWifiState() == WifiManager.WIFI_STATE_ENABLED) {
 
+					MainActivity.this.connectWifi();
 				}
-
-				List<WifiConfiguration> configs = mWifiHelper
-						.getConfiguredNetworks();
-
-				for (WifiConfiguration config : configs) {
-					AccessPoint accessPoint = new AccessPoint(context, config);
-
-					apMap.put(accessPoint.ssid, accessPoint);
-				}
-
 			}
 
 		}

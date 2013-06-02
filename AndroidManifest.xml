@@ -20,6 +20,10 @@
     </uses-permission>
     <uses-permission android:name="android.permission.WAKE_LOCK" >
     </uses-permission>
+    <uses-permission android:name="android.permission.DISABLE_KEYGUARD" >
+    </uses-permission>
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" >
+    </uses-permission>
 
     <application
         android:allowBackup="true"
@@ -36,6 +40,20 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name="com.emdoor.autotest.BlankActivity"
+            android:configChanges="orientation|screenSize"
+            android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen" >
+        </activity>
+
+        <receiver android:name="com.emdoor.autotest.MyReceiver" >
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
+
+        <service android:name="com.emdoor.autotest.AutoTestService" >
+        </service>
     </application>
 
 </manifest>
