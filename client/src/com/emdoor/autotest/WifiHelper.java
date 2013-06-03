@@ -67,7 +67,9 @@ public class WifiHelper {
 		if(wifiInfo==null){
 			return false;
 		}
-		return targetSSID.equals(wifiInfo.getSSID());
+		Log.d(TAG, "targetSSID :"+targetSSID+",wifiInfo.getSSID:"+wifiInfo.getSSID());
+		return ("\""+targetSSID+"\"").equals(wifiInfo.getSSID());
+
 	}
 
 	
@@ -90,7 +92,8 @@ public class WifiHelper {
 			return false;
 		}
 		for (ScanResult scanResult : scanResults) {
-			if(targetSSID.equals( scanResult.SSID)){
+			Log.d(TAG,"ScanResult :"+scanResult.SSID+",targetSSID:"+targetSSID);
+			if( targetSSID.equals( scanResult.SSID)){
 				securityType=getSecurity(scanResult);
 				return true;
 			}
@@ -106,7 +109,7 @@ public class WifiHelper {
 		WifiConfiguration config=new WifiConfiguration();
 		
 		config.SSID="\""+targetSSID+"\"";
-		Log.d(TAG, "connecting to "+targetSSID+"securityType is "+securityType);
+		Log.d(TAG, "connecting to "+targetSSID+" securityType is "+securityType);
 
 
 		String password = "\""+mContext.getString(R.string.def_wifi_pwd)+"\"";

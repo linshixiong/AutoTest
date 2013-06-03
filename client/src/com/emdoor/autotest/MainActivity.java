@@ -38,6 +38,8 @@ public class MainActivity extends Activity implements OnCancelListener {
 	private KeyguardLock keyguardLock;
 	private boolean isTargetAPExist;
 	private TCPClient client;
+	private boolean isTargetWifiConnected;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -90,7 +92,7 @@ public class MainActivity extends Activity implements OnCancelListener {
 
 			// mWifiHelper.scanAPList();
 			// connectNewAP();
-			// mScrollView.scrollTo(0, mScrollView.getBottom());
+			
 			break;
 		case R.id.menu_clean:
 			mTextOutput.setText("");
@@ -127,13 +129,14 @@ public class MainActivity extends Activity implements OnCancelListener {
 			mWifiHelper.turnOnWifi();
 			return;
 		}
-		boolean isTargetWifiConnected = mWifiHelper.isTargetWifiConnected();
+		 isTargetWifiConnected = mWifiHelper.isTargetWifiConnected();
 		if (isTargetWifiConnected) {
 			progress.dismiss();
 			connectServer();
 			return;
 		}
 		isTargetAPExist = mWifiHelper.isTargetAPExist();
+		Log.d(TAG,"isTargetAPExist:"+isTargetAPExist);
 		progress.show();
 		if (!isTargetAPExist) {
 			mWifiHelper.scanAPList();
@@ -146,26 +149,16 @@ public class MainActivity extends Activity implements OnCancelListener {
 		}
 	}
 
-	
-	private void connectServer()
-	{
-		new Thread(){
+	private void connectServer() {
+		if (client == null) {
+			client = new TCPClient("192.168.1.17", 8080,handler);
 
-
-
-			@Override
-			public  void run() {
-				if(client==null){
-					client=new TCPClient("192.168.1.100", 8080);
-				}
-				client.WriteString("Hello,I'm ready!");
-			}
-			
-			
-		}.start();
 		
+		}
+		
+
 	}
-	
+
 	private Handler handler = new Handler() {
 
 		@Override
@@ -175,7 +168,10 @@ public class MainActivity extends Activity implements OnCancelListener {
 			case Messages.MSG_WIFI_ENABLED:
 
 				break;
-
+			case Messages.MSG_CMD_RECEIVE:
+				mTextOutput.append("收到消息："+msg.obj.toString()+"\n");
+				mScrollView.scrollTo(0, mScrollView.getBottom());
+				break;
 			default:
 				break;
 			}
@@ -192,14 +188,25 @@ public class MainActivity extends Activity implements OnCancelListener {
 			if (WifiManager.SCAN_RESULTS_AVAILABLE_ACTION.equals(intent
 					.getAction())) {
 				isTargetAPExist = mWifiHelper.isTargetAPExist();
-				MainActivity.this.connectWifi();
+				isTargetWifiConnected=mWifiHelper.isTargetWifiConnected();
+				if(isTargetAPExist&&isTargetWifiConnected){
+					//MainActivity.this.connectWifi();
+					progress.dismiss();
+					
+				}
 
 			} else if (WifiManager.WIFI_STATE_CHANGED_ACTION.equals(intent
 					.getAction())) {
 
-				if (mWifiHelper.getWifiState() == WifiManager.WIFI_STATE_ENABLED) {
+				if (mWifiHelper.getWifiManager().isWifiEnabled()) {
 
-					MainActivity.this.connectWifi();
+					isTargetWifiConnected=mWifiHelper.isTargetWifiConnected();
+					Log.d(TAG, "WIFI_STATE_ENABLED,isTargetWifiConnected="+isTargetWifiConnected);
+					if(isTargetWifiConnected){
+						progress.dismiss();
+						
+					}
+					//MainActivity.this.connectWifi();
 				}
 			}
 

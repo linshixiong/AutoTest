@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     
-    <string name="def_wifi_ssid">LINSX-TP_Network</string>
-    <string name="def_wifi_pwd">linSX1689</string>
-    
+    <string name="def_wifi_ssid">emdoor_soft</string>
+    <string name="def_wifi_pwd">emdoor1234567890</string>
+    <string name="def_server">127.0.0.1</string>
 </resources>
