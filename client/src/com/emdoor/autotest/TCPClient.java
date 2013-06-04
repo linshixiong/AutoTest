@@ -96,9 +96,11 @@ public class TCPClient implements Runnable {
 			e.printStackTrace();
 		} finally {
 			try {
-				socket.close();
-				dis.close();
-				dos.close();
+				if (socket != null) {
+					socket.close();
+					dis.close();
+					dos.close();
+				}
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

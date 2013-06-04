@@ -68,6 +68,8 @@ public class WifiHelper {
 			return false;
 		}
 		Log.d(TAG, "targetSSID :"+targetSSID+",wifiInfo.getSSID:"+wifiInfo.getSSID());
+		//return targetSSID.equals(wifiInfo.getSSID());
+		
 		return ("\""+targetSSID+"\"").equals(wifiInfo.getSSID());
 
 	}

@@ -151,7 +151,9 @@ public class MainActivity extends Activity implements OnCancelListener {
 
 	private void connectServer() {
 		if (client == null) {
-			client = new TCPClient("192.168.1.17", 8080,handler);
+			String host=getString(R.string.def_server_host);
+			int port=getResources().getInteger(R.integer.def_server_port);
+			client = new TCPClient(host, port,handler);
 
 		
 		}
@@ -190,7 +192,7 @@ public class MainActivity extends Activity implements OnCancelListener {
 				isTargetAPExist = mWifiHelper.isTargetAPExist();
 				isTargetWifiConnected=mWifiHelper.isTargetWifiConnected();
 				if(isTargetAPExist&&isTargetWifiConnected){
-					//MainActivity.this.connectWifi();
+					MainActivity.this.connectWifi();
 					progress.dismiss();
 					
 				}
@@ -206,7 +208,7 @@ public class MainActivity extends Activity implements OnCancelListener {
 						progress.dismiss();
 						
 					}
-					//MainActivity.this.connectWifi();
+					MainActivity.this.connectWifi();
 				}
 			}
 
