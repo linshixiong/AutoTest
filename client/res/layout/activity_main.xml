@@ -3,27 +3,53 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity" >
-	<ImageView android:id="@+id/status_image"
-        android:layout_width="128dip"
-        android:layout_height="128dip"
-        android:src="@drawable/network_offline"
-        android:layout_centerInParent="true"
-        android:visibility="gone"
-        />
-    <ScrollView
-        android:id="@+id/SCROLLER_ID"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:scrollbars="vertical" >
+
+    <LinearLayout
+        android:id="@+id/operate_panel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:gravity="center_horizontal"
+        android:orientation="vertical" >
+
+        <Button
+            android:id="@+id/button"
+            android:layout_width="200dp"
+            android:layout_height="100dp"
+            android:text="开始测试"
+            android:textSize="30sp" />
+         <TextView
+            android:id="@+id/statusText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:textSize="20sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/progress_panel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:visibility="gone" >
+
+        <ProgressBar
+            android:id="@+id/progressBar1"
+            style="?android:attr/progressBarStyleLarge"
+            android:layout_width="150dp"
+            android:layout_height="150dp" />
 
         <TextView
-            android:id="@+id/text_output"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:layout_centerHorizontal="true"
-            android:layout_centerVertical="true"
-            android:padding="10dip"
-           />
-    </ScrollView>
+            android:id="@+id/progressText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:text="正在连接网络，请稍后..."
+            android:textSize="20sp" />
+    </LinearLayout>
 
 </RelativeLayout>

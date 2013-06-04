@@ -24,7 +24,8 @@
     </uses-permission>
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" >
     </uses-permission>
-
+	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE">
+	</uses-permission>
     <application
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
@@ -43,7 +44,8 @@
         <activity
             android:name="com.emdoor.autotest.BlankActivity"
             android:configChanges="orientation|screenSize"
-            android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen" >
+            android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen" 
+            android:launchMode="singleInstance">
         </activity>
 
         <receiver android:name="com.emdoor.autotest.MyReceiver" >

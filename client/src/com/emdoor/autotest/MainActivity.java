@@ -1,102 +1,105 @@
 package com.emdoor.autotest;
 
-import java.util.List;
+import java.text.SimpleDateFormat;
 
-import android.net.wifi.ScanResult;
-import android.net.wifi.WifiConfiguration;
-import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.provider.MediaStore;
 import android.app.Activity;
-import android.app.KeyguardManager;
-import android.app.KeyguardManager.KeyguardLock;
-import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.DialogInterface.OnCancelListener;
 import android.graphics.Color;
+import android.hardware.Sensor;
+import android.hardware.SensorListener;
+import android.hardware.SensorManager;
 
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.ScrollView;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
-public class MainActivity extends Activity implements OnCancelListener {
+public class MainActivity extends Activity implements OnClickListener,
+		SensorListener {
 	protected static final String TAG = "MainActivity";
 	private WifiHelper mWifiHelper;
-
-	private TextView mTextOutput;
-	private ScrollView mScrollView;
-	private ProgressDialog progress;
-	private KeyguardManager keyguardManager;
-	private KeyguardLock keyguardLock;
+	private SensorManager sm;
 	private boolean isTargetAPExist;
 	private TCPClient client;
 	private boolean isTargetWifiConnected;
+	private LinearLayout progressLayout;
+	private LinearLayout operateLayout;
+	private Button button;
+	private TextView textStatus;
+	private Menu menu;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+		progressLayout = (LinearLayout) findViewById(R.id.progress_panel);
+		operateLayout = (LinearLayout) findViewById(R.id.operate_panel);
+		button = (Button) findViewById(R.id.button);
+		textStatus = (TextView) findViewById(R.id.statusText);
+		button.setOnClickListener(this);
 		IntentFilter filter = new IntentFilter();
 		filter.addAction(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION);
 		filter.addAction(WifiManager.WIFI_STATE_CHANGED_ACTION);
 		this.registerReceiver(wifiBroadcastReceiver, filter);
 		mWifiHelper = WifiHelper.getInstance(this);
-		mTextOutput = (TextView) findViewById(R.id.text_output);
-		mScrollView = (ScrollView) findViewById(R.id.SCROLLER_ID);
-		keyguardManager = (KeyguardManager) getSystemService(KEYGUARD_SERVICE);
-		keyguardLock = keyguardManager.newKeyguardLock(TAG);
-		progress = new ProgressDialog(this);
-		progress.setTitle("正在连接网络");
-		progress.setCanceledOnTouchOutside(false);
-		progress.setCancelable(true);
-		progress.setOnCancelListener(this);
-		this.connectWifi();
+		// sm = (SensorManager)getSystemService(Context.SENSOR_SERVICE);
+
+		// int sensorType = Sensor.TYPE_ACCELEROMETER;
+		isTargetWifiConnected = mWifiHelper.isTargetWifiConnected();
+
+		progressLayout.setVisibility(isTargetWifiConnected ? View.GONE
+				: View.VISIBLE);
+		operateLayout.setVisibility(isTargetWifiConnected ? View.VISIBLE
+				: View.GONE);
+		if (!isTargetWifiConnected) {
+			this.connectWifi();
+		} else {
+			textStatus.setText("");
+			textStatus.append("网络名: " + getString(R.string.def_wifi_ssid));
+			textStatus.append("\n");
+			textStatus.append("服务器: " + getString(R.string.def_server_host)
+					+ ":"
+					+ getResources().getInteger(R.integer.def_server_port));
+		}
 	}
 
 	@Override
 	protected void onResume() {
-
-		keyguardLock.disableKeyguard();
-
 		super.onResume();
 	}
 
 	@Override
 	protected void onDestroy() {
 		this.unregisterReceiver(wifiBroadcastReceiver);
-
-		// keyguardLock.reenableKeyguard();
 		super.onDestroy();
 	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.activity_main, menu);
-
+		this.menu = menu;
 		return true;
 	}
 
 	@Override
 	public boolean onMenuItemSelected(int featureId, MenuItem item) {
 		switch (item.getItemId()) {
-		case R.id.menu_connect:
-			this.connectWifi();
+		case R.id.menu_disconnect:
 
-			// mWifiHelper.scanAPList();
-			// connectNewAP();
-			
 			break;
-		case R.id.menu_clean:
-			mTextOutput.setText("");
-			break;
+
 		case R.id.menu_settings:
 			Intent intent = new Intent();
 			intent.setClass(this, BlankActivity.class);
@@ -110,54 +113,37 @@ public class MainActivity extends Activity implements OnCancelListener {
 		return super.onMenuItemSelected(featureId, item);
 	}
 
-	private void showInstallProgress() {
-
-		progress.show();
-	}
-
-	@Override
-	public void onCancel(DialogInterface arg0) {
-
-		this.finish();
-	}
-
 	private void connectWifi() {
 
 		if (!mWifiHelper.isWifiEnabled()) {
-			progress.setTitle("正在打开WFI");
-			progress.show();
+
 			mWifiHelper.turnOnWifi();
 			return;
 		}
-		 isTargetWifiConnected = mWifiHelper.isTargetWifiConnected();
+		isTargetWifiConnected = mWifiHelper.isTargetWifiConnected();
 		if (isTargetWifiConnected) {
-			progress.dismiss();
-			connectServer();
 			return;
 		}
 		isTargetAPExist = mWifiHelper.isTargetAPExist();
-		Log.d(TAG,"isTargetAPExist:"+isTargetAPExist);
-		progress.show();
+		Log.d(TAG, "isTargetAPExist:" + isTargetAPExist);
+
 		if (!isTargetAPExist) {
 			mWifiHelper.scanAPList();
 			return;
 		}
 		if (mWifiHelper.getWifiState() != WifiManager.WIFI_STATE_ENABLING) {
-			progress.setTitle("正在连接到指定热点");
 
 			mWifiHelper.connectWifi();
 		}
 	}
 
 	private void connectServer() {
-		if (client == null) {
-			String host=getString(R.string.def_server_host);
-			int port=getResources().getInteger(R.integer.def_server_port);
-			client = new TCPClient(host, port,handler);
+		if (client == null || !client.isConnected()) {
+			String host = getString(R.string.def_server_host);
+			int port = getResources().getInteger(R.integer.def_server_port);
+			client = new TCPClient(host, port, this, handler);
 
-		
 		}
-		
 
 	}
 
@@ -170,9 +156,19 @@ public class MainActivity extends Activity implements OnCancelListener {
 			case Messages.MSG_WIFI_ENABLED:
 
 				break;
+			case Messages.MSG_CONNECT_SUCCUSS:
+				button.setText("正在测试");
+				button.setEnabled(false);
+				menu.getItem(0).setVisible(true);
+				break;
 			case Messages.MSG_CMD_RECEIVE:
-				mTextOutput.append("收到消息："+msg.obj.toString()+"\n");
-				mScrollView.scrollTo(0, mScrollView.getBottom());
+				String cmd = msg.obj.toString();
+				byte[] data = Commands.getInstance(MainActivity.this).excute(
+						cmd);
+				if(data!=null){
+					Log.d(TAG, "command excute result=" + data.length);
+					client.WriteByteArray(data);
+				}
 				break;
 			default:
 				break;
@@ -190,11 +186,10 @@ public class MainActivity extends Activity implements OnCancelListener {
 			if (WifiManager.SCAN_RESULTS_AVAILABLE_ACTION.equals(intent
 					.getAction())) {
 				isTargetAPExist = mWifiHelper.isTargetAPExist();
-				isTargetWifiConnected=mWifiHelper.isTargetWifiConnected();
-				if(isTargetAPExist&&isTargetWifiConnected){
-					MainActivity.this.connectWifi();
-					progress.dismiss();
-					
+				isTargetWifiConnected = mWifiHelper.isTargetWifiConnected();
+				if (isTargetAPExist && isTargetWifiConnected) {
+					// MainActivity.this.connectWifi();
+
 				}
 
 			} else if (WifiManager.WIFI_STATE_CHANGED_ACTION.equals(intent
@@ -202,18 +197,38 @@ public class MainActivity extends Activity implements OnCancelListener {
 
 				if (mWifiHelper.getWifiManager().isWifiEnabled()) {
 
-					isTargetWifiConnected=mWifiHelper.isTargetWifiConnected();
-					Log.d(TAG, "WIFI_STATE_ENABLED,isTargetWifiConnected="+isTargetWifiConnected);
-					if(isTargetWifiConnected){
-						progress.dismiss();
-						
+					isTargetWifiConnected = mWifiHelper.isTargetWifiConnected();
+					Log.d(TAG, "WIFI_STATE_ENABLED,isTargetWifiConnected="
+							+ isTargetWifiConnected);
+					if (isTargetWifiConnected) {
+
 					}
-					MainActivity.this.connectWifi();
+					// MainActivity.this.connectWifi();
 				}
 			}
 
 		}
 
 	};
+
+
+
+	@Override
+	public void onClick(View v) {
+		connectServer();
+
+	}
+
+	@Override
+	public void onAccuracyChanged(int sensor, int accuracy) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void onSensorChanged(int sensor, float[] values) {
+		// TODO Auto-generated method stub
+
+	}
 
 }

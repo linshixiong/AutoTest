@@ -75,6 +75,22 @@ public class WifiHelper {
 	}
 
 	
+	public String getWifiMAC(){
+		WifiInfo wifiInfo= mWifiManager.getConnectionInfo();
+		if(wifiInfo==null){
+			return null;
+		}
+		return wifiInfo.getMacAddress();
+	}
+	
+	public int getWifiSignal(){
+		WifiInfo wifiInfo= mWifiManager.getConnectionInfo();
+		if(wifiInfo==null){
+			return 0;
+		}
+		return wifiInfo.getRssi();
+	}
+	
 	public void scanAPList(){
 		mWifiManager.startScan();
 		
