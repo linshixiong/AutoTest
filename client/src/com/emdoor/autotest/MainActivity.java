@@ -1,22 +1,17 @@
 package com.emdoor.autotest;
 
-import java.text.SimpleDateFormat;
-
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.provider.MediaStore;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
-import android.hardware.Sensor;
-import android.hardware.SensorListener;
-import android.hardware.SensorManager;
-
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -26,19 +21,17 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-public class MainActivity extends Activity implements OnClickListener,
-		SensorListener {
+public class MainActivity extends Activity implements OnClickListener {
 	protected static final String TAG = "MainActivity";
 	private WifiHelper mWifiHelper;
-	private SensorManager sm;
 	private boolean isTargetAPExist;
-	private TCPClient client;
 	private boolean isTargetWifiConnected;
 	private LinearLayout progressLayout;
 	private LinearLayout operateLayout;
 	private Button button;
 	private TextView textStatus;
 	private Menu menu;
+	private ConnectivityManager cm;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -52,11 +45,11 @@ public class MainActivity extends Activity implements OnClickListener,
 		IntentFilter filter = new IntentFilter();
 		filter.addAction(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION);
 		filter.addAction(WifiManager.WIFI_STATE_CHANGED_ACTION);
+		filter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
 		this.registerReceiver(wifiBroadcastReceiver, filter);
 		mWifiHelper = WifiHelper.getInstance(this);
-		// sm = (SensorManager)getSystemService(Context.SENSOR_SERVICE);
-
-		// int sensorType = Sensor.TYPE_ACCELEROMETER;
+		cm = (ConnectivityManager) this
+				.getSystemService(Context.CONNECTIVITY_SERVICE);
 		isTargetWifiConnected = mWifiHelper.isTargetWifiConnected();
 
 		progressLayout.setVisibility(isTargetWifiConnected ? View.GONE
@@ -66,12 +59,7 @@ public class MainActivity extends Activity implements OnClickListener,
 		if (!isTargetWifiConnected) {
 			this.connectWifi();
 		} else {
-			textStatus.setText("");
-			textStatus.append("网络名: " + getString(R.string.def_wifi_ssid));
-			textStatus.append("\n");
-			textStatus.append("服务器: " + getString(R.string.def_server_host)
-					+ ":"
-					+ getResources().getInteger(R.integer.def_server_port));
+			showButton();
 		}
 	}
 
@@ -118,10 +106,12 @@ public class MainActivity extends Activity implements OnClickListener,
 		if (!mWifiHelper.isWifiEnabled()) {
 
 			mWifiHelper.turnOnWifi();
+			Log.d(TAG, "turn on wifi");
 			return;
 		}
 		isTargetWifiConnected = mWifiHelper.isTargetWifiConnected();
 		if (isTargetWifiConnected) {
+
 			return;
 		}
 		isTargetAPExist = mWifiHelper.isTargetAPExist();
@@ -137,48 +127,6 @@ public class MainActivity extends Activity implements OnClickListener,
 		}
 	}
 
-	private void connectServer() {
-		if (client == null || !client.isConnected()) {
-			String host = getString(R.string.def_server_host);
-			int port = getResources().getInteger(R.integer.def_server_port);
-			client = new TCPClient(host, port, this, handler);
-
-		}
-
-	}
-
-	private Handler handler = new Handler() {
-
-		@Override
-		public void handleMessage(Message msg) {
-
-			switch (msg.what) {
-			case Messages.MSG_WIFI_ENABLED:
-
-				break;
-			case Messages.MSG_CONNECT_SUCCUSS:
-				button.setText("正在测试");
-				button.setEnabled(false);
-				menu.getItem(0).setVisible(true);
-				break;
-			case Messages.MSG_CMD_RECEIVE:
-				String cmd = msg.obj.toString();
-				byte[] data = Commands.getInstance(MainActivity.this).excute(
-						cmd);
-				if(data!=null){
-					Log.d(TAG, "command excute result=" + data.length);
-					client.WriteByteArray(data);
-				}
-				break;
-			default:
-				break;
-			}
-
-			super.handleMessage(msg);
-		}
-
-	};
-
 	private BroadcastReceiver wifiBroadcastReceiver = new BroadcastReceiver() {
 
 		@Override
@@ -186,24 +134,29 @@ public class MainActivity extends Activity implements OnClickListener,
 			if (WifiManager.SCAN_RESULTS_AVAILABLE_ACTION.equals(intent
 					.getAction())) {
 				isTargetAPExist = mWifiHelper.isTargetAPExist();
-				isTargetWifiConnected = mWifiHelper.isTargetWifiConnected();
-				if (isTargetAPExist && isTargetWifiConnected) {
-					// MainActivity.this.connectWifi();
+				Log.d(TAG,"SCAN RESULTS AVAILABLE,isTargetAPExist:"+isTargetAPExist);
+				if (isTargetAPExist) {
 
+					isTargetWifiConnected = mWifiHelper.isTargetWifiConnected();
+					if (!isTargetWifiConnected) {
+						connectWifi();
+
+					}
 				}
 
-			} else if (WifiManager.WIFI_STATE_CHANGED_ACTION.equals(intent
+			}  else if (ConnectivityManager.CONNECTIVITY_ACTION.equals(intent
 					.getAction())) {
 
-				if (mWifiHelper.getWifiManager().isWifiEnabled()) {
+				NetworkInfo wifi = cm
+						.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
 
+				if (wifi != null && wifi.isConnected()) {
 					isTargetWifiConnected = mWifiHelper.isTargetWifiConnected();
 					Log.d(TAG, "WIFI_STATE_ENABLED,isTargetWifiConnected="
 							+ isTargetWifiConnected);
 					if (isTargetWifiConnected) {
-
+						showButton();
 					}
-					// MainActivity.this.connectWifi();
 				}
 			}
 
@@ -211,23 +164,19 @@ public class MainActivity extends Activity implements OnClickListener,
 
 	};
 
-
+	private void showButton() {
+		operateLayout.setVisibility(View.VISIBLE);
+		progressLayout.setVisibility(View.GONE);
+		textStatus.setText("");
+		textStatus.append("网络名: " + getString(R.string.def_wifi_ssid));
+		textStatus.append("\n");
+		textStatus.append("服务器: " + getString(R.string.def_server_host) + ":"
+				+ getResources().getInteger(R.integer.def_server_port));
+	}
 
 	@Override
 	public void onClick(View v) {
-		connectServer();
-
-	}
-
-	@Override
-	public void onAccuracyChanged(int sensor, int accuracy) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void onSensorChanged(int sensor, float[] values) {
-		// TODO Auto-generated method stub
+		// connectServer();
 
 	}
 

@@ -171,6 +171,7 @@ public class Commands{
 	
 	private byte[] writeFileToSdcard(String cmd){
 		File sdPatch= Environment.getExternalStorageDirectory();
+				
 		
 		Log.d(TAG, "write file to "+sdPatch);
 		return null;
