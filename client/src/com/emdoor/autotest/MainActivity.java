@@ -200,9 +200,9 @@ public class MainActivity extends Activity implements OnClickListener {
 		operateLayout.setVisibility(View.VISIBLE);
 		progressLayout.setVisibility(View.GONE);
 		textStatus.setText("");
-		textStatus.append("ÍøÂçÃû: " + getString(R.string.def_wifi_ssid));
+		textStatus.append(getString(R.string.network)+ getString(R.string.def_wifi_ssid));
 		textStatus.append("\n");
-		textStatus.append("·şÎñÆ÷: " + getString(R.string.def_server_host) + ":"
+		textStatus.append(getString(R.string.server) + getString(R.string.def_server_host) + ":"
 				+ getResources().getInteger(R.integer.def_server_port));
 	}
 

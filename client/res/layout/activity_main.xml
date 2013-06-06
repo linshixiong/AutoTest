@@ -18,7 +18,7 @@
             android:id="@+id/button"
             android:layout_width="200dp"
             android:layout_height="100dp"
-            android:text="开始测试"
+            android:text="@string/start_test"
             android:textSize="30sp" />
          <TextView
             android:id="@+id/statusText"
@@ -49,7 +49,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="30dp"
-            android:text="正在连接网络，请稍后..."
+            android:text="@string/connecting"
             android:textSize="20sp" />
     </LinearLayout>
 
