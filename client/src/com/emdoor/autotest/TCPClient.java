@@ -10,6 +10,7 @@ import android.content.Context;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
+import android.widget.Toast;
 
 public class TCPClient implements Runnable {
 	private static final String TAG = "TCPClient";
@@ -33,11 +34,11 @@ public class TCPClient implements Runnable {
 	}
 
 	public boolean isConnected() {
-		return socket!=null? socket.isConnected():false;
+		return socket != null ? socket.isConnected() : false;
 	}
 
-	public void WriteByteArray(byte [] data){
-		if(data==null||data.length==0){
+	public void WriteByteArray(byte[] data) {
+		if (data == null || data.length == 0) {
 			return;
 		}
 		try {
@@ -47,7 +48,7 @@ public class TCPClient implements Runnable {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public void WriteString(String str) {
 
 		if (str == null) {
@@ -62,15 +63,17 @@ public class TCPClient implements Runnable {
 		}
 	}
 
-	// 显示从socket返回的数据
-	public void ReadInt() {
-		try {
-			System.out.println(dis.readInt());
-		} catch (IOException ioe) {
-			ioe.printStackTrace();
+	public void Disconnect(){
+		if(socket!=null){
+			try {
+				socket.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
+		socket=null;
 	}
-
+	
 	@Override
 	public void run() {
 
@@ -80,64 +83,49 @@ public class TCPClient implements Runnable {
 			dis = new DataInputStream(socket.getInputStream());
 			dos = new DataOutputStream(socket.getOutputStream());
 			if (socket != null && socket.isConnected()) {
-				
+
 				this.WriteString("I'm ready,"
 						+ WifiHelper.getInstance(mContext).getWifiMAC()
 						+ "\r\n");
-				Message msg=new Message();
-				msg.what=Messages.MSG_CONNECT_SUCCUSS;
+				Message msg = new Message();
+				msg.what = Messages.MSG_CONNECT_SUCCUSS;
 				mHandler.sendMessage(msg);
 			}
 		} catch (UnknownHostException e) {
-
+			Message msg=new Message();
+			msg.what=Messages.MSG_CONNECT_ERROR;
+			msg.obj=e.getMessage();
+			mHandler.sendMessage(msg);
 			e.printStackTrace();
+			return;
 		} catch (IOException e) {
-
+			Message msg=new Message();
+			msg.what=Messages.MSG_CONNECT_ERROR;
+			msg.obj=e.getMessage();
+			mHandler.sendMessage(msg);
 			e.printStackTrace();
-		}
+			return;
+		} 
 		try {
 			while (true) {
-				 if (!socket.isInputShutdown()) {  
-                     if ((content = dis.readLine()) != null) {  
-                    	 if (!content.isEmpty()) {
-     						Message msg = new Message();
-     						msg.what = Messages.MSG_CMD_RECEIVE;
-     						msg.obj = content;
-     						Log.d(TAG, "receive data:" + content);
-     						mHandler.sendMessage(msg);
-     					}
-                     } else {  
+				if (!socket.isInputShutdown()) {
+					if ((content = dis.readLine()) != null) {
+						if (!content.isEmpty()) {
+							Message msg = new Message();
+							msg.what = Messages.MSG_CMD_RECEIVE;
+							msg.obj = content;
+							Log.d(TAG, "receive data:" + content);
+							mHandler.sendMessage(msg);
+						}
+					} else {
 
-                     }  
-				/*
-				if ( socket.isConnected()&&!socket.isInputShutdown()) {
-					content = dis.readLine();
-					if (content != null&&!content.isEmpty()) {
-						Message msg = new Message();
-						msg.what = Messages.MSG_CMD_RECEIVE;
-						msg.obj = content;
-						Log.d(TAG, "receive data:" + content);
-						mHandler.sendMessage(msg);
 					}
-				}else{
-					break;
-				}*/
 
-				 }
+				}
 			}
-		}
-		 catch (Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-			try {
-				if (socket != null) {
-					socket.close();
-					dis.close();
-					dos.close();
-				}
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
 
 		}
 	}

@@ -1,11 +1,13 @@
 package com.emdoor.autotest;
 
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.util.Log;
+import android.widget.Toast;
 
 public class AutoTestService extends Service {
 
@@ -39,6 +41,16 @@ public class AutoTestService extends Service {
 		return client.isConnected();
 	}
 	
+	public static void disconnect(Context context){
+		if(client!=null){
+			client.Disconnect();
+			client=null;
+		}
+		Intent intent=new Intent(Intents.ACTION_TCP_CONNECT_STATE_CHANGE);
+		context.sendBroadcast(intent);
+		
+	}
+	
 	private Handler handler = new Handler() {
 		@Override
 		public void handleMessage(Message msg) {
@@ -48,9 +60,12 @@ public class AutoTestService extends Service {
 
 				break;
 			case Messages.MSG_CONNECT_SUCCUSS:
-				//button.setText("ÕýÔÚ²âÊÔ");
-				//button.setEnabled(false);
-				//menu.getItem(0).setVisible(true);
+				Intent intent=new Intent(Intents.ACTION_TCP_CONNECT_STATE_CHANGE);
+				AutoTestService.this.sendBroadcast(intent);
+				break;
+			case Messages.MSG_CONNECT_ERROR:
+				String error=msg.obj.toString();
+				Toast.makeText(AutoTestService.this,error, Toast.LENGTH_SHORT).show();
 				break;
 			case Messages.MSG_CMD_RECEIVE:
 				String cmd = msg.obj.toString();

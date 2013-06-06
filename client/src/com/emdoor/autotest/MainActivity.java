@@ -5,8 +5,11 @@ import android.net.NetworkInfo;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
@@ -57,10 +60,16 @@ public class MainActivity extends Activity implements OnClickListener {
 		filter.addAction(WifiManager.WIFI_STATE_CHANGED_ACTION);
 		filter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
 		filter.addAction(Intents.ACTION_FULLSCREEN_STATE_CHANGE);
+		filter.addAction(Intents.ACTION_TCP_CONNECT_STATE_CHANGE);
 		this.registerReceiver(wifiBroadcastReceiver, filter);
 		mWifiHelper = WifiHelper.getInstance(this);
 		cm = (ConnectivityManager) this
 				.getSystemService(Context.CONNECTIVITY_SERVICE);
+
+	}
+
+	@Override
+	protected void onResume() {
 		isTargetWifiConnected = mWifiHelper.isTargetWifiConnected();
 
 		progressLayout.setVisibility(isTargetWifiConnected ? View.GONE
@@ -72,10 +81,7 @@ public class MainActivity extends Activity implements OnClickListener {
 		} else {
 			showButton();
 		}
-	}
 
-	@Override
-	protected void onResume() {
 		super.onResume();
 	}
 
@@ -97,11 +103,28 @@ public class MainActivity extends Activity implements OnClickListener {
 	public boolean onMenuItemSelected(int featureId, MenuItem item) {
 		switch (item.getItemId()) {
 		case R.id.menu_disconnect:
+			Dialog alertDialog = new AlertDialog.Builder(this)
+					.setTitle("Stop Test")
+					.setMessage("Are you sure to disconnect and stop test?")
+					.setIcon(R.drawable.ic_launcher)
+					.setNegativeButton("Cancel", null)
+					.setPositiveButton("OK",
+							new DialogInterface.OnClickListener() {
+
+								@Override
+								public void onClick(DialogInterface dialog,
+										int which) {
+									AutoTestService.disconnect(MainActivity.this);
+									
+									
+								}
+							}).create();
+			alertDialog.show();
 
 			break;
 
 		case R.id.menu_settings:
-			
+
 			break;
 		default:
 			break;
@@ -190,6 +213,10 @@ public class MainActivity extends Activity implements OnClickListener {
 					quitFullScreen();
 				}
 
+			} else if (Intents.ACTION_TCP_CONNECT_STATE_CHANGE.equals(intent
+					.getAction())) {
+				menu.getItem(0).setVisible(AutoTestService.isConnected());
+				button.setEnabled(!AutoTestService.isConnected());
 			}
 
 		}
@@ -200,9 +227,11 @@ public class MainActivity extends Activity implements OnClickListener {
 		operateLayout.setVisibility(View.VISIBLE);
 		progressLayout.setVisibility(View.GONE);
 		textStatus.setText("");
-		textStatus.append(getString(R.string.network)+ getString(R.string.def_wifi_ssid));
+		textStatus.append(getString(R.string.network)
+				+ getString(R.string.def_wifi_ssid));
 		textStatus.append("\n");
-		textStatus.append(getString(R.string.server) + getString(R.string.def_server_host) + ":"
+		textStatus.append(getString(R.string.server)
+				+ getString(R.string.def_server_host) + ":"
 				+ getResources().getInteger(R.integer.def_server_port));
 	}
 
@@ -253,7 +282,7 @@ public class MainActivity extends Activity implements OnClickListener {
 				.clearFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
 		getActionBar().show();
 		mainLayout.setVisibility(View.VISIBLE);
-		
+
 	}
 
 }
