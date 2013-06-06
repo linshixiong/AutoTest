@@ -36,7 +36,7 @@ public class WifiHelper {
 		this.mContext = context;
 		mWifiManager = (WifiManager) mContext
 				.getSystemService(Context.WIFI_SERVICE);
-		targetSSID = mContext.getString(R.string.def_wifi_ssid);
+		targetSSID = Settings.getSSID();
 	}
 
 	public WifiManager getWifiManager() {
@@ -68,7 +68,9 @@ public class WifiHelper {
 		if (wifiInfo == null) {
 			return false;
 		}
-		return convertToQuotedString(targetSSID).equals(wifiInfo.getSSID());
+		Log.d(TAG, "targetSSID:"+targetSSID+",wifiInfo.getSSID()="+wifiInfo.getSSID());
+		return targetSSID.equals(wifiInfo.getSSID());
+		//return convertToQuotedString(targetSSID).equals(wifiInfo.getSSID());
 
 	}
 
@@ -119,7 +121,7 @@ public class WifiHelper {
 
 		Log.d(TAG, "connecting to " + targetSSID + " securityType is "
 				+ securityType);
-		String password = mContext.getString(R.string.def_wifi_pwd);
+		String password = Settings.getPwd();
 		WifiConfiguration config = getConfig(-1, targetSSID, password,
 				securityType);
 

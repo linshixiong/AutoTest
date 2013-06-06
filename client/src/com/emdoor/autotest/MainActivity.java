@@ -49,6 +49,7 @@ public class MainActivity extends Activity implements OnClickListener {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+		Settings.init(this);
 		progressLayout = (LinearLayout) findViewById(R.id.progress_panel);
 		operateLayout = (LinearLayout) findViewById(R.id.operate_panel);
 		mainLayout = (RelativeLayout) findViewById(R.id.layout_main);
@@ -65,6 +66,7 @@ public class MainActivity extends Activity implements OnClickListener {
 		mWifiHelper = WifiHelper.getInstance(this);
 		cm = (ConnectivityManager) this
 				.getSystemService(Context.CONNECTIVITY_SERVICE);
+	
 
 	}
 
@@ -124,7 +126,9 @@ public class MainActivity extends Activity implements OnClickListener {
 			break;
 
 		case R.id.menu_settings:
-
+			Intent intent=new Intent();
+			intent.setClass(this, SettingsActivity.class);
+			this.startActivity(intent);
 			break;
 		default:
 			break;
@@ -228,11 +232,11 @@ public class MainActivity extends Activity implements OnClickListener {
 		progressLayout.setVisibility(View.GONE);
 		textStatus.setText("");
 		textStatus.append(getString(R.string.network)
-				+ getString(R.string.def_wifi_ssid));
+				+ Settings.getSSID());
 		textStatus.append("\n");
 		textStatus.append(getString(R.string.server)
-				+ getString(R.string.def_server_host) + ":"
-				+ getResources().getInteger(R.integer.def_server_port));
+				+ Settings.getServerHost()+ ":"
+				+ Settings.getPort());
 	}
 
 	boolean isFullScreen = false;

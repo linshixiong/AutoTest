@@ -48,7 +48,7 @@
             android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen" 
             android:launchMode="singleInstance">
         </activity>
-
+ 		<activity android:name="com.emdoor.autotest.SettingsActivity"></activity>
         <receiver android:name="com.emdoor.autotest.MyReceiver" >
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />

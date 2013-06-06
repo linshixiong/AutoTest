@@ -10,4 +10,22 @@
 	<string name="connecting">Connecting network，please wait...</string>
 	<string name="network">Network:&#x0020;</string>
 	<string name="server">Server:&#x0020;  </string>
+	
+	<string name="network_settings">Network settings</string>
+	<string name="wifi_ssid">Wifi ssid</string>
+	<string name="wifi_pwd">Wifi password</string>
+	<string name="wifi_ssid_summary">Wifi ssid is %s</string>
+	<string name="wifi_ssid_dialog_title">Input the wifi ssid</string>
+	<string name="wifi_pwd_dialog_title">Input the wifi password</string>
+	<string name="server_settings">Server settings</string>
+	<string name="server_host">Server Host</string>
+	<string name="server_port">Server Port</string>
+	<string name="server_port_summary">Server port is %d</string>
+	<string name="server_port_dialog_title">Input the server port</string>
+	<string name="server_host_summary">Server host is %s</string>
+	<string name="server_host_dialog_title">Input the server host</string>
+	<string name="server_port_invalid">Port number must be between 1024 and 65535</string>
+	<string name="server_port_occupied">Port %d is occupied by others, please set new port in settings menu.</string>
+	<string name="about">About</string>
+	<string name="version">Version</string>
 </resources>
