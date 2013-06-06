@@ -10,7 +10,7 @@ import android.util.Log;
 public class AutoTestService extends Service {
 
 	protected static final String TAG = "AutoTestService";
-	private TCPClient client;
+	private static TCPClient client;
 	@Override
 	public IBinder onBind(Intent arg0) {
 
@@ -19,6 +19,7 @@ public class AutoTestService extends Service {
 
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
+		this.connectServer();
 		return super.onStartCommand(intent, flags, startId);
 	}
 	
@@ -28,13 +29,17 @@ public class AutoTestService extends Service {
 			String host = getString(R.string.def_server_host);
 			int port = getResources().getInteger(R.integer.def_server_port);
 			client = new TCPClient(host, port, this, handler);
-
 		}
-
+	}
+	
+	public static boolean isConnected(){
+		if(client==null){
+			return false;
+		}
+		return client.isConnected();
 	}
 	
 	private Handler handler = new Handler() {
-
 		@Override
 		public void handleMessage(Message msg) {
 

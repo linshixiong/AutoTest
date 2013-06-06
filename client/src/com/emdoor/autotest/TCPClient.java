@@ -33,7 +33,7 @@ public class TCPClient implements Runnable {
 	}
 
 	public boolean isConnected() {
-		return socket.isConnected();
+		return socket!=null? socket.isConnected():false;
 	}
 
 	public void WriteByteArray(byte [] data){
@@ -97,9 +97,22 @@ public class TCPClient implements Runnable {
 		}
 		try {
 			while (true) {
+				 if (!socket.isInputShutdown()) {  
+                     if ((content = dis.readLine()) != null) {  
+                    	 if (!content.isEmpty()) {
+     						Message msg = new Message();
+     						msg.what = Messages.MSG_CMD_RECEIVE;
+     						msg.obj = content;
+     						Log.d(TAG, "receive data:" + content);
+     						mHandler.sendMessage(msg);
+     					}
+                     } else {  
+
+                     }  
+				/*
 				if ( socket.isConnected()&&!socket.isInputShutdown()) {
 					content = dis.readLine();
-					if (content != null) {
+					if (content != null&&!content.isEmpty()) {
 						Message msg = new Message();
 						msg.what = Messages.MSG_CMD_RECEIVE;
 						msg.obj = content;
@@ -108,10 +121,12 @@ public class TCPClient implements Runnable {
 					}
 				}else{
 					break;
-				}
+				}*/
 
+				 }
 			}
-		} catch (Exception e) {
+		}
+		 catch (Exception e) {
 			e.printStackTrace();
 		} finally {
 			try {
@@ -121,7 +136,6 @@ public class TCPClient implements Runnable {
 					dos.close();
 				}
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 

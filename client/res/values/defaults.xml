@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     
-    <string name="def_wifi_ssid">AndroidAP</string>
-    <string name="def_wifi_pwd">12345678</string>
+    <string name="def_wifi_ssid">emdoor_soft</string>
+    <string name="def_wifi_pwd">emdoor1234567890</string>
     <string name="def_server_host">192.168.1.17</string>
     <integer name="def_server_port">3001</integer>
 </resources>
