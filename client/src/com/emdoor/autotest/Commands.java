@@ -191,7 +191,7 @@ public class Commands {
 	}
 
 	private byte[] enableBle(boolean enable) {
-		String result = enable ? "BLE Open OK\r\n" : "BLE Close OK\r\n";
+		String result = enable ? "BLE Open ERROR\r\n" : "BLE Close ERROR\r\n";
 		return result.getBytes();
 	}
 
