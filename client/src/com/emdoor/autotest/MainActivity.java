@@ -82,8 +82,9 @@ public class MainActivity extends Activity implements OnClickListener {
 			this.connectWifi();
 		} else {
 			showButton();
+			updateButton();
 		}
-
+		
 		super.onResume();
 	}
 
@@ -219,14 +220,21 @@ public class MainActivity extends Activity implements OnClickListener {
 
 			} else if (Intents.ACTION_TCP_CONNECT_STATE_CHANGE.equals(intent
 					.getAction())) {
-				menu.getItem(0).setVisible(AutoTestService.isConnected());
-				button.setEnabled(!AutoTestService.isConnected());
+				updateButton();
 			}
 
 		}
 
 	};
 
+	private void updateButton(){
+		if(menu!=null){
+			menu.getItem(0).setVisible(AutoTestService.isConnected());
+		}
+		button.setEnabled(!AutoTestService.isConnected());
+		button.setText(AutoTestService.isConnected()?"Testing":"Start Test");
+	}
+	
 	private void showButton() {
 		operateLayout.setVisibility(View.VISIBLE);
 		progressLayout.setVisibility(View.GONE);
@@ -246,7 +254,8 @@ public class MainActivity extends Activity implements OnClickListener {
 		Intent service = new Intent();
 		service.setClass(this, AutoTestService.class);
 		startService(service);
-
+		button.setText("Starting");
+		button.setEnabled(false);
 	}
 
 	@Override

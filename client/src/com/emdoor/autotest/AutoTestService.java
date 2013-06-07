@@ -54,18 +54,20 @@ public class AutoTestService extends Service {
 	private Handler handler = new Handler() {
 		@Override
 		public void handleMessage(Message msg) {
-
+			Intent intent=null;
 			switch (msg.what) {
 			case Messages.MSG_WIFI_ENABLED:
 
 				break;
 			case Messages.MSG_CONNECT_SUCCUSS:
-				Intent intent=new Intent(Intents.ACTION_TCP_CONNECT_STATE_CHANGE);
+				intent=new Intent(Intents.ACTION_TCP_CONNECT_STATE_CHANGE);
 				AutoTestService.this.sendBroadcast(intent);
 				break;
 			case Messages.MSG_CONNECT_ERROR:
 				String error=msg.obj.toString();
 				Toast.makeText(AutoTestService.this,error, Toast.LENGTH_SHORT).show();
+				intent=new Intent(Intents.ACTION_TCP_CONNECT_STATE_CHANGE);
+				AutoTestService.this.sendBroadcast(intent);
 				break;
 			case Messages.MSG_CMD_RECEIVE:
 				String cmd = msg.obj.toString();

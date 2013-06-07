@@ -68,8 +68,16 @@ public class WifiHelper {
 		if (wifiInfo == null) {
 			return false;
 		}
-		Log.d(TAG, "targetSSID:"+targetSSID+",wifiInfo.getSSID()="+wifiInfo.getSSID());
-		return targetSSID.equals(wifiInfo.getSSID());
+		
+		String ssid=wifiInfo.getSSID();
+		if(ssid.startsWith("\"")){
+			ssid=ssid.substring(1);
+		}
+		if(ssid.endsWith("\"")){
+			ssid=ssid.substring(0, ssid.length()-1);
+		}
+		Log.d(TAG, "targetSSID:"+targetSSID+",wifiInfo.getSSID()="+ssid);
+		return targetSSID.equals(ssid);
 		//return convertToQuotedString(targetSSID).equals(wifiInfo.getSSID());
 
 	}
