@@ -87,7 +87,7 @@ public class WifiHelper {
 		if (wifiInfo == null) {
 			return null;
 		}
-		return wifiInfo.getMacAddress();
+		return wifiInfo.getMacAddress().replace(":", "").toUpperCase();
 	}
 
 	public int getWifiSignal() {

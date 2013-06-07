@@ -186,8 +186,7 @@ public class Commands {
 	}
 
 	private byte[] getBleInfo() {
-		String result = String.format("Level=%dDB and Address=%s\r\n", -50,
-				"12:34:56:78:AB:CD");
+		String result = String.format("Level=%dDB and Address=%s\r\n", -50,BleHelper.getBleMAC());
 		return result.getBytes();
 	}
 
