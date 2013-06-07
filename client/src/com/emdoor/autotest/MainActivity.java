@@ -221,6 +221,11 @@ public class MainActivity extends Activity implements OnClickListener {
 			} else if (Intents.ACTION_TCP_CONNECT_STATE_CHANGE.equals(intent
 					.getAction())) {
 				updateButton();
+				if(!AutoTestService.isConnected()){
+					Intent service = new Intent();
+					service.setClass(MainActivity.this, AutoTestService.class);
+					stopService(service);
+				}
 			}
 
 		}

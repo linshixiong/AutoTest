@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
+import android.os.PowerManager;
+import android.os.PowerManager.WakeLock;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -13,19 +15,49 @@ public class AutoTestService extends Service {
 
 	protected static final String TAG = "AutoTestService";
 	private static TCPClient client;
+	private PowerManager pm;
+	private WakeLock wl;
 	@Override
 	public IBinder onBind(Intent arg0) {
 
 		return null;
 	}
+	
+	
+	
+	@Override
+	public void onCreate() {
+		
+		super.onCreate();
+		pm=(PowerManager)getSystemService(Context.POWER_SERVICE);
+		if(pm!=null){
+			wl=pm.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, TAG);
+		}
+	}
+
+
 
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		this.connectServer();
+		if(wl!=null&&!wl.isHeld()){
+			wl.acquire();
+		}
 		return super.onStartCommand(intent, flags, startId);
 	}
 	
 	
+	
+	@Override
+	public void onDestroy() {
+		if(wl!=null&&wl.isHeld()){
+			wl.release();
+		}
+		super.onDestroy();
+	}
+
+
+
 	private void connectServer() {
 		if (client == null || !client.isConnected()) {
 			String host = Settings.getServerHost();
@@ -46,6 +78,7 @@ public class AutoTestService extends Service {
 			client.Disconnect();
 			client=null;
 		}
+		
 		Intent intent=new Intent(Intents.ACTION_TCP_CONNECT_STATE_CHANGE);
 		context.sendBroadcast(intent);
 		
