@@ -79,7 +79,6 @@ public class TCPClient implements Runnable {
 
 		try {
 			socket = new Socket(serverIP, port);
-
 			dis = new DataInputStream(socket.getInputStream());
 			dos = new DataOutputStream(socket.getOutputStream());
 			if (socket != null && socket.isConnected()) {
@@ -125,6 +124,18 @@ public class TCPClient implements Runnable {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
+			try {
+				if(socket!=null){
+					socket.close();
+				}
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
+			//socket=null;
+			Message msg=new Message();
+			msg.what=Messages.MSG_CONNECT_ERROR;
+			msg.obj=e.getMessage();
+			mHandler.sendMessage(msg);
 		} finally {
 
 		}
