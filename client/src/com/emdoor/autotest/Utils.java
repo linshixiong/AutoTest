@@ -1,5 +1,6 @@
 package com.emdoor.autotest;
 
+import java.io.FileOutputStream;
 import java.util.List;
 
 import android.annotation.SuppressLint;
@@ -100,7 +101,7 @@ public class Utils {
 			dims[1] = Math.abs(dims[1]);
 		}
 		Bitmap screenBitmap = null;
-		// screenBitmap= Surface.screenshot((int) dims[0], (int) dims[1]);
+		screenBitmap= Surface.screenshot((int) dims[0], (int) dims[1]);
 		if (requiresRotation) {
 			// Rotate the screenshot to the current orientation
 			Bitmap ss = Bitmap.createBitmap(displayMetrics.widthPixels,
@@ -124,6 +125,13 @@ public class Utils {
 		screenBitmap.setHasAlpha(false);
 		screenBitmap.prepareToDraw();
 
+		try {
+		       FileOutputStream out = new FileOutputStream("/sdcard/screen.png");
+		       screenBitmap.compress(Bitmap.CompressFormat.PNG, 90, out);
+		       out.close();
+		} catch (Exception e) {
+		       e.printStackTrace();
+		}
 		// img_display.setImageBitmap(mScreenBitmap);
 		return screenBitmap;
 	}

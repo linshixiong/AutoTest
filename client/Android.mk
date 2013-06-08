@@ -8,6 +8,6 @@ LOCAL_SRC_FILES := $(call all-subdir-java-files)
 
 LOCAL_PACKAGE_NAME := AutoTest
 LOCAL_CERTIFICATE := platform
-
+WITH_DEXPREOPT := false
 include $(BUILD_PACKAGE)
 endif

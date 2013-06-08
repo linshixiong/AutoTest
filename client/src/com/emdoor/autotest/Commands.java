@@ -26,7 +26,7 @@ import android.os.SystemClock;
 import android.util.Log;
 import android.view.InputDevice;
 import android.view.Surface;
-
+import android.graphics.Bitmap;
 public class Commands {
 
 	public static final String CMD_GET_VERSION = "Test Version";
@@ -65,6 +65,7 @@ public class Commands {
 	public static final String CMD_CLOSE_APP = "Close App";
 	public static final String CMD_MOTION_CLICK = "Click X=";
 	public static final String CMD_MOTION_MOVE = "Move X1=";
+	public static final String CMD_TAKE_SCREEN_SHOT="PrtSc";
 	public static final String CMD_TEST_END = "Test End";
 
 	public static final HashMap<String, String> mapCmds = new HashMap<String, String>();
@@ -190,6 +191,8 @@ public class Commands {
 			return motionClick(cmd);
 		} else if (cmd.toUpperCase().startsWith(CMD_MOTION_MOVE.toUpperCase())) {
 			return motionSwipe(cmd);
+		}else if(cmd.toUpperCase().startsWith(CMD_TAKE_SCREEN_SHOT.toUpperCase())){
+			return takeScreenShot(cmd);
 		}
 		return null;
 	}
@@ -298,6 +301,19 @@ public class Commands {
 		return buffer;
 	}
 
+	private byte[] takeScreenShot(String cmd) {
+		try{
+		   	Bitmap bm=Utils.takeScreenShot(mContext);
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			bm.compress(Bitmap.CompressFormat.PNG, 100, baos);
+			return baos.toByteArray();
+		}catch (Exception e) {
+			e.printStackTrace();
+			return (cmd + " ERROR\r\n").getBytes();
+		}
+		
+	}
+	
 	private byte[] writeFileToSdcard(String cmd) {
 		// File sdPatch = Environment.getExternalStorageDirectory();
 		mDataWrite = cmd.substring(cmd.lastIndexOf('=') + 1);
@@ -357,11 +373,13 @@ public class Commands {
 		try {
 			float x = Float.parseFloat(xStr);
 			float y = Float.parseFloat(yStr);
+
 			EventHelper.sendTap(InputDevice.SOURCE_TOUCHSCREEN, x, y);
 			Log.d(TAG, "motionClick,x=" + x + ",y=" + y);
 		} catch (Exception e) {
 			return (cmd + " ERROR\r\n").getBytes();
 		}
+
 
 		return (cmd + " OK\r\n").getBytes();
 	}
