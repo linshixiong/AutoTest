@@ -63,8 +63,8 @@ public class Commands {
 	public static final String CMD_FACTORY_RESET = "Factory Reset";
 	public static final String CMD_OPEN_APP = "Open App";
 	public static final String CMD_CLOSE_APP = "Close App";
-	public static final String CMD_MOTION_CLICK = "";
-	public static final String CMD_MOTION_MOVE = "";
+	public static final String CMD_MOTION_CLICK = "Click X=";
+	public static final String CMD_MOTION_MOVE = "Move X1=";
 	public static final String CMD_TEST_END = "Test End";
 
 	public static final HashMap<String, String> mapCmds = new HashMap<String, String>();
@@ -189,7 +189,7 @@ public class Commands {
 		else if (cmd.toUpperCase().startsWith(CMD_MOTION_CLICK.toUpperCase())) {
 			return motionClick(cmd);
 		} else if (cmd.toUpperCase().startsWith(CMD_MOTION_MOVE.toUpperCase())) {
-
+			return motionSwipe(cmd);
 		}
 		return null;
 	}
@@ -362,7 +362,31 @@ public class Commands {
 		} catch (Exception e) {
 			return (cmd + " ERROR\r\n").getBytes();
 		}
-		
+
+		return (cmd + " OK\r\n").getBytes();
+	}
+
+	private byte[] motionSwipe(String cmd) {
+		cmd = cmd.toUpperCase();
+		try {
+			String x1Str = cmd.substring(cmd.indexOf("X1=") + 3,
+					cmd.indexOf(",Y1"));
+			String y1Str = cmd.substring(cmd.indexOf("Y1=") + 3,
+					cmd.indexOf(",X2"));
+			String x2Str = cmd.substring(cmd.indexOf("X2=") + 3,
+					cmd.indexOf(",Y2"));
+			String y2Str = cmd.substring(cmd.indexOf("Y2=") + 3);
+			Log.d(TAG, "motionSwipe,x1=" + x1Str + ",y1=" + y1Str+",x2="+x2Str+",y2="+y2Str);
+			float x1 = Float.parseFloat(x1Str);
+			float y1 = Float.parseFloat(y1Str);
+			float x2 = Float.parseFloat(x2Str);
+			float y2 = Float.parseFloat(y2Str);
+			
+			EventHelper.sendSwipe(InputDevice.SOURCE_TOUCHSCREEN, x1, y1, x2, y2);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return (cmd + " ERROR\r\n").getBytes();
+		}
 		return (cmd + " OK\r\n").getBytes();
 	}
 }
