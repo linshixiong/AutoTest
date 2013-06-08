@@ -24,6 +24,7 @@ import android.os.Environment;
 import android.os.PowerManager;
 import android.os.SystemClock;
 import android.util.Log;
+import android.view.InputDevice;
 import android.view.Surface;
 
 public class Commands {
@@ -60,10 +61,10 @@ public class Commands {
 	public static final String CMD_SN_READ = "SN Read";
 	public static final String CMD_CLEAR_HISTORY = "Clear History";
 	public static final String CMD_FACTORY_RESET = "Factory Reset";
-	public static final String CMD_OPEN_APP="Open App";
-	public static final String CMD_CLOSE_APP="Close App";
-	public static final String CMD_MOTION_TOUCH="";
-	public static final String CMD_MOTION_MOVE="";
+	public static final String CMD_OPEN_APP = "Open App";
+	public static final String CMD_CLOSE_APP = "Close App";
+	public static final String CMD_MOTION_CLICK = "";
+	public static final String CMD_MOTION_MOVE = "";
 	public static final String CMD_TEST_END = "Test End";
 
 	public static final HashMap<String, String> mapCmds = new HashMap<String, String>();
@@ -94,8 +95,8 @@ public class Commands {
 		sensorMgr = (SensorManager) mContext
 				.getSystemService(Context.SENSOR_SERVICE);
 		sensor = sensorMgr.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-		sensorMgr.registerListener(lsn, sensor, 
-				SensorManager.SENSOR_DELAY_GAME);   
+		sensorMgr
+				.registerListener(lsn, sensor, SensorManager.SENSOR_DELAY_GAME);
 	}
 
 	private SensorEventListener lsn = new SensorEventListener() {
@@ -104,7 +105,7 @@ public class Commands {
 			x = e.values[SensorManager.DATA_X];
 			y = e.values[SensorManager.DATA_Y];
 			z = e.values[SensorManager.DATA_Z];
-			//Log.d(TAG,"sensor:x="+x+",y="+y+",z="+z);
+			// Log.d(TAG,"sensor:x="+x+",y="+y+",z="+z);
 		}
 
 		public void onAccuracyChanged(Sensor s, int accuracy) {
@@ -178,12 +179,17 @@ public class Commands {
 		} else if (cmd.toUpperCase().startsWith(CMD_SLEEP.toUpperCase())) {
 			return screenOff(cmd);
 		}
-		
+
 		else if (cmd.toUpperCase().startsWith(CMD_OPEN_APP.toUpperCase())) {
 			return openApp(cmd);
-		}
-		else if (cmd.toUpperCase().startsWith(CMD_CLOSE_APP.toUpperCase())) {
+		} else if (cmd.toUpperCase().startsWith(CMD_CLOSE_APP.toUpperCase())) {
 			return closeApp(cmd);
+		}
+
+		else if (cmd.toUpperCase().startsWith(CMD_MOTION_CLICK.toUpperCase())) {
+			return motionClick(cmd);
+		} else if (cmd.toUpperCase().startsWith(CMD_MOTION_MOVE.toUpperCase())) {
+
 		}
 		return null;
 	}
@@ -201,7 +207,8 @@ public class Commands {
 	}
 
 	private byte[] getBleInfo() {
-		String result = String.format("Level=%dDB and Address=%s\r\n", -50,BleHelper.getBleMAC());
+		String result = String.format("Level=%dDB and Address=%s\r\n", -50,
+				BleHelper.getBleMAC());
 		return result.getBytes();
 	}
 
@@ -255,8 +262,6 @@ public class Commands {
 		return (cmd + " OK\r\n").getBytes();
 	}
 
-	
-	
 	private byte[] recodAudio(String cmd) {
 		try {
 			Thread.sleep(5000);
@@ -313,7 +318,7 @@ public class Commands {
 	}
 
 	private byte[] setTime(String cmd) {
-		//boolean isSuc = SystemClock.setCurrentTimeMillis(0);	
+		// boolean isSuc = SystemClock.setCurrentTimeMillis(0);
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		Date curDate = new Date(System.currentTimeMillis());// 获取当前时间
 		String str = formatter.format(curDate);
@@ -332,15 +337,32 @@ public class Commands {
 	private byte[] testEnd(String cmd) {
 		return (cmd + " OK\r\n").getBytes();
 	}
-	
-	private byte[] openApp(String cmd){
+
+	private byte[] openApp(String cmd) {
 		String name = cmd.substring(cmd.lastIndexOf('=') + 1);
 		Utils.launchAppByName(name, mContext);
 		return (cmd + " OK\r\n").getBytes();
 	}
-	private byte[] closeApp(String cmd){
+
+	private byte[] closeApp(String cmd) {
 		String name = cmd.substring(cmd.lastIndexOf('=') + 1);
 		Utils.closeAppByName(name, mContext);
+		return (cmd + " OK\r\n").getBytes();
+	}
+
+	private byte[] motionClick(String cmd) {
+
+		String xStr = cmd.substring(cmd.indexOf('=') + 1, cmd.indexOf(','));
+		String yStr = cmd.substring(cmd.lastIndexOf('=') + 1);
+		try {
+			float x = Float.parseFloat(xStr);
+			float y = Float.parseFloat(yStr);
+			EventHelper.sendTap(InputDevice.SOURCE_TOUCHSCREEN, x, y);
+			Log.d(TAG, "motionClick,x=" + x + ",y=" + y);
+		} catch (Exception e) {
+			return (cmd + " ERROR\r\n").getBytes();
+		}
+		
 		return (cmd + " OK\r\n").getBytes();
 	}
 }
