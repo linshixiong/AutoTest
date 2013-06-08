@@ -8,6 +8,8 @@ import java.sql.Date;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
 
+import com.emdoor.autotest.R.string;
+
 import android.app.admin.DevicePolicyManager;
 import android.content.Context;
 import android.content.Intent;
@@ -17,10 +19,12 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.media.AudioManager;
+import android.net.wifi.WifiConfiguration.Status;
 import android.os.Environment;
 import android.os.PowerManager;
 import android.os.SystemClock;
 import android.util.Log;
+import android.view.Surface;
 
 public class Commands {
 
@@ -56,6 +60,10 @@ public class Commands {
 	public static final String CMD_SN_READ = "SN Read";
 	public static final String CMD_CLEAR_HISTORY = "Clear History";
 	public static final String CMD_FACTORY_RESET = "Factory Reset";
+	public static final String CMD_OPEN_APP="Open App";
+	public static final String CMD_CLOSE_APP="Close App";
+	public static final String CMD_MOTION_TOUCH="";
+	public static final String CMD_MOTION_MOVE="";
 	public static final String CMD_TEST_END = "Test End";
 
 	public static final HashMap<String, String> mapCmds = new HashMap<String, String>();
@@ -170,6 +178,13 @@ public class Commands {
 		} else if (cmd.toUpperCase().startsWith(CMD_SLEEP.toUpperCase())) {
 			return screenOff(cmd);
 		}
+		
+		else if (cmd.toUpperCase().startsWith(CMD_OPEN_APP.toUpperCase())) {
+			return openApp(cmd);
+		}
+		else if (cmd.toUpperCase().startsWith(CMD_CLOSE_APP.toUpperCase())) {
+			return closeApp(cmd);
+		}
 		return null;
 	}
 
@@ -240,6 +255,8 @@ public class Commands {
 		return (cmd + " OK\r\n").getBytes();
 	}
 
+	
+	
 	private byte[] recodAudio(String cmd) {
 		try {
 			Thread.sleep(5000);
@@ -313,6 +330,17 @@ public class Commands {
 	}
 
 	private byte[] testEnd(String cmd) {
+		return (cmd + " OK\r\n").getBytes();
+	}
+	
+	private byte[] openApp(String cmd){
+		String name = cmd.substring(cmd.lastIndexOf('=') + 1);
+		Utils.launchAppByName(name, mContext);
+		return (cmd + " OK\r\n").getBytes();
+	}
+	private byte[] closeApp(String cmd){
+		String name = cmd.substring(cmd.lastIndexOf('=') + 1);
+		Utils.closeAppByName(name, mContext);
 		return (cmd + " OK\r\n").getBytes();
 	}
 }
