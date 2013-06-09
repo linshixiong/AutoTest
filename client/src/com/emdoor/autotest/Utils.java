@@ -125,14 +125,6 @@ public class Utils {
 		screenBitmap.setHasAlpha(false);
 		screenBitmap.prepareToDraw();
 
-		try {
-		       FileOutputStream out = new FileOutputStream("/sdcard/screen.png");
-		       screenBitmap.compress(Bitmap.CompressFormat.PNG, 90, out);
-		       out.close();
-		} catch (Exception e) {
-		       e.printStackTrace();
-		}
-		// img_display.setImageBitmap(mScreenBitmap);
 		return screenBitmap;
 	}
 

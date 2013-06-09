@@ -306,7 +306,7 @@ public class Commands {
 		try{
 		   	Bitmap bm=Utils.takeScreenShot(mContext);
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			bm.compress(Bitmap.CompressFormat.PNG, 100, baos);
+			bm.compress(Bitmap.CompressFormat.JPEG, 100, baos);
 			return baos.toByteArray();
 		}catch (Exception e) {
 			e.printStackTrace();
