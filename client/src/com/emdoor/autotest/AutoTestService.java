@@ -97,7 +97,7 @@ public class AutoTestService extends Service {
 				AutoTestService.this.sendBroadcast(intent);
 				break;
 			case Messages.MSG_CONNECT_ERROR:
-				String error=msg.obj.toString();
+				String error=msg.obj==null?"connection disconnect": msg.obj.toString();
 				Toast.makeText(AutoTestService.this,error, Toast.LENGTH_SHORT).show();
 				intent=new Intent(Intents.ACTION_TCP_CONNECT_STATE_CHANGE);
 				AutoTestService.this.sendBroadcast(intent);
