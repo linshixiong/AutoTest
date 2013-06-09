@@ -25,6 +25,7 @@ import android.os.PowerManager;
 import android.os.SystemClock;
 import android.util.Log;
 import android.view.InputDevice;
+import android.view.KeyEvent;
 import android.view.Surface;
 import android.graphics.Bitmap;
 public class Commands {
@@ -361,8 +362,8 @@ public class Commands {
 	}
 
 	private byte[] closeApp(String cmd) {
-		String name = cmd.substring(cmd.lastIndexOf('=') + 1);
-		Utils.closeAppByName(name, mContext);
+		//String name = cmd.substring(cmd.lastIndexOf('=') + 1);
+		EventHelper.sendKeyEvent(KeyEvent.KEYCODE_HOME);
 		return (cmd + " OK\r\n").getBytes();
 	}
 
