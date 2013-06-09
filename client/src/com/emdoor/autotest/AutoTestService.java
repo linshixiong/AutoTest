@@ -1,5 +1,7 @@
 package com.emdoor.autotest;
 
+import java.text.BreakIterator;
+
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -104,12 +106,19 @@ public class AutoTestService extends Service {
 				break;
 			case Messages.MSG_CMD_RECEIVE:
 				String cmd = msg.obj.toString();
-				byte[] data = Commands.getInstance(AutoTestService.this).excute(
+				byte[] data = Commands.getInstance(AutoTestService.this,handler).excute(
 						cmd);
 				if (data != null) {
 					Log.d(TAG, "command excute result=" + data.length);
 					client.WriteByteArray(data);
 				}
+				break;
+			case Messages.MSG_PHOTO_TAKEN:
+				byte[] photo=(byte[])msg.obj;
+				if(photo!=null){
+					client.WriteByteArray(photo);
+				}
+				
 				break;
 			default:
 				break;

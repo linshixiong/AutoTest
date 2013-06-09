@@ -21,6 +21,7 @@ import android.hardware.SensorManager;
 import android.media.AudioManager;
 import android.net.wifi.WifiConfiguration.Status;
 import android.os.Environment;
+import android.os.Handler;
 import android.os.PowerManager;
 import android.os.SystemClock;
 import android.util.Log;
@@ -85,9 +86,12 @@ public class Commands {
 	private float x;
 	private float y;
 	private float z;
-
-	private Commands(Context context) {
+	
+	public static byte[] buffCameraPhoto;
+	
+	private Commands(Context context,Handler handler) {
 		this.mContext = context;
+		this.handler=handler;
 		this.am = (AudioManager) mContext
 				.getSystemService(Context.AUDIO_SERVICE);
 		this.pm = (PowerManager) mContext
@@ -114,9 +118,11 @@ public class Commands {
 		}
 	};
 
-	public static Commands getInstance(Context context) {
+	private Handler handler;
+
+	public static Commands getInstance(Context context,Handler handler) {
 		if (instance == null) {
-			instance = new Commands(context);
+			instance = new Commands(context,handler);
 		}
 		return instance;
 	}
@@ -285,28 +291,22 @@ public class Commands {
 	}
 
 	private byte[] takePhoto(String cmd) {
-		InputStream is = mContext.getResources().openRawResource(
-				R.raw.photo_demo);
-		byte[] buffer = null;
-
-		try {
-			int lenght = is.available();
-			// 创建byte数组
-			buffer = new byte[lenght];
-			is.read(buffer);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		// byte[] result= buff.toByteArray();
-
-		return buffer;
+		
+		Intent cameraTest=new Intent();
+		cameraTest.setClass(mContext, CameraTestActivity.class);
+		cameraTest.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+		CameraTestActivity.handler=handler;
+		mContext.startActivity(cameraTest);
+		return null;
 	}
 
+	
+	
 	private byte[] takeScreenShot(String cmd) {
 		try{
 		   	Bitmap bm=Utils.takeScreenShot(mContext);
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			bm.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+			bm.compress(Bitmap.CompressFormat.PNG, 100, baos);
 			return baos.toByteArray();
 		}catch (Exception e) {
 			e.printStackTrace();
