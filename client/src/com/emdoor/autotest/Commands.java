@@ -4,6 +4,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.RandomAccessFile;
 import java.sql.Date;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
@@ -19,16 +20,21 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.media.AudioManager;
+import android.media.MediaPlayer;
+import android.media.MediaRecorder;
 import android.net.wifi.WifiConfiguration.Status;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.PowerManager;
+import android.os.RecoverySystem;
 import android.os.SystemClock;
 import android.util.Log;
 import android.view.InputDevice;
 import android.view.KeyEvent;
 import android.view.Surface;
+import android.widget.Toast;
 import android.graphics.Bitmap;
+
 public class Commands {
 
 	public static final String CMD_GET_VERSION = "Test Version";
@@ -67,13 +73,15 @@ public class Commands {
 	public static final String CMD_CLOSE_APP = "Close App";
 	public static final String CMD_MOTION_CLICK = "Click X=";
 	public static final String CMD_MOTION_MOVE = "Move X1=";
-	public static final String CMD_TAKE_SCREEN_SHOT="PrtSc";
+	public static final String CMD_TAKE_SCREEN_SHOT = "PrtSc";
 	public static final String CMD_TEST_END = "Test End";
 
 	public static final HashMap<String, String> mapCmds = new HashMap<String, String>();
 
 	private static final String TAG = "Commands";
 
+	private final File SN_FILE=new File("/factory/sn.txt");
+	
 	private static Commands instance;
 	private Context mContext;
 	private AudioManager am;
@@ -86,12 +94,12 @@ public class Commands {
 	private float x;
 	private float y;
 	private float z;
-	
+
 	public static byte[] buffCameraPhoto;
-	
-	private Commands(Context context,Handler handler) {
+
+	private Commands(Context context, Handler handler) {
 		this.mContext = context;
-		this.handler=handler;
+		this.handler = handler;
 		this.am = (AudioManager) mContext
 				.getSystemService(Context.AUDIO_SERVICE);
 		this.pm = (PowerManager) mContext
@@ -120,9 +128,13 @@ public class Commands {
 
 	private Handler handler;
 
-	public static Commands getInstance(Context context,Handler handler) {
+	private MediaRecorder mRecorder;
+
+	private MediaPlayer mPlayer;
+
+	public static Commands getInstance(Context context, Handler handler) {
 		if (instance == null) {
-			instance = new Commands(context,handler);
+			instance = new Commands(context, handler);
 		}
 		return instance;
 	}
@@ -198,7 +210,8 @@ public class Commands {
 			return motionClick(cmd);
 		} else if (cmd.toUpperCase().startsWith(CMD_MOTION_MOVE.toUpperCase())) {
 			return motionSwipe(cmd);
-		}else if(cmd.toUpperCase().startsWith(CMD_TAKE_SCREEN_SHOT.toUpperCase())){
+		} else if (cmd.toUpperCase().startsWith(
+				CMD_TAKE_SCREEN_SHOT.toUpperCase())) {
 			return takeScreenShot(cmd);
 		}
 		return null;
@@ -273,63 +286,116 @@ public class Commands {
 	}
 
 	private byte[] recodAudio(String cmd) {
+		mRecorder = new MediaRecorder();
+		mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+		mRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
+		File cacheDir = mContext.getCacheDir();
+		File audioFileName = new File(cacheDir, "record.3gp");
+		Log.d(TAG, "record audio to " + audioFileName.getAbsolutePath());
+		mRecorder.setOutputFile(audioFileName.getAbsolutePath());
+		mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
+		try {
+			mRecorder.prepare();
+		} catch (IOException e) {
+			Log.e(TAG, "prepare() failed");
+		}
+		mRecorder.start();
+		Toast.makeText(mContext, "recoding audio", Toast.LENGTH_SHORT).show();
 		try {
 			Thread.sleep(5000);
 		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		mRecorder.stop();
 		return "Record Audio OK\r\n".getBytes();
 	}
 
 	private byte[] playAudio(String cmd) {
-		try {
-			Thread.sleep(5000);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
+		File cacheDir = mContext.getCacheDir();
+		File audioFileName = new File(cacheDir, "record.3gp");
+		if (!audioFileName.exists()) {
+			return (cmd + " ERROR\r\n").getBytes();
 		}
+		mPlayer = new MediaPlayer();
+		try {
+			mPlayer.setDataSource(audioFileName.getAbsolutePath());
+			mPlayer.prepare();
+			mPlayer.start();
+			try {
+				Thread.sleep(mPlayer.getDuration());
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		} catch (IOException e) {
+			Log.e(TAG, "prepare() failed");
+			return (cmd + " ERROR\r\n").getBytes();
+		}
+
 		return (cmd + " OK\r\n").getBytes();
 	}
 
 	private byte[] takePhoto(String cmd) {
-		
-		Intent cameraTest=new Intent();
+
+		Intent cameraTest = new Intent();
 		cameraTest.setClass(mContext, CameraTestActivity.class);
 		cameraTest.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-		CameraTestActivity.handler=handler;
+		CameraTestActivity.handler = handler;
 		mContext.startActivity(cameraTest);
 		return null;
 	}
 
-	
-	
 	private byte[] takeScreenShot(String cmd) {
-		try{
-		   	Bitmap bm=Utils.takeScreenShot(mContext);
+		try {
+			Bitmap bm = Utils.takeScreenShot(mContext);
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			bm.compress(Bitmap.CompressFormat.PNG, 100, baos);
 			return baos.toByteArray();
-		}catch (Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 			return (cmd + " ERROR\r\n").getBytes();
 		}
-		
+
 	}
-	
+
 	private byte[] writeFileToSdcard(String cmd) {
-		// File sdPatch = Environment.getExternalStorageDirectory();
-		mDataWrite = cmd.substring(cmd.lastIndexOf('=') + 1);
-		// Log.d(TAG, "write file to " + sdPatch);
-		String result = "SD Read=" + mDataWrite + "\r\n";
+		String result = "";
+		if (!DeviceManager.getInstance(mContext).isExternalSDCardMounted()) {
+			result = "SD Read=ERROR\r\n";
+		} else {
+			File file = new File("/storage/external_storage/sdcard1/.temp");
+			mDataWrite = cmd.substring(cmd.lastIndexOf('=') + 1);
+			if (file.exists()) {
+				file.delete();
+			}
+
+			boolean success = Utils.writeTextToFile(file, mDataWrite);
+			if (success == true) {
+				mDataWrite = Utils.readTextFromFile(file);
+				result = "SD Read=" + mDataWrite + "\r\n";
+			} else {
+				result = "SD Read=ERROR\r\n";
+			}
+			
+		}
 		return result.getBytes();
 	}
 
 	private byte[] writeSN(String cmd) {
 		mSn = cmd.substring(cmd.lastIndexOf('=') + 1);
+		boolean success = Utils.writeTextToFile(SN_FILE, mSn);
+		if (success == true) {		
+			return (cmd + " OK\r\n").getBytes();
+		} else {
+			return (cmd + " ERROR\r\n").getBytes();
+		}
 
-		return (cmd + " OK\r\n").getBytes();
 	}
 
 	private byte[] readSN(String cmd) {
+		mSn=Utils.readTextFromFile(SN_FILE);
+		
 		String result = "SN Read=" + mSn + "\r\n";
 		return result.getBytes();
 	}
@@ -348,6 +414,12 @@ public class Commands {
 	}
 
 	private byte[] factoryReset(String cmd) {
+		try {
+			RecoverySystem.rebootWipeUserData(mContext);
+		} catch (IOException e) {
+			
+			e.printStackTrace();
+		}
 		return (cmd + " OK\r\n").getBytes();
 	}
 
@@ -362,7 +434,7 @@ public class Commands {
 	}
 
 	private byte[] closeApp(String cmd) {
-		//String name = cmd.substring(cmd.lastIndexOf('=') + 1);
+		// String name = cmd.substring(cmd.lastIndexOf('=') + 1);
 		EventHelper.sendKeyEvent(KeyEvent.KEYCODE_HOME);
 		return (cmd + " OK\r\n").getBytes();
 	}
@@ -381,7 +453,6 @@ public class Commands {
 			return (cmd + " ERROR\r\n").getBytes();
 		}
 
-
 		return (cmd + " OK\r\n").getBytes();
 	}
 
@@ -395,13 +466,15 @@ public class Commands {
 			String x2Str = cmd.substring(cmd.indexOf("X2=") + 3,
 					cmd.indexOf(",Y2"));
 			String y2Str = cmd.substring(cmd.indexOf("Y2=") + 3);
-			Log.d(TAG, "motionSwipe,x1=" + x1Str + ",y1=" + y1Str+",x2="+x2Str+",y2="+y2Str);
+			Log.d(TAG, "motionSwipe,x1=" + x1Str + ",y1=" + y1Str + ",x2="
+					+ x2Str + ",y2=" + y2Str);
 			float x1 = Float.parseFloat(x1Str);
 			float y1 = Float.parseFloat(y1Str);
 			float x2 = Float.parseFloat(x2Str);
 			float y2 = Float.parseFloat(y2Str);
-			
-			EventHelper.sendSwipe(InputDevice.SOURCE_TOUCHSCREEN, x1, y1, x2, y2);
+
+			EventHelper.sendSwipe(InputDevice.SOURCE_TOUCHSCREEN, x1, y1, x2,
+					y2);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return (cmd + " ERROR\r\n").getBytes();

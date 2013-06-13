@@ -1,6 +1,14 @@
 package com.emdoor.autotest;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.util.List;
 
 import android.annotation.SuppressLint;
@@ -36,10 +44,52 @@ public class Utils {
 		}
 	}
 
-	public static void closeAppByName(String name,Context context){
+	public static boolean writeTextToFile(File file, String text) {
+		try {
+			OutputStream outstream = new FileOutputStream(file);
+			OutputStreamWriter out = new OutputStreamWriter(outstream);
+			out.write(text);
+			out.close();
+			return true;
+		} catch (java.io.IOException e) {
+			e.printStackTrace();
+			return false;
+		}
 		
 	}
-	
+
+	public static String readTextFromFile(File file) {
+
+		String content = ""; // 文件内容字符串
+		if (file.isDirectory()) {
+			Log.d("TestFile", "The File doesn't not exist.");
+		} else {
+			try {
+				InputStream instream = new FileInputStream(file);
+				if (instream != null) {
+					InputStreamReader inputreader = new InputStreamReader(
+							instream);
+					BufferedReader buffreader = new BufferedReader(inputreader);
+					String line;
+					// 分行读取
+					while ((line = buffreader.readLine()) != null) {
+						content += line ;
+					}
+					instream.close();
+				}
+			} catch (java.io.FileNotFoundException e) {
+				Log.d("TestFile", "The File doesn't not exist.");
+			} catch (IOException e) {
+				Log.d("TestFile", e.getMessage());
+			}
+		}
+		return content;
+	}
+
+	public static void closeAppByName(String name, Context context) {
+
+	}
+
 	public static void launchAppByName(String name, Context context) {
 		PackageManager pm = context.getApplicationContext().getPackageManager();
 
@@ -48,7 +98,6 @@ public class Utils {
 
 		final List<ResolveInfo> allApps = pm.queryIntentActivities(mainIntent,
 				0);
-
 
 		Intent intent = null;
 		if (null != allApps && null != name) {
@@ -101,7 +150,7 @@ public class Utils {
 			dims[1] = Math.abs(dims[1]);
 		}
 		Bitmap screenBitmap = null;
-		screenBitmap= Surface.screenshot((int) dims[0], (int) dims[1]);
+		// screenBitmap= Surface.screenshot((int) dims[0], (int) dims[1]);
 		if (requiresRotation) {
 			// Rotate the screenshot to the current orientation
 			Bitmap ss = Bitmap.createBitmap(displayMetrics.widthPixels,

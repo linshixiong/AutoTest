@@ -22,6 +22,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.GridLayout;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -34,6 +35,7 @@ public class MainActivity extends Activity implements OnClickListener {
 	private LinearLayout progressLayout;
 	private LinearLayout operateLayout;
 	private RelativeLayout mainLayout;
+	private GridLayout buttonLayout;
 	private Button button;
 	private TextView textStatus;
 	private Menu menu;
@@ -53,9 +55,17 @@ public class MainActivity extends Activity implements OnClickListener {
 		progressLayout = (LinearLayout) findViewById(R.id.progress_panel);
 		operateLayout = (LinearLayout) findViewById(R.id.operate_panel);
 		mainLayout = (RelativeLayout) findViewById(R.id.layout_main);
-		button = (Button) findViewById(R.id.button);
+		buttonLayout = (GridLayout) findViewById(R.id.button_layout);
+		//button = (Button) findViewById(R.id.button1);
 		textStatus = (TextView) findViewById(R.id.statusText);
-		button.setOnClickListener(this);
+		
+		
+		for(int i=0;i<buttonLayout.getChildCount();i++){
+			
+			Button button=(Button)buttonLayout.getChildAt(i);
+			button.setOnClickListener(this);
+			button.setTag(i+1);
+		}
 		IntentFilter filter = new IntentFilter();
 		filter.addAction(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION);
 		filter.addAction(WifiManager.WIFI_STATE_CHANGED_ACTION);
@@ -66,7 +76,6 @@ public class MainActivity extends Activity implements OnClickListener {
 		mWifiHelper = WifiHelper.getInstance(this);
 		cm = (ConnectivityManager) this
 				.getSystemService(Context.CONNECTIVITY_SERVICE);
-	
 
 	}
 
@@ -82,9 +91,9 @@ public class MainActivity extends Activity implements OnClickListener {
 			this.connectWifi();
 		} else {
 			showButton();
-			updateButton();
+			//updateButton();
 		}
-		
+
 		super.onResume();
 	}
 
@@ -117,9 +126,9 @@ public class MainActivity extends Activity implements OnClickListener {
 								@Override
 								public void onClick(DialogInterface dialog,
 										int which) {
-									AutoTestService.disconnect(MainActivity.this);
-									
-									
+									AutoTestService
+											.disconnect(MainActivity.this);
+
 								}
 							}).create();
 			alertDialog.show();
@@ -127,7 +136,7 @@ public class MainActivity extends Activity implements OnClickListener {
 			break;
 
 		case R.id.menu_settings:
-			Intent intent=new Intent();
+			Intent intent = new Intent();
 			intent.setClass(this, SettingsActivity.class);
 			this.startActivity(intent);
 			break;
@@ -221,7 +230,7 @@ public class MainActivity extends Activity implements OnClickListener {
 			} else if (Intents.ACTION_TCP_CONNECT_STATE_CHANGE.equals(intent
 					.getAction())) {
 				updateButton();
-				if(!AutoTestService.isConnected()){
+				if (!AutoTestService.isConnected()) {
 					Intent service = new Intent();
 					service.setClass(MainActivity.this, AutoTestService.class);
 					stopService(service);
@@ -232,30 +241,35 @@ public class MainActivity extends Activity implements OnClickListener {
 
 	};
 
-	private void updateButton(){
-		if(menu!=null){
+	private void updateButton() {
+		if (menu != null) {
 			menu.getItem(0).setVisible(AutoTestService.isConnected());
 		}
 		button.setEnabled(!AutoTestService.isConnected());
-		button.setText(AutoTestService.isConnected()?"Testing":"Start Test");
+		button.setBackgroundColor(AutoTestService.isConnected() ? Color.BLUE
+				: Color.GRAY);
+		String buttonIndex=button.getTag().toString();
+		button.setText(AutoTestService.isConnected() ? "Testing No."+buttonIndex : "Start Test");
 	}
-	
+
 	private void showButton() {
 		operateLayout.setVisibility(View.VISIBLE);
 		progressLayout.setVisibility(View.GONE);
 		textStatus.setText("");
-		textStatus.append(getString(R.string.network)
-				+ Settings.getSSID());
+		textStatus.append(getString(R.string.network) + Settings.getSSID());
 		textStatus.append("\n");
-		textStatus.append(getString(R.string.server)
-				+ Settings.getServerHost()+ ":"
-				+ Settings.getPort());
+		textStatus.append(getString(R.string.server) + Settings.getServerHost()
+				+ ":" + Settings.getPort());
 	}
 
 	boolean isFullScreen = false;
 
 	@Override
 	public void onClick(View v) {
+		
+		Button button=(Button)v;
+		this.button=button;
+		String index=button.getTag().toString();
 		Intent service = new Intent();
 		service.setClass(this, AutoTestService.class);
 		startService(service);
