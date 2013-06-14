@@ -116,7 +116,8 @@ public class AutoTestService extends Service {
 			case Messages.MSG_PHOTO_TAKEN:
 				byte[] photo=(byte[])msg.obj;
 				if(photo!=null){
-					client.WriteByteArray(photo);
+					byte[] output=Utils.getResponeData(Commands.deviceIndex, photo);
+					client.WriteByteArray(output);
 				}
 				
 				break;

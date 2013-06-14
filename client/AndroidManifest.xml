@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.emdoor.autotest"
-    android:versionCode="2"
-    android:versionName="0.9.1" >
+    android:versionCode="3"
+    android:versionName="0.9.2" >
 
     <uses-sdk
         android:minSdkVersion="14"
@@ -32,7 +32,9 @@
     </uses-permission>
     <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" >
     </uses-permission>
+   
     <!--
+     <uses-permission android:name="android.permission.REBOOT"/>
     <uses-permission android:name="android.permission.DEVICE_POWER">
 	</uses-permission>
     -->
@@ -47,7 +49,8 @@
         <activity
             android:name="com.emdoor.autotest.MainActivity"
             android:configChanges="orientation|screenSize"
-            android:label="@string/app_name" >
+            android:label="@string/app_name" 
+            android:screenOrientation="landscape">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -57,11 +60,6 @@
         <activity
             android:name="com.emdoor.autotest.CameraTestActivity"
             android:configChanges="orientation|screenSize" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity android:name="com.emdoor.autotest.SettingsActivity" >
         </activity>

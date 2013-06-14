@@ -54,7 +54,7 @@ public class TCPClient implements Runnable {
 		if (str == null) {
 			return;
 		}
-		byte[] b = str.getBytes();
+		byte[] b = Utils.getResponeData(Commands.deviceIndex, str);
 		try {
 			dos.write(b);
 
