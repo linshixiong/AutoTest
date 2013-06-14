@@ -90,7 +90,7 @@ public class MainActivity extends Activity implements OnClickListener {
 			this.connectWifi();
 		} else {
 			showButton();
-			updateButton();
+			//updateButton();
 		}
 
 		super.onResume();
@@ -258,6 +258,7 @@ public class MainActivity extends Activity implements OnClickListener {
 					+ buttonIndex : "Start No."+buttonIndex);
 		}
 
+
 	}
 
 	private void showButton() {
@@ -276,7 +277,6 @@ public class MainActivity extends Activity implements OnClickListener {
 	public void onClick(View v) {
 
 		Button button = (Button) v;
-		//this.button = button;
 		int deviceIndex =Integer.parseInt(button.getTag().toString());
 		
 		Commands.deviceIndex=deviceIndex;

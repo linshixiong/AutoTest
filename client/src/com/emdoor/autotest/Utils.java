@@ -1,7 +1,9 @@
 package com.emdoor.autotest;
 
 import java.io.BufferedReader;
+
 import java.io.ByteArrayOutputStream;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -111,7 +113,6 @@ public class Utils {
 		}
 		return outputStream.toByteArray();
 	}
-	
 	public static void closeAppByName(String name, Context context) {
 
 	}

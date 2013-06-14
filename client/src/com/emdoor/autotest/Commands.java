@@ -290,7 +290,9 @@ public class Commands {
 	}
 
 	private byte[] recodAudio(String cmd) {
+
 		String result = "";
+
 		mRecorder = new MediaRecorder();
 		mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
 		mRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
@@ -299,10 +301,12 @@ public class Commands {
 		Log.d(TAG, "record audio to " + audioFileName.getAbsolutePath());
 		mRecorder.setOutputFile(audioFileName.getAbsolutePath());
 		mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
+
 		try {
 			mRecorder.prepare();
 			mRecorder.start();
 			Thread.sleep(5000);
+
 			mRecorder.stop();
 			result = "Record Audio OK\r\n";
 		} catch (Exception e) {
@@ -317,7 +321,7 @@ public class Commands {
 		File cacheDir = mContext.getCacheDir();
 		File audioFileName = new File(cacheDir, "record.3gp");
 		if (!audioFileName.exists()) {
-			result = cmd + " ERROR\r\n";
+			return (cmd + " ERROR\r\n").getBytes();
 		}
 		mPlayer = new MediaPlayer();
 		try {
@@ -332,6 +336,7 @@ public class Commands {
 		}
 		result = cmd + " OK\r\n";
 		return Utils.getResponeData(deviceIndex, result);
+
 	}
 
 	private byte[] takePhoto(String cmd) {
@@ -350,9 +355,10 @@ public class Commands {
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			bm.compress(Bitmap.CompressFormat.PNG, 100, baos);
 			return Utils.getResponeData(deviceIndex, baos.toByteArray());
+
 		} catch (Exception e) {
 			e.printStackTrace();
-			return Utils.getResponeData(deviceIndex,cmd + " ERROR\r\n");
+			return Utils.getResponeData(deviceIndex, cmd + " ERROR\r\n");
 		}
 
 	}
@@ -384,9 +390,10 @@ public class Commands {
 		mSn = cmd.substring(cmd.lastIndexOf('=') + 1);
 		boolean success = Utils.writeTextToFile(SN_FILE, mSn);
 		if (success == true) {
-			return Utils.getResponeData(deviceIndex,cmd + " OK\r\n");
+			return Utils.getResponeData(deviceIndex, cmd + " OK\r\n");
 		} else {
-			return Utils.getResponeData(deviceIndex,cmd + " ERROR\r\n");
+			return Utils.getResponeData(deviceIndex, cmd + " ERROR\r\n");
+
 		}
 
 	}
@@ -408,7 +415,7 @@ public class Commands {
 	}
 
 	private byte[] clearHistory(String cmd) {
-		return Utils.getResponeData(deviceIndex,cmd + " OK\r\n");
+		return Utils.getResponeData(deviceIndex, cmd + " OK\r\n");
 	}
 
 	private byte[] factoryReset(String cmd) {
@@ -418,23 +425,24 @@ public class Commands {
 
 			e.printStackTrace();
 		}
-		return Utils.getResponeData(deviceIndex,cmd + " OK\r\n");
+		return Utils.getResponeData(deviceIndex, cmd + " OK\r\n");
+
 	}
 
 	private byte[] testEnd(String cmd) {
-		return Utils.getResponeData(deviceIndex,cmd + " OK\r\n");
+		return Utils.getResponeData(deviceIndex, cmd + " OK\r\n");
 	}
 
 	private byte[] openApp(String cmd) {
 		String name = cmd.substring(cmd.lastIndexOf('=') + 1);
 		Utils.launchAppByName(name, mContext);
-		return Utils.getResponeData(deviceIndex,cmd + " OK\r\n");
+		return Utils.getResponeData(deviceIndex, cmd + " OK\r\n");
 	}
 
 	private byte[] closeApp(String cmd) {
 		// String name = cmd.substring(cmd.lastIndexOf('=') + 1);
 		EventHelper.sendKeyEvent(KeyEvent.KEYCODE_HOME);
-		return Utils.getResponeData(deviceIndex,cmd + " OK\r\n");
+		return Utils.getResponeData(deviceIndex, cmd + " OK\r\n");
 	}
 
 	private byte[] motionClick(String cmd) {
@@ -448,10 +456,11 @@ public class Commands {
 			EventHelper.sendTap(InputDevice.SOURCE_TOUCHSCREEN, x, y);
 			Log.d(TAG, "motionClick,x=" + x + ",y=" + y);
 		} catch (Exception e) {
-			return Utils.getResponeData(deviceIndex,cmd + " ERROR\r\n");
+			return Utils.getResponeData(deviceIndex, cmd + " ERROR\r\n");
 		}
 
-		return Utils.getResponeData(deviceIndex,cmd + " OK\r\n");
+		return Utils.getResponeData(deviceIndex, cmd + " OK\r\n");
+
 	}
 
 	private byte[] motionSwipe(String cmd) {
@@ -475,8 +484,8 @@ public class Commands {
 					y2);
 		} catch (Exception e) {
 			e.printStackTrace();
-			return Utils.getResponeData(deviceIndex,cmd + " ERROR\r\n");
+			return Utils.getResponeData(deviceIndex, cmd + " ERROR\r\n");
 		}
-		return Utils.getResponeData(deviceIndex,cmd + " OK\r\n");
+		return Utils.getResponeData(deviceIndex, cmd + " OK\r\n");
 	}
 }
