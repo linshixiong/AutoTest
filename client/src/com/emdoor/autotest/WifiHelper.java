@@ -22,7 +22,7 @@ public class WifiHelper {
 	private static WifiHelper wifiHelper;
 	private WifiManager mWifiManager;
 	private Context mContext;
-	private String targetSSID;
+	//private String targetSSID;
 	private int securityType = -1;
 
 	public static WifiHelper getInstance(Context context) {
@@ -36,7 +36,7 @@ public class WifiHelper {
 		this.mContext = context;
 		mWifiManager = (WifiManager) mContext
 				.getSystemService(Context.WIFI_SERVICE);
-		targetSSID = Settings.getSSID();
+		//targetSSID = Settings.getSSID();
 	}
 
 	public WifiManager getWifiManager() {
@@ -54,6 +54,17 @@ public class WifiHelper {
 		return mWifiManager.getWifiState();
 	}
 
+	public void disableTargetWifi(){
+		if(isTargetWifiConnected()){
+			WifiInfo wifiInfo = mWifiManager.getConnectionInfo();
+			if (wifiInfo == null) {
+				return ;
+			}
+			mWifiManager.disableNetwork(wifiInfo.getNetworkId());
+		}
+	}
+	
+	
 	public boolean isWifiEnabled() {
 		boolean isWifiEnabled = mWifiManager.isWifiEnabled();
 		Log.d(TAG, "isWifiEnabled=" + isWifiEnabled);
@@ -76,6 +87,7 @@ public class WifiHelper {
 		if(ssid.endsWith("\"")){
 			ssid=ssid.substring(0, ssid.length()-1);
 		}
+		String targetSSID=Settings.getSSID();
 		Log.d(TAG, "targetSSID:"+targetSSID+",wifiInfo.getSSID()="+ssid);
 		return targetSSID.equals(ssid);
 		//return convertToQuotedString(targetSSID).equals(wifiInfo.getSSID());
@@ -116,6 +128,7 @@ public class WifiHelper {
 		if (scanResults == null) {
 			return false;
 		}
+		String targetSSID=Settings.getSSID();
 		for (ScanResult scanResult : scanResults) {
 			if (targetSSID.equals(scanResult.SSID)) {
 				securityType = getSecurity(scanResult);
@@ -126,7 +139,7 @@ public class WifiHelper {
 	}
 
 	public boolean connectWifi() {
-
+		String targetSSID=Settings.getSSID();
 		Log.d(TAG, "connecting to " + targetSSID + " securityType is "
 				+ securityType);
 		String password = Settings.getPwd();

@@ -4,11 +4,7 @@ import android.view.InputDevice;
 import android.view.KeyCharacterMap;
 import android.view.MotionEvent;
 import android.view.KeyEvent;
-//import android.view.IWindowManager;
-//import android.os.ServiceManager;
-import android.hardware.input.InputManager;
 import android.os.SystemClock;
-import android.os.RemoteException;
 import android.util.Log;
 
 public class EventHelper {
@@ -95,8 +91,7 @@ public class EventHelper {
 
 	private static void injectKeyEvent(KeyEvent event) {
 		Log.i(TAG, "injectKeyEvent: " + event);
-		//InputManager.getInstance().injectInputEvent(event,
-		//		InputManager.INJECT_INPUT_EVENT_MODE_WAIT_FOR_FINISH);
+		InternalAPI.injectInputEvent(event);
 	}
 
 	/**
@@ -130,8 +125,7 @@ public class EventHelper {
 				DEFAULT_EDGE_FLAGS);
 		event.setSource(inputSource);
 		Log.i("Input", "injectMotionEvent: " + event);
-		//InputManager.getInstance().injectInputEvent(event,
-		//		InputManager.INJECT_INPUT_EVENT_MODE_WAIT_FOR_FINISH);
+		InternalAPI.injectInputEvent(event);
 	}
 
 	private static final float lerp(float a, float b, float alpha) {

@@ -13,6 +13,11 @@ public class Settings {
 		prefs =PreferenceManager.getDefaultSharedPreferences(context) ;
 	}
 	
+	public static void reset(){
+		prefs.edit().clear().commit();
+	}
+	
+	
 	public static String getSSID(){
 		return prefs.getString("ssid",sContext.getString(R.string.def_wifi_ssid));
 	}

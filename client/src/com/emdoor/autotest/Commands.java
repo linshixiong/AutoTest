@@ -3,19 +3,12 @@ package com.emdoor.autotest;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.RandomAccessFile;
 import java.sql.Date;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
 
-import com.emdoor.autotest.R.string;
-
-import android.app.admin.DevicePolicyManager;
-import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -23,8 +16,6 @@ import android.hardware.SensorManager;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
-import android.net.wifi.WifiConfiguration.Status;
-import android.os.Environment;
 import android.os.Handler;
 import android.os.PowerManager;
 import android.os.RecoverySystem;
@@ -32,8 +23,6 @@ import android.os.SystemClock;
 import android.util.Log;
 import android.view.InputDevice;
 import android.view.KeyEvent;
-import android.view.Surface;
-import android.widget.Toast;
 import android.graphics.Bitmap;
 
 public class Commands {
@@ -54,6 +43,7 @@ public class Commands {
 	public static final String CMD_SCREEN_NORMAL = "Screen Normal";
 
 	public static final String CMD_SLEEP = "Android Sleep";
+	public static final String CMD_WAKEUP = "Android Wakeup";
 	public static final String CMD_SCREEN_OFF = "Screen Off";
 	public static final String CMD_SCREEN_ON = "Screen On";
 
@@ -76,7 +66,8 @@ public class Commands {
 	public static final String CMD_MOTION_MOVE = "Move X1=";
 	public static final String CMD_TAKE_SCREEN_SHOT = "PrtSc";
 	public static final String CMD_TEST_END = "Test End";
-
+	public static final String CMD_CHANGE_WIFI="SSID=";
+	
 	public static final HashMap<String, String> mapCmds = new HashMap<String, String>();
 
 	private static final String TAG = "Commands";
@@ -87,7 +78,6 @@ public class Commands {
 	private Context mContext;
 	private AudioManager am;
 	private PowerManager pm;
-	private DevicePolicyManager dpm;
 	private static String mSn;
 	private static String mDataWrite;
 	private SensorManager sensorMgr;
@@ -107,8 +97,6 @@ public class Commands {
 				.getSystemService(Context.AUDIO_SERVICE);
 		this.pm = (PowerManager) mContext
 				.getSystemService(Context.POWER_SERVICE);
-		this.dpm = (DevicePolicyManager) mContext
-				.getSystemService(Context.DEVICE_POLICY_SERVICE);
 		this.bleHelper=new BleHelper(context);
 		sensorMgr = (SensorManager) mContext
 				.getSystemService(Context.SENSOR_SERVICE);
@@ -119,6 +107,7 @@ public class Commands {
 
 	private SensorEventListener lsn = new SensorEventListener() {
 
+		@Override
 		public void onSensorChanged(SensorEvent e) {
 			x = e.values[SensorManager.DATA_X];
 			y = e.values[SensorManager.DATA_Y];
@@ -126,6 +115,7 @@ public class Commands {
 			// Log.d(TAG,"sensor:x="+x+",y="+y+",z="+z);
 		}
 
+		@Override
 		public void onAccuracyChanged(Sensor s, int accuracy) {
 		}
 	};
@@ -144,6 +134,7 @@ public class Commands {
 	}
 
 	public byte[] excute(String cmd) {
+		cmd=cmd.trim();
 		if (cmd.toUpperCase().startsWith(CMD_GET_VERSION.toUpperCase())) {
 			return getVersion();
 		} else if (cmd.toUpperCase()
@@ -203,7 +194,9 @@ public class Commands {
 		} else if (cmd.toUpperCase().startsWith(CMD_SLEEP.toUpperCase())) {
 			return screenOff(cmd);
 		}
-
+		else if (cmd.toUpperCase().startsWith(CMD_WAKEUP.toUpperCase())) {
+			return screenOn(cmd);
+		}
 		else if (cmd.toUpperCase().startsWith(CMD_OPEN_APP.toUpperCase())) {
 			return openApp(cmd);
 		} else if (cmd.toUpperCase().startsWith(CMD_CLOSE_APP.toUpperCase())) {
@@ -218,7 +211,12 @@ public class Commands {
 				CMD_TAKE_SCREEN_SHOT.toUpperCase())) {
 			return takeScreenShot(cmd);
 		}
-		return null;
+		else if (cmd.toUpperCase().startsWith(
+				CMD_CHANGE_WIFI.toUpperCase())) {
+			return changeWifi(cmd);
+		}
+		
+		return Utils.getResponeData(deviceIndex, "Unknown command\r\n");
 	}
 
 	private byte[] getVersion() {
@@ -280,17 +278,23 @@ public class Commands {
 
 	private byte[] screenOn(String cmd) {
 		String result = cmd + " OK\r\n";
+		try {
+			pm.wakeUp(SystemClock.uptimeMillis()+1);
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			result = cmd + " ERROR\r\n";
+		}
 		return Utils.getResponeData(deviceIndex, result);
 	}
 
 	private byte[] screenOff(String cmd) {
 		String result = "";
 		try {
-			dpm.lockNow();
+			pm.goToSleep(SystemClock.uptimeMillis()+1);
 		} catch (Exception ex) {
+			ex.printStackTrace();
 			result = cmd + " ERROR\r\n";
 		}
-		result = cmd + " OK\r\n";
 		return Utils.getResponeData(deviceIndex, result);
 	}
 
@@ -420,7 +424,12 @@ public class Commands {
 	}
 
 	private byte[] clearHistory(String cmd) {
-		return Utils.getResponeData(deviceIndex, cmd + " OK\r\n");
+		
+		Settings.reset();
+		File cacheDir=mContext.getCacheDir();
+		Utils.delAllFile(cacheDir.getAbsolutePath());
+		
+		return Utils.getResponeData(deviceIndex, cmd  + " OK\r\n");
 	}
 
 	private byte[] factoryReset(String cmd) {
@@ -490,6 +499,16 @@ public class Commands {
 		} catch (Exception e) {
 			e.printStackTrace();
 			return Utils.getResponeData(deviceIndex, cmd + " ERROR\r\n");
+		}
+		return Utils.getResponeData(deviceIndex, cmd + " OK\r\n");
+	}
+	
+	
+	private byte[] changeWifi(String cmd){
+		String ssid= cmd.substring(cmd.lastIndexOf('=') + 1);
+		if(ssid!=null){
+			ssid=ssid.replace("\"", "");
+			Settings.setSSID(ssid);
 		}
 		return Utils.getResponeData(deviceIndex, cmd + " OK\r\n");
 	}

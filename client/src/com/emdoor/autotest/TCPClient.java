@@ -10,7 +10,6 @@ import android.content.Context;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
-import android.widget.Toast;
 
 public class TCPClient implements Runnable {
 	private static final String TAG = "TCPClient";
@@ -22,7 +21,6 @@ public class TCPClient implements Runnable {
 	private String content = "";
 	private String serverIP;
 	private int port;
-	private boolean bConnected = false;
 
 	public TCPClient(String serverIP, int port, Context context, Handler handler) {
 		this.mHandler = handler;
