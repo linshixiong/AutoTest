@@ -92,8 +92,8 @@ public class Utils {
 	
 	public static byte[] getResponeData(int index,String response){
 		ByteArrayOutputStream outputStream=new ByteArrayOutputStream();
-		outputStream.write(index);
-		outputStream.write(0);
+		//outputStream.write(index);
+		//outputStream.write(0);
 		try {
 			outputStream.write(response.getBytes());
 		} catch (IOException e) {

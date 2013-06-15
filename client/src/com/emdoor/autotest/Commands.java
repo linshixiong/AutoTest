@@ -12,6 +12,7 @@ import java.util.HashMap;
 import com.emdoor.autotest.R.string;
 
 import android.app.admin.DevicePolicyManager;
+import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -90,6 +91,7 @@ public class Commands {
 	private static String mSn;
 	private static String mDataWrite;
 	private SensorManager sensorMgr;
+	private BleHelper bleHelper;
 	private Sensor sensor;
 	private float x;
 	private float y;
@@ -107,6 +109,7 @@ public class Commands {
 				.getSystemService(Context.POWER_SERVICE);
 		this.dpm = (DevicePolicyManager) mContext
 				.getSystemService(Context.DEVICE_POLICY_SERVICE);
+		this.bleHelper=new BleHelper(context);
 		sensorMgr = (SensorManager) mContext
 				.getSystemService(Context.SENSOR_SERVICE);
 		sensor = sensorMgr.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
@@ -231,12 +234,14 @@ public class Commands {
 	}
 
 	private byte[] getBleInfo() {
-		String result = String.format("Level=%dDB and Address=%s\r\n", -50,
-				BleHelper.getBleMAC());
+		String result = String.format("Level=%dDB and Address=%s\r\n", bleHelper.getBleRSSI("00:17:EA:8F:08:8A"),
+				bleHelper.getBleMAC());
 		return Utils.getResponeData(deviceIndex, result);
 	}
 
 	private byte[] enableBle(boolean enable) {
+
+		bleHelper.enableBle(enable);
 		String result = enable ? "BLE Open ERROR\r\n" : "BLE Close ERROR\r\n";
 		return Utils.getResponeData(deviceIndex, result);
 	}

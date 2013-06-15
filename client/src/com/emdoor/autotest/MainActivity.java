@@ -90,7 +90,7 @@ public class MainActivity extends Activity implements OnClickListener {
 			this.connectWifi();
 		} else {
 			showButton();
-			//updateButton();
+			updateButton();
 		}
 
 		super.onResume();
@@ -269,6 +269,7 @@ public class MainActivity extends Activity implements OnClickListener {
 		textStatus.append("\n");
 		textStatus.append(getString(R.string.server) + Settings.getServerHost()
 				+ ":" + Settings.getPort());
+		updateButton();
 	}
 
 	boolean isFullScreen = false;
