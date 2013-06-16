@@ -234,6 +234,9 @@ public class MainActivity extends Activity implements OnClickListener {
 					service.setClass(MainActivity.this, AutoTestService.class);
 					stopService(service);
 				}
+			}else if(Intents.ACTION_WIFI_AP_CHANGE.equals(intent.getAction())){
+				onResume();
+				connectWifi();
 			}
 
 		}

@@ -231,22 +231,25 @@ public class BleHelper {
 	public boolean enableBle(boolean enable) {
 		boolean result = false;
 		if (enable) {
+			if(mBluetoothAdapter.isEnabled()){		
+				return true;
+			}
 			result = mBluetoothAdapter.enable();
 			if (result == true) {
 				scan(true);
-				//connect("");
 			}
 		} else {
 			disconnect();
 			scan(false);
+			if(!mBluetoothAdapter.isEnabled()){
+				return true;
+			}
 			result = mBluetoothAdapter.disable();
-
 		}
 		return result;
 	}
 
 	public String getBleMAC() {
-
 		return BluetoothAdapter.getDefaultAdapter().getAddress()
 				.replace(":", "");
 	}

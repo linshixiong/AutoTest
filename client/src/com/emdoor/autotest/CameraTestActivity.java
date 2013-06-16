@@ -19,27 +19,12 @@ public class CameraTestActivity extends Activity {
 				WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
 		getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);// 设置横屏模式以及全屏模式
-		cameraView=new CameraView(this);
+		cameraView=new CameraView(this,handler);
 		setContentView(cameraView); // 设置View
 		
-		takePhoto();
+		
 	}
 	
-	private void takePhoto(){
-		new Thread(){
 
-			@Override
-			public void run() {
-				try {
-					sleep(2000);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-				cameraView.takePicture(handler);
-				super.run();
-			}
-			
-		}.start();
-	}
 
 }

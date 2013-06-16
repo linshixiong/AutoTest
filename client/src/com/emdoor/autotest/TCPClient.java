@@ -47,12 +47,12 @@ public class TCPClient implements Runnable {
 		}
 	}
 
-	public void WriteString(String str) {
+	public void WriteString(String str,int resultCode) {
 
 		if (str == null) {
 			return;
 		}
-		byte[] b = Utils.getResponeData(Commands.deviceIndex, str);
+		byte[] b = Utils.getResponeData(Commands.deviceIndex,resultCode, str);
 		try {
 			dos.write(b);
 
@@ -83,7 +83,7 @@ public class TCPClient implements Runnable {
 
 				this.WriteString("I'm ready,"
 						+ WifiHelper.getInstance(mContext).getWifiMAC()
-						+ "\r\n");
+						+ "\r\n",0);
 				Message msg = new Message();
 				msg.what = Messages.MSG_CONNECT_SUCCUSS;
 				mHandler.sendMessage(msg);

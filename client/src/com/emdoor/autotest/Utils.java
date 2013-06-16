@@ -134,10 +134,11 @@ public class Utils {
 		return flag;
 	}
 
-	public static byte[] getResponeData(int index, String response) {
+	public static byte[] getResponeData(int index,int resultCode, String response) {
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-		// outputStream.write(index);
-		// outputStream.write(0);
+		outputStream.write(index);
+		outputStream.write(0);
+		outputStream.write(resultCode);
 		try {
 			outputStream.write(response.getBytes());
 		} catch (IOException e) {
@@ -146,10 +147,11 @@ public class Utils {
 		return outputStream.toByteArray();
 	}
 
-	public static byte[] getResponeData(int index, byte[] response) {
+	public static byte[] getResponeData(int index,int resultCode, byte[] response) {
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 		outputStream.write(index);
 		outputStream.write(1);
+		outputStream.write(resultCode);
 		try {
 			outputStream.write(response);
 		} catch (IOException e) {
@@ -162,7 +164,7 @@ public class Utils {
 
 	}
 
-	public static void launchAppByName(String name, Context context) {
+	public static boolean launchAppByName(String name, Context context) {
 		PackageManager pm = context.getApplicationContext().getPackageManager();
 
 		Intent mainIntent = new Intent(Intent.ACTION_MAIN, null);
@@ -195,6 +197,9 @@ public class Utils {
 		}
 		if (intent != null) {
 			context.startActivity(intent);
+			return true;
+		}else {
+			return false;
 		}
 	}
 

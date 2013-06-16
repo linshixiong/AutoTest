@@ -1,14 +1,18 @@
 package com.emdoor.autotest;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.hardware.Camera;
+import android.hardware.Camera.PreviewCallback;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 import android.view.MotionEvent;
+import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.widget.Toast;
 
 public class CameraView extends SurfaceView implements SurfaceHolder.Callback,
 		Camera.PictureCallback {
@@ -17,9 +21,9 @@ public class CameraView extends SurfaceView implements SurfaceHolder.Callback,
 	private Camera camera;
 	private Handler handler;
 
-	public CameraView(Activity context) {// 构造函数
+	public CameraView(Activity context, Handler handler) {// 构造函数
 		super(context);
-
+		this.handler = handler;
 		holder = getHolder();// 生成Surface Holder
 		holder.addCallback(this);
 
@@ -35,49 +39,86 @@ public class CameraView extends SurfaceView implements SurfaceHolder.Callback,
 		}
 	}
 
+	@SuppressLint("NewApi")
 	@Override
 	public void surfaceChanged(SurfaceHolder holder, int format, int width,
 			int height) {// Surface改变事件的处理
-
+		//Commands.buffCameraPhoto=null;
 		if (camera != null) {
 			Camera.Parameters parameters = camera.getParameters();
 			Log.d(TAG, "surfaceChanged width=" + width + ",height=" + height);
 			// parameters.setPreviewSize(320, 240);
 			parameters.setPictureSize(640, 480);
+			camera.setDisplayOrientation(Surface.ROTATION_0);
+			// camera.enableShutterSound(true);
 			camera.setParameters(parameters);// 设置参数
 			camera.startPreview();// 开始预览
+			takePicture();
+		} else {
+			Toast.makeText(getContext(), "camera open fail", Toast.LENGTH_SHORT)
+					.show();
+			if (handler != null) {
+				Message msg = new Message();
+				msg.what = Messages.MSG_PHOTO_TAKEN;
+				handler.sendMessage(msg);
+			}
+			((Activity) getContext()).finish();
 		}
 	}
 
-	public void takePicture(Handler handler) {
-		this.handler = handler;
-		camera.takePicture(null, null, this);
+	public void takePicture() {
+		new Thread(){
+
+			@Override
+			public void run() {
+				try {
+					Thread.sleep(2000);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+				try {
+					camera.takePicture(null, null, CameraView.this);
+				} catch (Exception e) {
+					if (handler != null) {
+						Message msg = new Message();
+						msg.what = Messages.MSG_PHOTO_TAKEN;
+						handler.sendMessage(msg);
+					}
+					((Activity) getContext()).finish();
+				}
+				
+			}
+			
+		}.start();
+		
 	}
 
 	@Override
 	public void onPictureTaken(byte[] data, Camera camera) {// 拍摄完成后保存照片
 		Log.d(TAG, "onPictureTaken,data length=" + data.length);
-		Commands.buffCameraPhoto = data;
-		camera.setPreviewCallback(null);
-		camera.stopPreview();
-		camera.release();
-		camera = null;
-		if(handler!=null){
-			 Message msg=new Message();
-			 msg.what=Messages.MSG_PHOTO_TAKEN;
-			 msg.obj=data;
-			 handler.sendMessage(msg);
+		//Commands.buffCameraPhoto = data;
+
+		if (handler != null) {
+			Message msg = new Message();
+			msg.obj=data;
+			msg.what = Messages.MSG_PHOTO_TAKEN;
+			handler.sendMessage(msg);
 		}
 		((Activity) getContext()).finish();
-	
+
 		// camera.startPreview();
 
 	}
 
 	@Override
 	public void surfaceDestroyed(SurfaceHolder holder) {
-		// TODO Auto-generated method stub
-		
+
+		if (camera != null) {
+			camera.setPreviewCallback(null);
+			camera.stopPreview();
+			camera.release();
+			camera = null;
+		}
 	}
 
 }

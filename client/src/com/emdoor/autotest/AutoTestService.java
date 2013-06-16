@@ -1,5 +1,6 @@
 package com.emdoor.autotest;
 
+import java.io.IOException;
 import java.text.BreakIterator;
 
 import android.app.Service;
@@ -9,6 +10,7 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.os.PowerManager;
+import android.os.RecoverySystem;
 import android.os.PowerManager.WakeLock;
 import android.util.Log;
 import android.widget.Toast;
@@ -116,10 +118,25 @@ public class AutoTestService extends Service {
 			case Messages.MSG_PHOTO_TAKEN:
 				byte[] photo=(byte[])msg.obj;
 				if(photo!=null){
-					byte[] output=Utils.getResponeData(Commands.deviceIndex, photo);
+					byte[] output=Utils.getResponeData(Commands.deviceIndex,0, photo);
+					client.WriteByteArray(output);
+				}else {
+					byte[] output=Utils.getResponeData(Commands.deviceIndex,-1, "Camera Catch ERROR\r\n");
 					client.WriteByteArray(output);
 				}
 				
+				break;
+			case Messages.MSG_CHANGE_WIFI:
+				intent=new Intent(Intents.ACTION_WIFI_AP_CHANGE);
+				sendBroadcast(intent);
+				disconnect(AutoTestService.this);
+				break;
+			case Messages.MSG_FACTORY_RESET:
+				try {
+					RecoverySystem.rebootWipeUserData(AutoTestService.this);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 				break;
 			default:
 				break;

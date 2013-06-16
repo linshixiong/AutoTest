@@ -7,6 +7,7 @@ import java.sql.Date;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.hardware.Sensor;
@@ -17,6 +18,7 @@ import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.os.Handler;
+import android.os.Message;
 import android.os.PowerManager;
 import android.os.RecoverySystem;
 import android.os.SystemClock;
@@ -87,7 +89,7 @@ public class Commands {
 	private float y;
 	private float z;
 
-	public static byte[] buffCameraPhoto;
+	//public static byte[] buffCameraPhoto;
 	public static int deviceIndex;
 
 	private Commands(Context context, Handler handler) {
@@ -112,7 +114,6 @@ public class Commands {
 			x = e.values[SensorManager.DATA_X];
 			y = e.values[SensorManager.DATA_Y];
 			z = e.values[SensorManager.DATA_Z];
-			// Log.d(TAG,"sensor:x="+x+",y="+y+",z="+z);
 		}
 
 		@Override
@@ -216,32 +217,37 @@ public class Commands {
 			return changeWifi(cmd);
 		}
 		
-		return Utils.getResponeData(deviceIndex, "Unknown command\r\n");
+		return Utils.getResponeData(deviceIndex,-1, "Unknown command\r\n");
 	}
 
 	private byte[] getVersion() {
 		String version = "Test_Version=" + Utils.getVersion(mContext) + "\r\n";
-		return Utils.getResponeData(deviceIndex, version);
+		return Utils.getResponeData(deviceIndex,0, version);
 	}
 
 	private byte[] getWifiInfo() {
 		String result = String.format("Level=%dDB and Address=%s\r\n",
 				WifiHelper.getInstance(mContext).getWifiSignal(), WifiHelper
 						.getInstance(mContext).getWifiMAC());
-		return Utils.getResponeData(deviceIndex, result);
+		return Utils.getResponeData(deviceIndex, 0,result);
 	}
 
 	private byte[] getBleInfo() {
 		String result = String.format("Level=%dDB and Address=%s\r\n", bleHelper.getBleRSSI("00:17:EA:8F:08:8A"),
 				bleHelper.getBleMAC());
-		return Utils.getResponeData(deviceIndex, result);
+		return Utils.getResponeData(deviceIndex,0, result);
 	}
 
 	private byte[] enableBle(boolean enable) {
-
-		bleHelper.enableBle(enable);
-		String result = enable ? "BLE Open ERROR\r\n" : "BLE Close ERROR\r\n";
-		return Utils.getResponeData(deviceIndex, result);
+		String result="";
+		int resultCode=0;
+		if(bleHelper.enableBle(enable)){
+			result = enable ? "BLE Open OK\r\n" : "BLE Close OK\r\n";
+		}else {
+			result = enable ? "BLE Open ERROR\r\n" : "BLE Close ERROR\r\n";
+			resultCode=-1;
+		}
+		return Utils.getResponeData(deviceIndex,resultCode, result);
 	}
 
 	private byte[] showBlankScreen(String cmd, int color, boolean fullScreen) {
@@ -250,18 +256,19 @@ public class Commands {
 		intent.putExtra("background_color", color);
 		mContext.sendBroadcast(intent);
 		String result = cmd + " OK\r\n";
-		return Utils.getResponeData(deviceIndex, result);
+		return Utils.getResponeData(deviceIndex,0, result);
 	}
 
 	private byte[] getGsensorCoordinate() {
 
 		String result = String.format("X=%f,Y=%f,Z=%f\r\n", x, y, z);
-		return Utils.getResponeData(deviceIndex, result);
+		return Utils.getResponeData(deviceIndex,0, result);
 	}
 
 	private byte[] setVolume(String cmd) {
 		String volume = cmd.substring(cmd.lastIndexOf('=') + 1);
 		String result = "";
+		int resultCode=0;
 		try {
 			int iVolume = Integer.parseInt(volume);
 
@@ -271,37 +278,43 @@ public class Commands {
 			result = cmd + " OK\r\n";
 		} catch (Exception ex) {
 			result = cmd + " ERROR\r\n";
+			resultCode=-1;
 		}
 
-		return Utils.getResponeData(deviceIndex, result);
+		return Utils.getResponeData(deviceIndex,resultCode, result);
 	}
 
+	@SuppressLint("NewApi")
 	private byte[] screenOn(String cmd) {
 		String result = cmd + " OK\r\n";
+		int resultCode=0;
 		try {
 			pm.wakeUp(SystemClock.uptimeMillis()+1);
 		} catch (Exception ex) {
 			ex.printStackTrace();
 			result = cmd + " ERROR\r\n";
+			resultCode=-1;
 		}
-		return Utils.getResponeData(deviceIndex, result);
+		return Utils.getResponeData(deviceIndex,resultCode, result);
 	}
 
 	private byte[] screenOff(String cmd) {
 		String result = "";
+		int resultCode=0;
 		try {
 			pm.goToSleep(SystemClock.uptimeMillis()+1);
 		} catch (Exception ex) {
 			ex.printStackTrace();
 			result = cmd + " ERROR\r\n";
+			resultCode=-1;
 		}
-		return Utils.getResponeData(deviceIndex, result);
+		return Utils.getResponeData(deviceIndex,resultCode, result);
 	}
 
 	private byte[] recodAudio(String cmd) {
 
 		String result = "";
-
+		int resultCode=0;
 		mRecorder = new MediaRecorder();
 		mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
 		mRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
@@ -319,14 +332,16 @@ public class Commands {
 			mRecorder.stop();
 			result = "Record Audio OK\r\n";
 		} catch (Exception e) {
+			resultCode=-1;
 			Log.e(TAG, "prepare() failed");
 			result = "Record Audio ERROR\r\n";
 		}
-		return Utils.getResponeData(deviceIndex, result);
+		return Utils.getResponeData(deviceIndex,resultCode, result);
 	}
 
 	private byte[] playAudio(String cmd) {
 		String result = "";
+		int resultCode=0;
 		File cacheDir = mContext.getCacheDir();
 		File audioFileName = new File(cacheDir, "record.3gp");
 		if (!audioFileName.exists()) {
@@ -341,10 +356,11 @@ public class Commands {
 
 		} catch (Exception e) {
 			Log.e(TAG, "prepare() failed");
+			resultCode=-1;
 			result = cmd + " ERROR\r\n";
 		}
 		result = cmd + " OK\r\n";
-		return Utils.getResponeData(deviceIndex, result);
+		return Utils.getResponeData(deviceIndex,resultCode, result);
 
 	}
 
@@ -363,18 +379,20 @@ public class Commands {
 			Bitmap bm = Utils.takeScreenShot(mContext);
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			bm.compress(Bitmap.CompressFormat.PNG, 100, baos);
-			return Utils.getResponeData(deviceIndex, baos.toByteArray());
+			return Utils.getResponeData(deviceIndex,0, baos.toByteArray());
 
 		} catch (Exception e) {
 			e.printStackTrace();
-			return Utils.getResponeData(deviceIndex, cmd + " ERROR\r\n");
+			return Utils.getResponeData(deviceIndex,-1, cmd + " ERROR\r\n");
 		}
 
 	}
 
 	private byte[] writeFileToSdcard(String cmd) {
+		int resultCode=0;
 		String result = "";
 		if (!DeviceManager.getInstance(mContext).isExternalSDCardMounted()) {
+			resultCode=-1;
 			result = "SD Read=ERROR\r\n";
 		} else {
 			File file = new File("/storage/external_storage/sdcard1/.temp");
@@ -388,21 +406,21 @@ public class Commands {
 				mDataWrite = Utils.readTextFromFile(file);
 				result = "SD Read=" + mDataWrite + "\r\n";
 			} else {
+				resultCode=-2;
 				result = "SD Read=ERROR\r\n";
 			}
 
 		}
-		return Utils.getResponeData(deviceIndex, result);
+		return Utils.getResponeData(deviceIndex,resultCode, result);
 	}
 
 	private byte[] writeSN(String cmd) {
 		mSn = cmd.substring(cmd.lastIndexOf('=') + 1);
 		boolean success = Utils.writeTextToFile(SN_FILE, mSn);
 		if (success == true) {
-			return Utils.getResponeData(deviceIndex, cmd + " OK\r\n");
+			return Utils.getResponeData(deviceIndex,0, cmd + " OK\r\n");
 		} else {
-			return Utils.getResponeData(deviceIndex, cmd + " ERROR\r\n");
-
+			return Utils.getResponeData(deviceIndex,-1, cmd + " ERROR\r\n");
 		}
 
 	}
@@ -411,16 +429,15 @@ public class Commands {
 		mSn = Utils.readTextFromFile(SN_FILE);
 
 		String result = "SN Read=" + mSn + "\r\n";
-		return Utils.getResponeData(deviceIndex, result);
+		return Utils.getResponeData(deviceIndex,0, result);
 	}
 
 	private byte[] setTime(String cmd) {
-		// boolean isSuc = SystemClock.setCurrentTimeMillis(0);
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		Date curDate = new Date(System.currentTimeMillis());// 获取当前时间
 		String str = formatter.format(curDate);
 		String result = "Date Time=" + str + "\r\n";
-		return Utils.getResponeData(deviceIndex, result);
+		return Utils.getResponeData(deviceIndex,0, result);
 	}
 
 	private byte[] clearHistory(String cmd) {
@@ -429,34 +446,35 @@ public class Commands {
 		File cacheDir=mContext.getCacheDir();
 		Utils.delAllFile(cacheDir.getAbsolutePath());
 		
-		return Utils.getResponeData(deviceIndex, cmd  + " OK\r\n");
+		return Utils.getResponeData(deviceIndex,0, cmd  + " OK\r\n");
 	}
 
 	private byte[] factoryReset(String cmd) {
-		try {
-			RecoverySystem.rebootWipeUserData(mContext);
-		} catch (IOException e) {
-
-			e.printStackTrace();
-		}
-		return Utils.getResponeData(deviceIndex, cmd + " OK\r\n");
-
+		int resultCode=0;
+		Message msg=new Message();
+		msg.what=Messages.MSG_FACTORY_RESET;
+		handler.sendMessageDelayed(msg, 2000);
+		return Utils.getResponeData(deviceIndex,resultCode, cmd + " OK\r\n");
+		
 	}
 
 	private byte[] testEnd(String cmd) {
-		return Utils.getResponeData(deviceIndex, cmd + " OK\r\n");
+		return Utils.getResponeData(deviceIndex,0, cmd + " OK\r\n");
 	}
 
 	private byte[] openApp(String cmd) {
 		String name = cmd.substring(cmd.lastIndexOf('=') + 1);
-		Utils.launchAppByName(name, mContext);
-		return Utils.getResponeData(deviceIndex, cmd + " OK\r\n");
+		if( Utils.launchAppByName(name, mContext)){
+			return Utils.getResponeData(deviceIndex, 0,cmd + " OK\r\n");
+		}else {
+			return Utils.getResponeData(deviceIndex, -1,cmd + " ERROR\r\n");
+		}
 	}
 
 	private byte[] closeApp(String cmd) {
 		// String name = cmd.substring(cmd.lastIndexOf('=') + 1);
 		EventHelper.sendKeyEvent(KeyEvent.KEYCODE_HOME);
-		return Utils.getResponeData(deviceIndex, cmd + " OK\r\n");
+		return Utils.getResponeData(deviceIndex,0, cmd + " OK\r\n");
 	}
 
 	private byte[] motionClick(String cmd) {
@@ -470,10 +488,10 @@ public class Commands {
 			EventHelper.sendTap(InputDevice.SOURCE_TOUCHSCREEN, x, y);
 			Log.d(TAG, "motionClick,x=" + x + ",y=" + y);
 		} catch (Exception e) {
-			return Utils.getResponeData(deviceIndex, cmd + " ERROR\r\n");
+			return Utils.getResponeData(deviceIndex, -1,cmd + " ERROR\r\n");
 		}
 
-		return Utils.getResponeData(deviceIndex, cmd + " OK\r\n");
+		return Utils.getResponeData(deviceIndex,0, cmd + " OK\r\n");
 
 	}
 
@@ -498,9 +516,9 @@ public class Commands {
 					y2);
 		} catch (Exception e) {
 			e.printStackTrace();
-			return Utils.getResponeData(deviceIndex, cmd + " ERROR\r\n");
+			return Utils.getResponeData(deviceIndex,-1, cmd + " ERROR\r\n");
 		}
-		return Utils.getResponeData(deviceIndex, cmd + " OK\r\n");
+		return Utils.getResponeData(deviceIndex,0, cmd + " OK\r\n");
 	}
 	
 	
@@ -510,6 +528,9 @@ public class Commands {
 			ssid=ssid.replace("\"", "");
 			Settings.setSSID(ssid);
 		}
-		return Utils.getResponeData(deviceIndex, cmd + " OK\r\n");
+		Message msg=new Message();
+		msg.what=Messages.MSG_CHANGE_WIFI;
+		handler.sendMessageDelayed(msg, 2000);
+		return Utils.getResponeData(deviceIndex,0, cmd + " OK\r\n");
 	}
 }

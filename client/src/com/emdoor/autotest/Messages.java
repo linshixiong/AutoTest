@@ -6,4 +6,6 @@ public class Messages {
 	public static final int MSG_CONNECT_ERROR=102;
 	public static final int MSG_CMD_RECEIVE=103;
 	public static final int MSG_PHOTO_TAKEN=104;
+	public static final int MSG_CHANGE_WIFI=105;
+	public static final int MSG_FACTORY_RESET=106;
 }
