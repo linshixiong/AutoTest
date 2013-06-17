@@ -27,6 +27,10 @@
 	<string name="server_host_dialog_title">Input the server host</string>
 	<string name="server_port_invalid">Port number must be between 1024 and 65535</string>
 	<string name="server_port_occupied">Port %d is occupied by others, please set new port in settings menu.</string>
+	<string name="ble_settings">BLE device settings</string>
+	<string name="ble_mac_dialog_title">Input the BLE device MAC address</string>
+	<string name="ble_mac_summary">BLE device MAC address is %s</string>
+	<string name="ble_mac">BLE device MAC address</string>
 	<string name="about">About</string>
 	<string name="version">Version</string>
 </resources>

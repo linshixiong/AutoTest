@@ -9,4 +9,5 @@
     <string name="def_wifi_pwd">0123456789</string>
     <string name="def_server_host">192.168.1.200</string>-->
     <integer name="def_server_port">3001</integer>
+    <string name="def_ble_device_mac">00:17:EA:8F:08:8A</string>
 </resources>

@@ -51,5 +51,11 @@ public class Settings {
 		prefs.edit().putInt("server_port", port).commit();
 	}
 	
+	public static void setBLEDeviceMAC(String mac){
+		prefs.edit().putString("ble_device_mac", mac).commit();
+	}
 	
+	public static String getBLEDeviceMAC(){
+		return prefs.getString("ble_device_mac",sContext.getString(R.string.def_ble_device_mac));
+	}
 }

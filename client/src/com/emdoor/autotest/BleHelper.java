@@ -259,15 +259,13 @@ public class BleHelper {
 		if(mBluetoothGatt==null){
 			return 0;
 		}
-		//connect(address);
-		
-		address=address.replace(":", "");
-		if(deviceList.containsKey(address)){
-			return deviceList.get(address);
-		}
-		
+		disconnect();	
+	   	String key =address.replace(":", "");
+		if(deviceList.containsKey(key)){
+			connect(address);
+			return deviceList.get(key);
+		}	
 		return 0;
-		//mBluetoothGatt.
 	}
 
 }

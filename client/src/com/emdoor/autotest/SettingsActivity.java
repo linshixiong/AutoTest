@@ -16,10 +16,12 @@ public class SettingsActivity extends PreferenceActivity implements
 	private final String KEY_SERVER_HOST = "edittext_server_host";
 	private final String KEY_SERVER_PORT = "edittext_server_port";
 	private final String KEY_VERSION = "prdference_version";
+	private final String KEY_BLE_MAC="edittext_ble_mac";
 	private EditTextPreference preferenceSsid;
 	private EditTextPreference preferencePwd;
 	private EditTextPreference preferencePort;
 	private EditTextPreference preferenceHost;
+	private EditTextPreference preferenceBleMac;
 	private Preference preferenceVersion;
 
 	@Override
@@ -32,6 +34,7 @@ public class SettingsActivity extends PreferenceActivity implements
 		preferencePort = (EditTextPreference) findPreference(KEY_SERVER_PORT);
 		preferenceHost = (EditTextPreference) findPreference(KEY_SERVER_HOST);
 		preferenceVersion = (Preference) findPreference(KEY_VERSION);
+		preferenceBleMac=(EditTextPreference)findPreference(KEY_BLE_MAC);
 		if (preferencePort != null) {
 			preferencePort.setOnPreferenceChangeListener(this);
 		}
@@ -43,6 +46,9 @@ public class SettingsActivity extends PreferenceActivity implements
 		}
 		if (preferencePwd != null) {
 			preferencePwd.setOnPreferenceChangeListener(this);
+		}
+		if (preferenceBleMac != null) {
+			preferenceBleMac.setOnPreferenceChangeListener(this);
 		}
 		if (preferenceVersion != null) {
 			try {
@@ -75,7 +81,11 @@ public class SettingsActivity extends PreferenceActivity implements
 			preferenceHost.setSummary(getResources().getString(
 					R.string.server_host_summary, Settings.getServerHost()));
 		}
-
+		if (preferenceBleMac != null) {
+			preferenceBleMac.setText(Settings.getBLEDeviceMAC());
+			preferenceBleMac.setSummary(getResources().getString(
+					R.string.ble_mac_summary, Settings.getBLEDeviceMAC()));
+		}
 	}
 
 	@Override
@@ -104,6 +114,11 @@ public class SettingsActivity extends PreferenceActivity implements
 		else if (KEY_WIFI_PWD.equals(preference.getKey())) {
 			String pwd = newValue.toString();
 			Settings.setPwd(pwd);
+			updatePreferences();
+		}
+		else if (KEY_BLE_MAC.equals(preference.getKey())) {
+			String mac = newValue.toString();
+			Settings.setBLEDeviceMAC(mac);
 			updatePreferences();
 		}
 		return false;

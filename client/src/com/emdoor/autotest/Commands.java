@@ -233,7 +233,8 @@ public class Commands {
 	}
 
 	private byte[] getBleInfo() {
-		String result = String.format("Level=%dDB and Address=%s\r\n", bleHelper.getBleRSSI("00:17:EA:8F:08:8A"),
+		String address=Settings.getBLEDeviceMAC();
+		String result = String.format("Level=%dDB and Address=%s\r\n", bleHelper.getBleRSSI(address),
 				bleHelper.getBleMAC());
 		return Utils.getResponeData(deviceIndex,0, result);
 	}
