@@ -10,6 +10,7 @@ import java.util.HashMap;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -68,8 +69,8 @@ public class Commands {
 	public static final String CMD_MOTION_MOVE = "Move X1=";
 	public static final String CMD_TAKE_SCREEN_SHOT = "PrtSc";
 	public static final String CMD_TEST_END = "Test End";
-	public static final String CMD_CHANGE_WIFI="SSID=";
-	
+	public static final String CMD_CHANGE_WIFI = "SSID=";
+
 	public static final HashMap<String, String> mapCmds = new HashMap<String, String>();
 
 	private static final String TAG = "Commands";
@@ -89,7 +90,7 @@ public class Commands {
 	private float y;
 	private float z;
 
-	//public static byte[] buffCameraPhoto;
+	// public static byte[] buffCameraPhoto;
 	public static int deviceIndex;
 
 	private Commands(Context context, Handler handler) {
@@ -99,7 +100,7 @@ public class Commands {
 				.getSystemService(Context.AUDIO_SERVICE);
 		this.pm = (PowerManager) mContext
 				.getSystemService(Context.POWER_SERVICE);
-		this.bleHelper=new BleHelper(context);
+		this.bleHelper = new BleHelper(context);
 		sensorMgr = (SensorManager) mContext
 				.getSystemService(Context.SENSOR_SERVICE);
 		sensor = sensorMgr.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
@@ -135,7 +136,7 @@ public class Commands {
 	}
 
 	public byte[] excute(String cmd) {
-		cmd=cmd.trim();
+		cmd = cmd.trim();
 		if (cmd.toUpperCase().startsWith(CMD_GET_VERSION.toUpperCase())) {
 			return getVersion();
 		} else if (cmd.toUpperCase()
@@ -194,11 +195,9 @@ public class Commands {
 			return testEnd(cmd);
 		} else if (cmd.toUpperCase().startsWith(CMD_SLEEP.toUpperCase())) {
 			return screenOff(cmd);
-		}
-		else if (cmd.toUpperCase().startsWith(CMD_WAKEUP.toUpperCase())) {
+		} else if (cmd.toUpperCase().startsWith(CMD_WAKEUP.toUpperCase())) {
 			return screenOn(cmd);
-		}
-		else if (cmd.toUpperCase().startsWith(CMD_OPEN_APP.toUpperCase())) {
+		} else if (cmd.toUpperCase().startsWith(CMD_OPEN_APP.toUpperCase())) {
 			return openApp(cmd);
 		} else if (cmd.toUpperCase().startsWith(CMD_CLOSE_APP.toUpperCase())) {
 			return closeApp(cmd);
@@ -211,65 +210,93 @@ public class Commands {
 		} else if (cmd.toUpperCase().startsWith(
 				CMD_TAKE_SCREEN_SHOT.toUpperCase())) {
 			return takeScreenShot(cmd);
-		}
-		else if (cmd.toUpperCase().startsWith(
-				CMD_CHANGE_WIFI.toUpperCase())) {
+		} else if (cmd.toUpperCase().startsWith(CMD_CHANGE_WIFI.toUpperCase())) {
 			return changeWifi(cmd);
 		}
-		
-		return Utils.getResponeData(deviceIndex,-1, "Unknown command\r\n");
+
+		return Utils.getResponeData(deviceIndex, -1, "Unknown command\r\n");
 	}
 
 	private byte[] getVersion() {
-		String version = "Test_Version=" + Utils.getVersion(mContext) + "\r\n";
-		return Utils.getResponeData(deviceIndex,0, version);
+		String version;
+		int resultCode = 0;
+		try {
+			version = "Test_Version=" + Utils.getVersion(mContext) + "\r\n";
+		} catch (NameNotFoundException e) {
+			version = "Test_Version=ERROR\r\n";
+			resultCode = -1;
+			e.printStackTrace();
+		}
+		return Utils.getResponeData(deviceIndex, resultCode, version);
 	}
 
 	private byte[] getWifiInfo() {
-		String result = String.format("Level=%dDB and Address=%s\r\n",
-				WifiHelper.getInstance(mContext).getWifiSignal(), WifiHelper
-						.getInstance(mContext).getWifiMAC());
-		return Utils.getResponeData(deviceIndex, 0,result);
+		int resultCode = 0;
+		int level = WifiHelper.getInstance(mContext).getWifiSignal();
+
+		String mac = WifiHelper.getInstance(mContext).getWifiMAC();
+		if (level == 0) {
+			resultCode = -1;
+		} else if (mac == null || mac.equals("")) {
+			resultCode = -2;
+		}
+		String result = String.format("Level=%dDB and Address=%s\r\n", level,
+				mac);
+
+		return Utils.getResponeData(deviceIndex, resultCode, result);
 	}
 
 	private byte[] getBleInfo() {
-		String address=Settings.getBLEDeviceMAC();
-		String result = String.format("Level=%dDB and Address=%s\r\n", bleHelper.getBleRSSI(address),
-				bleHelper.getBleMAC());
-		return Utils.getResponeData(deviceIndex,0, result);
+		String address = Settings.getBLEDeviceMAC();
+		String mac = bleHelper.getBleMAC();
+		int level = bleHelper.getBleRSSI(address);
+		String result = String.format("Level=%dDB and Address=%s\r\n", level,
+				mac);
+		int resultCode = 0;
+		if (level == 0) {
+			resultCode = -1;
+		} else if (mac == null || mac.equals("")) {
+			resultCode = -2;
+		}
+		return Utils.getResponeData(deviceIndex, resultCode, result);
 	}
 
 	private byte[] enableBle(boolean enable) {
-		String result="";
-		int resultCode=0;
-		if(bleHelper.enableBle(enable)){
+		String result = "";
+		int resultCode = 0;
+		if (bleHelper.enableBle(enable)) {
 			result = enable ? "BLE Open OK\r\n" : "BLE Close OK\r\n";
-		}else {
+		} else {
 			result = enable ? "BLE Open ERROR\r\n" : "BLE Close ERROR\r\n";
-			resultCode=-1;
+			resultCode = -1;
 		}
-		return Utils.getResponeData(deviceIndex,resultCode, result);
+		return Utils.getResponeData(deviceIndex, resultCode, result);
 	}
 
 	private byte[] showBlankScreen(String cmd, int color, boolean fullScreen) {
-		Intent intent = new Intent(Intents.ACTION_FULLSCREEN_STATE_CHANGE);
-		intent.putExtra("full_screen", fullScreen);
-		intent.putExtra("background_color", color);
-		mContext.sendBroadcast(intent);
-		String result = cmd + " OK\r\n";
-		return Utils.getResponeData(deviceIndex,0, result);
+		try {
+			Intent intent = new Intent(Intents.ACTION_FULLSCREEN_STATE_CHANGE);
+			intent.putExtra("full_screen", fullScreen);
+			intent.putExtra("background_color", color);
+			mContext.sendBroadcast(intent);
+			String result = cmd + " OK\r\n";
+			return Utils.getResponeData(deviceIndex, 0, result);
+		} catch (Exception e) {
+			String result = cmd + " ERROR\r\n";
+			return Utils.getResponeData(deviceIndex, -1, result);
+		}
 	}
 
 	private byte[] getGsensorCoordinate() {
 
 		String result = String.format("X=%f,Y=%f,Z=%f\r\n", x, y, z);
-		return Utils.getResponeData(deviceIndex,0, result);
+		return Utils.getResponeData(deviceIndex, 0, result);
 	}
 
 	private byte[] setVolume(String cmd) {
 		String volume = cmd.substring(cmd.lastIndexOf('=') + 1);
 		String result = "";
-		int resultCode=0;
+		int resultCode = 0;
 		try {
 			int iVolume = Integer.parseInt(volume);
 
@@ -279,43 +306,43 @@ public class Commands {
 			result = cmd + " OK\r\n";
 		} catch (Exception ex) {
 			result = cmd + " ERROR\r\n";
-			resultCode=-1;
+			resultCode = -1;
 		}
 
-		return Utils.getResponeData(deviceIndex,resultCode, result);
+		return Utils.getResponeData(deviceIndex, resultCode, result);
 	}
 
 	@SuppressLint("NewApi")
 	private byte[] screenOn(String cmd) {
 		String result = cmd + " OK\r\n";
-		int resultCode=0;
+		int resultCode = 0;
 		try {
-			pm.wakeUp(SystemClock.uptimeMillis()+1);
+			pm.wakeUp(SystemClock.uptimeMillis() + 1);
 		} catch (Exception ex) {
 			ex.printStackTrace();
 			result = cmd + " ERROR\r\n";
-			resultCode=-1;
+			resultCode = -1;
 		}
-		return Utils.getResponeData(deviceIndex,resultCode, result);
+		return Utils.getResponeData(deviceIndex, resultCode, result);
 	}
 
 	private byte[] screenOff(String cmd) {
 		String result = cmd + " OK\r\n";
-		int resultCode=0;
+		int resultCode = 0;
 		try {
-			pm.goToSleep(SystemClock.uptimeMillis()+1);
+			pm.goToSleep(SystemClock.uptimeMillis() + 1);
 		} catch (Exception ex) {
 			ex.printStackTrace();
 			result = cmd + " ERROR\r\n";
-			resultCode=-1;
+			resultCode = -1;
 		}
-		return Utils.getResponeData(deviceIndex,resultCode, result);
+		return Utils.getResponeData(deviceIndex, resultCode, result);
 	}
 
 	private byte[] recodAudio(String cmd) {
 
 		String result = "";
-		int resultCode=0;
+		int resultCode = 0;
 		mRecorder = new MediaRecorder();
 		mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
 		mRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
@@ -324,33 +351,34 @@ public class Commands {
 		Log.d(TAG, "record audio to " + audioFileName.getAbsolutePath());
 		mRecorder.setOutputFile(audioFileName.getAbsolutePath());
 		mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
-		int duration=0;
-		
-		try {		
-			duration=Integer.parseInt(cmd.substring(cmd.lastIndexOf('=') + 1).toLowerCase().replace(" ", "").replace("s", ""));
-			if(duration<=0){
-				resultCode=-1;
+		int duration = 0;
+
+		try {
+			duration = Integer.parseInt(cmd.substring(cmd.lastIndexOf('=') + 1)
+					.toLowerCase().replace(" ", "").replace("s", ""));
+			if (duration <= 0) {
+				resultCode = -1;
 				result = "Record Audio ERROR\r\n";
-				return Utils.getResponeData(deviceIndex,resultCode, result);
+				return Utils.getResponeData(deviceIndex, resultCode, result);
 			}
 			mRecorder.prepare();
 			mRecorder.start();
-			Thread.sleep(duration*1000);
+			Thread.sleep(duration * 1000);
 
 			mRecorder.stop();
 			result = "Record Audio OK\r\n";
 		} catch (Exception e) {
 			e.printStackTrace();
-			resultCode=-2;
+			resultCode = -2;
 			Log.e(TAG, "prepare() failed");
 			result = "Record Audio ERROR\r\n";
 		}
-		return Utils.getResponeData(deviceIndex,resultCode, result);
+		return Utils.getResponeData(deviceIndex, resultCode, result);
 	}
 
 	private byte[] playAudio(String cmd) {
 		String result = "";
-		int resultCode=0;
+		int resultCode = 0;
 		File cacheDir = mContext.getCacheDir();
 		File audioFileName = new File(cacheDir, "record.3gp");
 		if (!audioFileName.exists()) {
@@ -366,11 +394,11 @@ public class Commands {
 		} catch (Exception e) {
 			e.printStackTrace();
 			Log.e(TAG, "prepare() failed");
-			resultCode=-1;
+			resultCode = -1;
 			result = cmd + " ERROR\r\n";
 		}
 		result = cmd + " OK\r\n";
-		return Utils.getResponeData(deviceIndex,resultCode, result);
+		return Utils.getResponeData(deviceIndex, resultCode, result);
 
 	}
 
@@ -389,20 +417,20 @@ public class Commands {
 			Bitmap bm = Utils.takeScreenShot(mContext);
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			bm.compress(Bitmap.CompressFormat.PNG, 100, baos);
-			return Utils.getResponeData(deviceIndex,0, baos.toByteArray());
+			return Utils.getResponeData(deviceIndex, 0, baos.toByteArray());
 
 		} catch (Exception e) {
 			e.printStackTrace();
-			return Utils.getResponeData(deviceIndex,-1, cmd + " ERROR\r\n");
+			return Utils.getResponeData(deviceIndex, -1, cmd + " ERROR\r\n");
 		}
 
 	}
 
 	private byte[] writeFileToSdcard(String cmd) {
-		int resultCode=0;
+		int resultCode = 0;
 		String result = "";
 		if (!DeviceManager.getInstance(mContext).isExternalSDCardMounted()) {
-			resultCode=-1;
+			resultCode = -1;
 			result = "SD Read=ERROR\r\n";
 		} else {
 			File file = new File("/storage/external_storage/sdcard1/.temp");
@@ -416,30 +444,38 @@ public class Commands {
 				mDataWrite = Utils.readTextFromFile(file);
 				result = "SD Read=" + mDataWrite + "\r\n";
 			} else {
-				resultCode=-2;
+				resultCode = -2;
 				result = "SD Read=ERROR\r\n";
 			}
 
 		}
-		return Utils.getResponeData(deviceIndex,resultCode, result);
+		return Utils.getResponeData(deviceIndex, resultCode, result);
 	}
 
 	private byte[] writeSN(String cmd) {
 		mSn = cmd.substring(cmd.lastIndexOf('=') + 1);
 		boolean success = Utils.writeTextToFile(SN_FILE, mSn);
 		if (success == true) {
-			return Utils.getResponeData(deviceIndex,0, cmd + " OK\r\n");
+			return Utils.getResponeData(deviceIndex, 0, cmd + " OK\r\n");
 		} else {
-			return Utils.getResponeData(deviceIndex,-1, cmd + " ERROR\r\n");
+			return Utils.getResponeData(deviceIndex, -1, cmd + " ERROR\r\n");
 		}
 
 	}
 
 	private byte[] readSN(String cmd) {
+		if(!SN_FILE.exists()){
+			String result = "SN Read=ERROR\r\n";
+			return Utils.getResponeData(deviceIndex, -1, result);
+		}
+		if(!SN_FILE.canRead()){
+			String result = "SN Read=ERROR\r\n";
+			return Utils.getResponeData(deviceIndex, -2, result);
+		}
 		mSn = Utils.readTextFromFile(SN_FILE);
 
 		String result = "SN Read=" + mSn + "\r\n";
-		return Utils.getResponeData(deviceIndex,0, result);
+		return Utils.getResponeData(deviceIndex, 0, result);
 	}
 
 	private byte[] setTime(String cmd) {
@@ -447,46 +483,46 @@ public class Commands {
 		Date curDate = new Date(System.currentTimeMillis());// 获取当前时间
 		String str = formatter.format(curDate);
 		String result = "Date Time=" + str + "\r\n";
-		return Utils.getResponeData(deviceIndex,0, result);
+		return Utils.getResponeData(deviceIndex, 0, result);
 	}
 
 	private byte[] clearHistory(String cmd) {
-		
+
 		Settings.reset();
-		File cacheDir=mContext.getCacheDir();
+		File cacheDir = mContext.getCacheDir();
 		Utils.delAllFile(cacheDir.getAbsolutePath());
-		Message msg=new Message();
-		msg.what=Messages.MSG_CHANGE_WIFI;
+		Message msg = new Message();
+		msg.what = Messages.MSG_CHANGE_WIFI;
 		handler.sendMessageDelayed(msg, 2000);
-		return Utils.getResponeData(deviceIndex,0, cmd  + " OK\r\n");
+		return Utils.getResponeData(deviceIndex, 0, cmd + " OK\r\n");
 	}
 
 	private byte[] factoryReset(String cmd) {
-		int resultCode=0;
-		Message msg=new Message();
-		msg.what=Messages.MSG_FACTORY_RESET;
+		int resultCode = 0;
+		Message msg = new Message();
+		msg.what = Messages.MSG_FACTORY_RESET;
 		handler.sendMessageDelayed(msg, 2000);
-		return Utils.getResponeData(deviceIndex,resultCode, cmd + " OK\r\n");
-		
+		return Utils.getResponeData(deviceIndex, resultCode, cmd + " OK\r\n");
+
 	}
 
 	private byte[] testEnd(String cmd) {
-		return Utils.getResponeData(deviceIndex,0, cmd + " OK\r\n");
+		return Utils.getResponeData(deviceIndex, 0, cmd + " OK\r\n");
 	}
 
 	private byte[] openApp(String cmd) {
 		String name = cmd.substring(cmd.lastIndexOf('=') + 1);
-		if( Utils.launchAppByName(name, mContext)){
-			return Utils.getResponeData(deviceIndex, 0,cmd + " OK\r\n");
-		}else {
-			return Utils.getResponeData(deviceIndex, -1,cmd + " ERROR\r\n");
+		if (Utils.launchAppByName(name, mContext)) {
+			return Utils.getResponeData(deviceIndex, 0, cmd + " OK\r\n");
+		} else {
+			return Utils.getResponeData(deviceIndex, -1, cmd + " ERROR\r\n");
 		}
 	}
 
 	private byte[] closeApp(String cmd) {
 		// String name = cmd.substring(cmd.lastIndexOf('=') + 1);
 		EventHelper.sendKeyEvent(KeyEvent.KEYCODE_HOME);
-		return Utils.getResponeData(deviceIndex,0, cmd + " OK\r\n");
+		return Utils.getResponeData(deviceIndex, 0, cmd + " OK\r\n");
 	}
 
 	private byte[] motionClick(String cmd) {
@@ -501,10 +537,10 @@ public class Commands {
 			Log.d(TAG, "motionClick,x=" + x + ",y=" + y);
 		} catch (Exception e) {
 			e.printStackTrace();
-			return Utils.getResponeData(deviceIndex, -1,cmd + " ERROR\r\n");
+			return Utils.getResponeData(deviceIndex, -1, cmd + " ERROR\r\n");
 		}
 
-		return Utils.getResponeData(deviceIndex,0, cmd + " OK\r\n");
+		return Utils.getResponeData(deviceIndex, 0, cmd + " OK\r\n");
 
 	}
 
@@ -529,21 +565,20 @@ public class Commands {
 					y2);
 		} catch (Exception e) {
 			e.printStackTrace();
-			return Utils.getResponeData(deviceIndex,-1, cmd + " ERROR\r\n");
+			return Utils.getResponeData(deviceIndex, -1, cmd + " ERROR\r\n");
 		}
-		return Utils.getResponeData(deviceIndex,0, cmd + " OK\r\n");
+		return Utils.getResponeData(deviceIndex, 0, cmd + " OK\r\n");
 	}
-	
-	
-	private byte[] changeWifi(String cmd){
-		String ssid= cmd.substring(cmd.lastIndexOf('=') + 1);
-		if(ssid!=null){
-			ssid=ssid.replace("\"", "");
+
+	private byte[] changeWifi(String cmd) {
+		String ssid = cmd.substring(cmd.lastIndexOf('=') + 1);
+		if (ssid != null) {
+			ssid = ssid.replace("\"", "");
 			Settings.setSSID(ssid);
 		}
-		Message msg=new Message();
-		msg.what=Messages.MSG_CHANGE_WIFI;
+		Message msg = new Message();
+		msg.what = Messages.MSG_CHANGE_WIFI;
 		handler.sendMessageDelayed(msg, 2000);
-		return Utils.getResponeData(deviceIndex,0, cmd + " OK\r\n");
+		return Utils.getResponeData(deviceIndex, 0, cmd + " OK\r\n");
 	}
 }

@@ -20,6 +20,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.pm.ResolveInfo;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -33,17 +34,13 @@ import android.view.WindowManager;
 public class Utils {
 	private static final String TAG = "Utils";
 
-	public static String getVersion(Context context) {
-		try {
-			PackageManager manager = context.getPackageManager();
-			PackageInfo info = manager.getPackageInfo(context.getPackageName(),
-					0);
-			String version = info.versionName;
-			return version;
-		} catch (Exception e) {
-			e.printStackTrace();
-			return "";
-		}
+	public static String getVersion(Context context) throws NameNotFoundException {
+
+		PackageManager manager = context.getPackageManager();
+		PackageInfo info = manager.getPackageInfo(context.getPackageName(), 0);
+		String version = info.versionName;
+		return version;
+
 	}
 
 	public static boolean writeTextToFile(File file, String text) {
@@ -134,7 +131,8 @@ public class Utils {
 		return flag;
 	}
 
-	public static byte[] getResponeData(int index,int resultCode, String response) {
+	public static byte[] getResponeData(int index, int resultCode,
+			String response) {
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 		outputStream.write(index);
 		outputStream.write(0);
@@ -147,7 +145,8 @@ public class Utils {
 		return outputStream.toByteArray();
 	}
 
-	public static byte[] getResponeData(int index,int resultCode, byte[] response) {
+	public static byte[] getResponeData(int index, int resultCode,
+			byte[] response) {
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 		outputStream.write(index);
 		outputStream.write(1);
@@ -198,7 +197,7 @@ public class Utils {
 		if (intent != null) {
 			context.startActivity(intent);
 			return true;
-		}else {
+		} else {
 			return false;
 		}
 	}
@@ -227,7 +226,7 @@ public class Utils {
 			dims[1] = Math.abs(dims[1]);
 		}
 		Bitmap screenBitmap = null;
-		 screenBitmap= InternalAPI.screenshot((int) dims[0], (int) dims[1]);
+		screenBitmap = InternalAPI.screenshot((int) dims[0], (int) dims[1]);
 		if (requiresRotation) {
 			// Rotate the screenshot to the current orientation
 			Bitmap ss = Bitmap.createBitmap(displayMetrics.widthPixels,
