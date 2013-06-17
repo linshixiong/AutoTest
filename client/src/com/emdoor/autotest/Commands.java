@@ -55,7 +55,7 @@ public class Commands {
 	public static final String CMD_SET_VOLUME = "Volume=";
 
 	public static final String CMD_GET_GSENSOR_COORDINATE = "3D XYZ";
-	public static final String CMD_SD_WRITE = "SD Write";
+	public static final String CMD_SD_WRITE = "TF Write";
 	public static final String CMD_SET_TIME = "Time Setup";
 	public static final String CMD_CHECK_FILE = "Check File";
 	public static final String CMD_SN_WRITE = "SN Write";
@@ -300,7 +300,7 @@ public class Commands {
 	}
 
 	private byte[] screenOff(String cmd) {
-		String result = "";
+		String result = cmd + " OK\r\n";
 		int resultCode=0;
 		try {
 			pm.goToSleep(SystemClock.uptimeMillis()+1);
@@ -324,16 +324,24 @@ public class Commands {
 		Log.d(TAG, "record audio to " + audioFileName.getAbsolutePath());
 		mRecorder.setOutputFile(audioFileName.getAbsolutePath());
 		mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
-
-		try {
+		int duration=0;
+		
+		try {		
+			duration=Integer.parseInt(cmd.substring(cmd.lastIndexOf('=') + 1).toLowerCase().replace(" ", "").replace("s", ""));
+			if(duration<=0){
+				resultCode=-1;
+				result = "Record Audio ERROR\r\n";
+				return Utils.getResponeData(deviceIndex,resultCode, result);
+			}
 			mRecorder.prepare();
 			mRecorder.start();
-			Thread.sleep(5000);
+			Thread.sleep(duration*1000);
 
 			mRecorder.stop();
 			result = "Record Audio OK\r\n";
 		} catch (Exception e) {
-			resultCode=-1;
+			e.printStackTrace();
+			resultCode=-2;
 			Log.e(TAG, "prepare() failed");
 			result = "Record Audio ERROR\r\n";
 		}
@@ -356,6 +364,7 @@ public class Commands {
 			Thread.sleep(mPlayer.getDuration());
 
 		} catch (Exception e) {
+			e.printStackTrace();
 			Log.e(TAG, "prepare() failed");
 			resultCode=-1;
 			result = cmd + " ERROR\r\n";
@@ -491,6 +500,7 @@ public class Commands {
 			EventHelper.sendTap(InputDevice.SOURCE_TOUCHSCREEN, x, y);
 			Log.d(TAG, "motionClick,x=" + x + ",y=" + y);
 		} catch (Exception e) {
+			e.printStackTrace();
 			return Utils.getResponeData(deviceIndex, -1,cmd + " ERROR\r\n");
 		}
 
