@@ -132,11 +132,11 @@ public class AutoTestService extends Service {
 				disconnect(AutoTestService.this);
 				break;
 			case Messages.MSG_FACTORY_RESET:
-				try {
-					RecoverySystem.rebootWipeUserData(AutoTestService.this);
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
+				Log.d(TAG,"send android.intent.action.MASTER_CLEAR");
+				sendBroadcast(new Intent("android.intent.action.MASTER_CLEAR"));
+				break;
+			case Messages.MSG_SCREEN_OFF:
+				
 				break;
 			default:
 				break;
