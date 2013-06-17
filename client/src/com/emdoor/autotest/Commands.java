@@ -445,7 +445,9 @@ public class Commands {
 		Settings.reset();
 		File cacheDir=mContext.getCacheDir();
 		Utils.delAllFile(cacheDir.getAbsolutePath());
-		
+		Message msg=new Message();
+		msg.what=Messages.MSG_CHANGE_WIFI;
+		handler.sendMessageDelayed(msg, 2000);
 		return Utils.getResponeData(deviceIndex,0, cmd  + " OK\r\n");
 	}
 

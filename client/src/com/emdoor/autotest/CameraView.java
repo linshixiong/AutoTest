@@ -48,9 +48,9 @@ public class CameraView extends SurfaceView implements SurfaceHolder.Callback,
 			Camera.Parameters parameters = camera.getParameters();
 			Log.d(TAG, "surfaceChanged width=" + width + ",height=" + height);
 			// parameters.setPreviewSize(320, 240);
-			parameters.setPictureSize(640, 480);
+			parameters.setPictureSize(1600, 1200);
 			camera.setDisplayOrientation(Surface.ROTATION_0);
-			// camera.enableShutterSound(true);
+			camera.enableShutterSound(true);
 			camera.setParameters(parameters);// 设置参数
 			camera.startPreview();// 开始预览
 			takePicture();
@@ -72,7 +72,7 @@ public class CameraView extends SurfaceView implements SurfaceHolder.Callback,
 			@Override
 			public void run() {
 				try {
-					Thread.sleep(2000);
+					Thread.sleep(1000);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}

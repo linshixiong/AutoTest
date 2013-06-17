@@ -71,6 +71,7 @@ public class MainActivity extends Activity implements OnClickListener {
 		filter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
 		filter.addAction(Intents.ACTION_FULLSCREEN_STATE_CHANGE);
 		filter.addAction(Intents.ACTION_TCP_CONNECT_STATE_CHANGE);
+		filter.addAction(Intents.ACTION_WIFI_AP_CHANGE);
 		this.registerReceiver(wifiBroadcastReceiver, filter);
 		mWifiHelper = WifiHelper.getInstance(this);
 		cm = (ConnectivityManager) this
@@ -314,6 +315,7 @@ public class MainActivity extends Activity implements OnClickListener {
 
 	private void setFullScreen() {
 		isFullScreen = true;
+		InternalAPI.setProperty(this,"vplayer.hideStatusBar.enable","false");
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
 				WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
@@ -323,6 +325,7 @@ public class MainActivity extends Activity implements OnClickListener {
 
 	private void quitFullScreen() {
 		isFullScreen = false;
+		InternalAPI.setProperty(this,"vplayer.hideStatusBar.enable","false");
 		setBackgroundColor(COLOR_WHITE);
 		final WindowManager.LayoutParams attrs = getWindow().getAttributes();
 
