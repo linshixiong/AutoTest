@@ -34,6 +34,7 @@ public class Commands {
 
 	public static final String CMD_GET_WIFI_INFO = "WIFI Level and WIFI Address";
 
+	public static final String CMD_SET_BLE_MAC = "Ble Device Address=";
 	public static final String CMD_GET_BLE_INFO = "BLE Level and BLE Address";
 	public static final String CMD_OPEN_BLE = "BLE Open";
 	public static final String CMD_CLOSE_BLE = "BLE Close";
@@ -142,6 +143,8 @@ public class Commands {
 		} else if (cmd.toUpperCase()
 				.startsWith(CMD_GET_WIFI_INFO.toUpperCase())) {
 			return getWifiInfo();
+		} else if (cmd.toUpperCase().startsWith(CMD_SET_BLE_MAC.toUpperCase())) {
+			return setBleMac(cmd);
 		} else if (cmd.toUpperCase().startsWith(CMD_GET_BLE_INFO.toUpperCase())) {
 			return getBleInfo();
 		} else if (cmd.toUpperCase().startsWith(CMD_OPEN_BLE.toUpperCase())) {
@@ -217,6 +220,8 @@ public class Commands {
 		return Utils.getResponeData(deviceIndex, -1, "Unknown command\r\n");
 	}
 
+
+
 	private byte[] getVersion() {
 		String version;
 		int resultCode = 0;
@@ -246,6 +251,22 @@ public class Commands {
 		return Utils.getResponeData(deviceIndex, resultCode, result);
 	}
 
+	private byte[] setBleMac(String cmd) {
+		String mac = cmd.substring(cmd.lastIndexOf('=') + 1);
+		mac=mac.toUpperCase().trim();
+		String result = cmd+" OK\r\n";
+		if(mac==null||mac.equals("")){
+			result = cmd+" ERROR\r\n";
+			return Utils.getResponeData(deviceIndex, -1, result);
+		}
+		Settings.setBLEDeviceMAC(mac);
+		
+		if(!Settings.getBLEDeviceMAC().equals(mac)){
+			result = cmd+" ERROR\r\n";
+			return Utils.getResponeData(deviceIndex, -2, result);
+		}
+		return Utils.getResponeData(deviceIndex, 0, result);
+	}
 	private byte[] getBleInfo() {
 		String address = Settings.getBLEDeviceMAC();
 		String mac = bleHelper.getBleMAC();
@@ -464,11 +485,11 @@ public class Commands {
 	}
 
 	private byte[] readSN(String cmd) {
-		if(!SN_FILE.exists()){
+		if (!SN_FILE.exists()) {
 			String result = "SN Read=ERROR\r\n";
 			return Utils.getResponeData(deviceIndex, -1, result);
 		}
-		if(!SN_FILE.canRead()){
+		if (!SN_FILE.canRead()) {
 			String result = "SN Read=ERROR\r\n";
 			return Utils.getResponeData(deviceIndex, -2, result);
 		}
