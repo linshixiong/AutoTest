@@ -315,7 +315,7 @@ public class MainActivity extends Activity implements OnClickListener {
 
 	private void setFullScreen() {
 		isFullScreen = true;
-		InternalAPI.setProperty(this,"vplayer.hideStatusBar.enable","false");
+		InternalAPI.setProperty(this,"vplayer.hideStatusBar.enable","true");
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
 				WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
