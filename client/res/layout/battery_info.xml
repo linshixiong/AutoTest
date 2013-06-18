@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/LinearLayout01"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal" 
+        android:paddingTop="20dp">
+
+        <TextView
+            android:id="@+id/tvbattery"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/batterytest"
+            android:textSize="30dp" >
+        </TextView>
+    </LinearLayout>
+    
+    <TableLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center" 
+        android:paddingTop="20dp">
+        
+        <TableRow
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent" >
+
+            <TextView
+                android:id="@+id/charging"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/charging"
+                android:textSize="30dp" >
+            </TextView>
+
+            <TextView
+                android:id="@+id/charging_state"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="30dp" >
+            </TextView>
+        </TableRow>
+        <TableRow
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent" >
+
+            <TextView
+                android:id="@+id/voltage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/valtage"
+                android:textSize="30dp"
+                android:visibility="gone" >
+            </TextView>
+
+            <TextView
+                android:id="@+id/voltage_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="30dp"
+                android:visibility="gone"  >
+            </TextView>
+        </TableRow>
+        <TableRow
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent" >
+
+            <TextView
+                android:id="@+id/current"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/current"
+                android:textSize="30dp" 
+                android:visibility="gone" >
+            </TextView>
+
+            <TextView
+                android:id="@+id/current_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="30dp"
+                android:visibility="gone"  >
+            </TextView>
+        </TableRow>
+        <TableRow
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent" >
+            
+            <TextView
+                android:id="@+id/capacity"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/capacity"
+                android:textSize="30dp" >
+            </TextView>
+
+            <TextView
+                android:id="@+id/capacity_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="30dp" >
+            </TextView>
+            
+        </TableRow>
+        <TableRow
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent" >
+			
+            <TextView
+                android:id="@+id/plug"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/plug"
+                android:textSize="30dp" >
+            </TextView>
+
+            <TextView
+                android:id="@+id/plug_state"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="30dp" >
+            </TextView>
+            
+        </TableRow>
+
+    </TableLayout>
+    
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_gravity="bottom"
+        android:gravity="bottom"
+        android:orientation="horizontal"
+        android:paddingBottom="5dp" >
+
+        <Button
+            android:id="@+id/btnbatteryok"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/pass" >
+        </Button>
+
+        <Button
+            android:id="@+id/btnbatteryfail"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/fail" >
+        </Button>
+
+        <Button
+            android:id="@+id/btnbatteryback"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/back" >
+        </Button>
+    </LinearLayout>
+
+</LinearLayout>

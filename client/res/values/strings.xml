@@ -1,36 +1,148 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
 
-    <string name="app_name">AutoTest</string>
-    <string name="menu_settings">Settings</string>
-    <string name="menu_disconnect">Disconnect</string>
-    <string name="menu_clean">Clear Log</string>
-    <string name="hello_world">Hello world!</string>
-	<string name="start_test">Start No.%d</string>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+
+    <string name="hello">Hello World, SelfTestNewActivity!</string>
+    <string name="app_name_selftest">Self Test</string>
+    <string name="app_name_autotest">Auto Test</string>
+    <string name="lcd">LCD</string>
+    <string name="touch">Touch</string>
+    <string name="wifi">Wifi</string>
+    <string name="bluetooth">Bluetooth</string>
+    <string name="gps">GPS</string>
+    <string name="evdo">WCDMA</string>
+    <string name="camera">Camera</string>
+    <string name="usb">Mrio USB</string>
+    <string name="gsensor">Gsensor</string>
+    <string name="lightsensor">Lightsensor</string>
+    <string name="speaker">Speaker</string>
+    <string name="mic">MIC</string>
+    <string name="tfcard">TF Card</string>
+    <string name="hdmi">HDMI</string>
+    <string name="battery">Battery</string>
+    <string name="keyboard">Keyboard</string>
+    <string name="version">Version</string>
+    <string name="brightness">Brightness</string>
+    <string name="test">Test checked</string>
+    <string name="close">Close</string>
+    <string name="clear">Clear</string>
+    <string name="uninstall">Uninstall</string>
+    <string name="recovery">Recovery</string>
+    
+    <string name="fail">fail</string>
+    <string name="pass">pass</string>
+    <string name="back">back</string>
+    <string name="lcd_title">lcd test</string>
+	<string name="lcdinfo">Click screen for lcd test</string>
+    <string name="tochscreen">Touch test</string>
+    <string name="tochinfo">Do diagonal test before multi-touch point test</string>
+    <string name="points">Max Point:%d</string>
+    <string name="wifitest">Wifi test</string>
+    <string name="wificheck">Wifi Environment checking </string>
 	
-	<string name="connecting">Connecting network，please wait...</string>
-	<string name="network">Network:&#x0020;</string>
-	<string name="server">Server:&#x0020;  </string>
+	<string name="bttest">Bluetooth Test</string>
+    <string name="btcheck">Please observe the equpment</string>
+    <string name="btscan">scan equpment...</string>
+    <string name="versiontest">Version test</string>
+    
+    <string name="model">Model number:</string>
+    <string name="version1">Android version:</string>
+    <string name="kernel">Kernel version:</string>
+    <string name="baseband">Baseband version:</string>
+    <string name="build">Build number:</string>
+    
+    <string name="volup">vol+</string>
+    <string name="voldown">vol-</string>
+	<string name="keyboardtest">Keyboard test</string>
 	
-	<string name="network_settings">Network settings</string>
-	<string name="wifi_ssid">Wifi ssid</string>
-	<string name="wifi_pwd">Wifi password</string>
-	<string name="wifi_ssid_summary">Wifi ssid is %s</string>
-	<string name="wifi_ssid_dialog_title">Input the wifi ssid</string>
-	<string name="wifi_pwd_dialog_title">Input the wifi password</string>
-	<string name="server_settings">Server settings</string>
-	<string name="server_host">Server Host</string>
-	<string name="server_port">Server Port</string>
-	<string name="server_port_summary">Server port is %d</string>
-	<string name="server_port_dialog_title">Input the server port</string>
-	<string name="server_host_summary">Server host is %s</string>
-	<string name="server_host_dialog_title">Input the server host</string>
-	<string name="server_port_invalid">Port number must be between 1024 and 65535</string>
-	<string name="server_port_occupied">Port %d is occupied by others, please set new port in settings menu.</string>
-	<string name="ble_settings">BLE device settings</string>
-	<string name="ble_mac_dialog_title">Input the BLE device MAC address</string>
-	<string name="ble_mac_summary">BLE device MAC address is %s</string>
-	<string name="ble_mac">BLE device MAC address</string>
-	<string name="about">About</string>
-	<string name="version">Version</string>
+	<string name="batterytest">Battery Information</string>
+	<string name="charging">Charge status:</string>
+	<string name="valtage">Valtage:</string>
+	<string name="current">Current:</string>
+	<string name="capacity">Capacity:</string>
+	<string name="plug">Plug:</string>
+	
+    <string name="brightness_title">Brightness Test</string>
+    <string name="gsensor_title">Gsensor Test</string>
+    <string name="hdmitest">HDMI Test </string>
+    <string name="hdmiinfo">Please insert HDMI for test! </string>
+	
+	<string name="tfcard_title">TFCard Test</string>
+    <string name="speeker_title">Speeker Test</string>
+    
+    <string name="left_speeker_disable">left disable</string>
+    <string name="left_speeker_enable">left enable</string>
+    <string name="right_speeker_disable">right disable</string>
+    <string name="right_speeker_enable">right enable</string>
+
+    
+    <string name="usbtest">Mrio USB Test </string>
+    <string name="usbinfo">Plug in usb and upplug usb</string>
+    <string name="plugout">Unplug usb test:</string>
+    <string name="plugin">Plug in usb test:</string>
+    
+	<string name="cameratest">Camera Test</string>
+	<string name="camerinfo">Click screen test it again.</string>
+	
+	<!-- Screen title before and during recording -->
+    <string name="record_your_message">Record your message</string>
+    <!-- Screen title after recording -->
+    <string name="message_recorded">Message recorded</string>
+    <!-- Screen title while playing back a recording -->
+    <string name="review_message">Review message</string>
+    <!-- Label shown during recording -->
+    <string name="recording">Recording</string>
+    <!-- Label shown when the recording is stopped for a reason other than the user stopping it (e.g. the sd card was removed) -->
+    <string name="recording_stopped">Recording stopped</string>
+    <!-- label shown when there is not enough space to record something -->
+    <string name="storage_is_full">Storage is full</string>
+    <!-- label shown when the recording has reached maximum allowed file size -->
+    <string name="max_length_reached">Maximum length reached</string>
+    <!-- label shown when there is no sd card available to record to [CHAR LIMIT=30] -->
+    <string name="insert_sd_card" product="nosdcard">Please mount USB storage</string>
+    <!-- label shown when there is no sd card available to record to -->
+    <string name="insert_sd_card" product="default">Please insert an SD card</string>
+    <!-- label shown when there is more than 1 minute but less than 9 minutes of space left to record -->
+    <string name="min_available"><xliff:g id="minutes">%d</xliff:g> min available</string>
+    <!-- label shown when there is less than 1 minute of space left to record -->
+    <string name="sec_available"><xliff:g id="seconds">%d</xliff:g>s available</string>
+
+    <!-- button to accept the current recording and return it to the caller -->
+    <string name="accept">Done</string>
+    <!-- button to discard the current recording and return to the caller -->
+    <string name="discard">Discard</string>
+    <!-- acknowlegement button in a number of dialogs -->
+    <string name="button_ok">OK</string>
+    <!-- Do not translate. Format of the timer that shows how much has been recorded so far -->
+    <string name="timer_format" translatable="false"><xliff:g id="format">%02d:%02d</xliff:g></string>
+   
+    <!-- the name under which recordings will be visible in the media database is formatted like this --> 
+    <string name="audio_db_title_format"><xliff:g id="format">yyyy-MM-dd HH:mm:ss</xliff:g></string>
+    <!-- all recordings will show up in the media database with this 'artist' name -->
+    <string name="audio_db_artist_name">Your recordings</string>
+    <!-- all recordings will show up in the media database with this 'album' name -->
+    <string name="audio_db_album_name">Audio recordings</string>
+    <!-- all recordings will show up in the media database in a playlist with this name -->
+    <string name="audio_db_playlist_name">My recordings</string>
+   
+    <!-- shown as the message in a dialog when an error occured because of an error accessing the sd card [CHAR LIMIT=NONE] -->
+    <string name="error_sdcard_access" product="nosdcard">Unable to access USB storage</string>
+    <!-- shown as the message in a dialog when an error occured because of an error accessing the sd card -->
+    <string name="error_sdcard_access" product="default">Unable to access SD card</string>
+    <!-- shown as the message in a dialog when the app encountered an unspecified internal error -->
+    <string name="error_app_internal">Internal application error</string>
+    <!-- shown as the message in a dialog when the recording could not be added to the media database -->
+    <string name="error_mediadb_new_record">Unable to save recorded audio</string>
+    <string name="recordertest">Recorder Test</string>	
+   
+    
+    <string name="dialog_title">Apply this mode?</string>
+    <string name="dialog_str_ok">OK</string>
+    <string name="dialog_str_cancel">Cancel</string>  
+
+	<string name="threeg_title">3G test</string>
+	<string name="threegtestinfo">push in 3G card , turn on 3G power on ,then wait for a mounment</string>
+	<string name="gps_title">GPS test</string>
+	<string name="nogpshw">This is no GPS hardware!</string>
+	<string name="textView_gps_msg">start GPS test</string>
 </resources>

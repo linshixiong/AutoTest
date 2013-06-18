@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/LinearLayout01"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal" 
+        android:paddingTop="20dp">
+        <TextView
+            android:id="@+id/tvkeyboard"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/keyboardtest"
+            android:textSize="30dp" >
+        </TextView>
+    </LinearLayout>
+    
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal" 
+        android:paddingTop="20dp">
+		<Button
+            android:id="@+id/volumeup"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/volup" >
+        </Button>
+
+        <Button
+            android:id="@+id/volumedown"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/voldown" >
+        </Button>
+    </LinearLayout>
+    
+    
+   
+    
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_gravity="bottom"
+        android:gravity="bottom"
+        android:orientation="horizontal"
+        android:paddingBottom="5dp" >
+
+        <Button
+            android:id="@+id/btnkeyboardok"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/pass" >
+        </Button>
+
+        <Button
+            android:id="@+id/btnkeyboardfail"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/fail" >
+        </Button>
+
+        <Button
+            android:id="@+id/btnkeyboardback"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/back" >
+        </Button>
+    </LinearLayout>
+
+</LinearLayout>

@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/LinearLayout01"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal" 
+        android:paddingTop="20dp">
+
+        <TextView
+            android:id="@+id/tvusb"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/usbtest"
+            android:textSize="30dp" >
+        </TextView>
+    </LinearLayout>
+    
+     <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal" 
+        android:paddingTop="20dp">
+
+        <TextView
+            android:id="@+id/tvusbinfo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/usbinfo"
+            android:textSize="30dp" >
+        </TextView>
+    </LinearLayout>
+    
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" 
+        android:paddingTop="20dp">
+        <TextView
+            android:id="@+id/plugout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/plugout"
+            android:textSize="30dp" >
+        </TextView>
+        <TextView
+            android:id="@+id/plugouttest"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="30dp" >
+        </TextView>
+    </LinearLayout>
+    
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" 
+        android:paddingTop="20dp">
+
+        <TextView
+            android:id="@+id/plugin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/plugin"
+            android:textSize="30dp" >
+        </TextView>
+        <TextView
+            android:id="@+id/plugintest"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="30dp" >
+        </TextView>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_gravity="bottom"
+        android:gravity="bottom"
+        android:orientation="horizontal"
+        android:paddingBottom="5dp" >
+
+        <Button
+            android:id="@+id/btnusbok"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/pass" >
+        </Button>
+
+        <Button
+            android:id="@+id/btnusbfail"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/fail" >
+        </Button>
+
+        <Button
+            android:id="@+id/btnusbback"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/back" >
+        </Button>
+    </LinearLayout>
+</LinearLayout>

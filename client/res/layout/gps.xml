@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical" >
+
+    <TextView
+        android:id="@+id/TextView_gps_01"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/gps_title" 
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:textSize="30dp"/>
+    
+    <TextView
+        android:id="@+id/textView_gps_msg"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:text="@string/textView_gps_msg"
+        android:textSize="20dp"/>
+           
+    <LinearLayout        
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"	        
+        android:orientation="horizontal"
+        android:layout_alignParentBottom="true"
+        android:paddingBottom="5dp">
+
+        <Button
+            android:id="@+id/btn_gps_1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/pass" />
+
+        <Button
+            android:id="@+id/btn_gps_2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/fail" />
+
+        <Button
+            android:id="@+id/btn_gps_3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/back" />
+     </LinearLayout>
+
+</RelativeLayout>

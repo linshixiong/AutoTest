@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/hdmi"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal" 
+        android:paddingTop="20dp">
+
+        <TextView
+            android:id="@+id/tvhdmi"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/hdmitest"
+            android:textSize="30dp" >
+        </TextView>
+    </LinearLayout>
+    
+    <LinearLayout        
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="vertical" 
+        android:paddingTop="20dp">
+        <TextView
+            android:id="@+id/hdmiinfo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/hdmiinfo"
+            android:textSize="30dp" >
+        </TextView>
+    </LinearLayout>   
+     
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:paddingTop="20dp" >
+
+        <SurfaceView
+            android:id="@+id/surfaceView"
+			android:layout_gravity="center" 
+            android:layout_width="300dp"
+            android:layout_height="200dp" >
+        </SurfaceView>
+    </LinearLayout>
+   
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_gravity="bottom"
+        android:gravity="bottom"
+        android:orientation="horizontal"
+        android:paddingBottom="5dp" >
+
+        <Button
+            android:id="@+id/btnhdmiok"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/pass" >
+        </Button>
+
+        <Button
+            android:id="@+id/btnhdmifail"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/fail" >
+        </Button>
+
+        <Button
+            android:id="@+id/btnhdmiback"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/back" >
+        </Button>
+    </LinearLayout>
+</LinearLayout>

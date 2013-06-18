@@ -1,0 +1,417 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:myapp="http://schemas.android.com/apk/res/com.emdoor.autotest"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:layout_gravity="center_vertical"
+    android:orientation="vertical" 
+    android:background="#000000">
+
+    <TableLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:layout_weight="6"
+        android:fitsSystemWindows="true" >
+
+        <TableRow
+            style="@style/horizontalline"
+            android:layout_width="fill_parent"
+            android:layout_height="3dp" >
+
+            <View
+                style="@style/horizontalline"
+                android:layout_height="3dp" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:gravity="center" >
+
+            <View
+                style="@style/TableBorder"
+                android:layout_height="wrap_content" />
+
+            <com.emdoor.autotest.MyButton
+                android:id="@+id/lcd"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                myapp:selftext="@string/lcd" />
+
+            <View
+                style="@style/TableBorder"
+                android:layout_height="wrap_content" />
+
+            <com.emdoor.autotest.MyButton
+                android:id="@+id/touch"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:tag="2"
+                myapp:selftext="@string/touch" />
+
+            <View
+                style="@style/TableBorder"
+                android:layout_height="wrap_content" />
+
+            <com.emdoor.autotest.MyButton
+                android:id="@+id/wifi"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:tag="3"
+                myapp:selftext="@string/wifi" />
+
+            <View
+                style="@style/TableBorder"
+                android:layout_height="wrap_content" />
+        </TableRow>
+
+        <TableRow
+            style="@style/horizontalline"
+            android:layout_width="fill_parent"
+            android:layout_height="3dp" >
+
+            <View
+                style="@style/horizontalline"
+                android:layout_height="3dp" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:gravity="center" >
+
+            <View
+                style="@style/TableBorder"
+                android:layout_height="wrap_content" />
+
+            <com.emdoor.autotest.MyButton
+                android:id="@+id/bluetooth"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:tag="4"
+                myapp:selftext="@string/bluetooth" />
+
+            <View
+                style="@style/TableBorder"
+                android:layout_height="wrap_content" />
+
+            <com.emdoor.autotest.MyButton
+                android:id="@+id/gps"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:tag="5"
+                myapp:selftext="@string/gps" />
+
+            <View
+                style="@style/TableBorder"
+                android:layout_height="wrap_content" />
+
+            <com.emdoor.autotest.MyButton
+                android:id="@+id/evdo"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:tag="6"
+                myapp:selftext="@string/evdo" />
+
+            <View
+                style="@style/TableBorder"
+                android:layout_height="wrap_content" />
+        </TableRow>
+
+        <TableRow
+            style="@style/horizontalline"
+            android:layout_width="fill_parent"
+            android:layout_height="3dp" >
+
+            <View
+                style="@style/horizontalline"
+                android:layout_height="3dp" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:gravity="center" >
+
+            <View
+                style="@style/TableBorder"
+                android:layout_height="wrap_content" />
+
+            <com.emdoor.autotest.MyButton
+                android:id="@+id/usb"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:tag="7"
+                myapp:selftext="@string/usb" />
+
+            <View
+                style="@style/TableBorder"
+                android:layout_height="wrap_content" />
+
+            <com.emdoor.autotest.MyButton
+                android:id="@+id/camera"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:tag="8"
+                myapp:selftext="@string/camera" />
+
+            <View
+                style="@style/TableBorder"
+                android:layout_height="wrap_content" />
+
+            <com.emdoor.autotest.MyButton
+                android:id="@+id/gsensor"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:tag="9"
+                myapp:selftext="@string/gsensor" />
+
+            <View
+                style="@style/TableBorder"
+                android:layout_height="wrap_content" />
+        </TableRow>
+
+        <TableRow
+            style="@style/horizontalline"
+            android:layout_width="fill_parent"
+            android:layout_height="3dp" >
+
+            <View
+                style="@style/horizontalline"
+                android:layout_height="3dp" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:gravity="center" >
+
+            <View
+                style="@style/TableBorder"
+                android:layout_height="wrap_content" />
+
+            <com.emdoor.autotest.MyButton
+                android:id="@+id/lightsensor"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:tag="10"
+                myapp:selftext="@string/lightsensor" />
+
+            <View
+                style="@style/TableBorder"
+                android:layout_height="wrap_content" />
+
+            <com.emdoor.autotest.MyButton
+                android:id="@+id/speaker"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:tag="11"
+                myapp:selftext="@string/speaker" />
+
+            <View
+                style="@style/TableBorder"
+                android:layout_height="wrap_content" />
+
+            <com.emdoor.autotest.MyButton
+                android:id="@+id/mic"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:tag="12"
+                myapp:selftext="@string/mic" />
+
+            <View
+                style="@style/TableBorder"
+                android:layout_height="wrap_content" />
+        </TableRow>
+
+        <TableRow
+            style="@style/horizontalline"
+            android:layout_width="fill_parent"
+            android:layout_height="3dp" >
+
+            <View
+                style="@style/horizontalline"
+                android:layout_height="3dp" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:gravity="center" >
+
+            <View
+                style="@style/TableBorder"
+                android:layout_height="wrap_content" />
+
+            <com.emdoor.autotest.MyButton
+                android:id="@+id/tfcard"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:tag="13"
+                myapp:selftext="@string/tfcard" />
+
+            <View
+                style="@style/TableBorder"
+                android:layout_height="wrap_content" />
+
+            <com.emdoor.autotest.MyButton
+                android:id="@+id/hdmi"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:tag="14"
+                myapp:selftext="@string/hdmi" />
+
+            <View
+                style="@style/TableBorder"
+                android:layout_height="wrap_content" />
+
+            <com.emdoor.autotest.MyButton
+                android:id="@+id/battery"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:tag="15"
+                myapp:selftext="@string/battery" />
+
+            <View
+                style="@style/TableBorder"
+                android:layout_height="wrap_content" />
+        </TableRow>
+
+        <TableRow
+            style="@style/horizontalline"
+            android:layout_width="fill_parent"
+            android:layout_height="3dp" >
+
+            <View
+                style="@style/horizontalline"
+                android:layout_height="3dp" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:gravity="center" >
+
+            <View
+                style="@style/TableBorder"
+                android:layout_height="wrap_content" />
+
+            <com.emdoor.autotest.MyButton
+                android:id="@+id/keyboard"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:tag="16"
+                myapp:selftext="@string/keyboard" />
+
+            <View
+                style="@style/TableBorder"
+                android:layout_height="wrap_content" />
+
+            <com.emdoor.autotest.MyButton
+                android:id="@+id/version"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:tag="17"
+                myapp:selftext="@string/version" />
+
+            <View
+                style="@style/TableBorder"
+                android:layout_height="wrap_content" />
+
+            <com.emdoor.autotest.MyButton
+                android:id="@+id/brightness"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:tag="18"
+                myapp:selftext="@string/brightness" />
+
+            <View
+                style="@style/TableBorder"
+                android:layout_height="wrap_content" />
+        </TableRow>
+
+        <TableRow
+            style="@style/horizontalline"
+            android:layout_width="fill_parent"
+            android:layout_height="3dp" >
+
+            <View
+                style="@style/horizontalline"
+                android:layout_height="3dp" />
+        </TableRow>
+    </TableLayout>
+
+    <TableLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:layout_weight="1"
+        android:fitsSystemWindows="true" >
+
+        <TableRow
+            android:layout_width="fill_parent"
+            android:layout_weight="1"
+            android:gravity="center" >
+
+            <Button
+                android:id="@+id/test"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/test" />
+
+            <Button
+                android:id="@+id/close"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/close" />
+
+            <Button
+                android:id="@+id/clear"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/clear" />
+
+            <Button
+                android:id="@+id/uninstall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/uninstall" />
+
+            <Button
+                android:id="@+id/recovery"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/recovery" />
+        </TableRow>
+    </TableLayout>
+
+</LinearLayout>
