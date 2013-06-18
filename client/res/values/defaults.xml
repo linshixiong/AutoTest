@@ -1,13 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="def_wifi_ssid">emdoor_soft</string>
-    <string name="def_wifi_pwd">emdoor1234567890</string>
-    <string name="def_server_host">192.168.1.13</string>
-    
-    <!--  
+    <array name="def_server_host_list" translatable="false">
+        <item>192.168.1.200</item>
+        <item>192.168.1.205</item>
+        <item>192.168.1.210</item>
+        <item>192.168.1.215</item>
+        <item>192.168.1.220</item>
+        <item>192.168.1.225</item>
+    </array>  
+    <array name="def_server_port_list" translatable="false">
+        <item>3001</item>
+        <item>3002</item>
+        <item>3003</item>
+        <item>3004</item>
+        <item>3005</item>
+        <item>3006</item>
+    </array>  
     <string name="def_wifi_ssid">MEEP2-ATE-001</string>
     <string name="def_wifi_pwd">0123456789</string>
-    <string name="def_server_host">192.168.1.200</string>-->
-    <integer name="def_server_port">3001</integer>
     <string name="def_ble_device_mac">00:17:EA:8F:08:8A</string>
 </resources>

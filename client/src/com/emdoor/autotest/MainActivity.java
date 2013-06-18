@@ -57,11 +57,11 @@ public class MainActivity extends Activity implements OnClickListener {
 		operateLayout = (LinearLayout) findViewById(R.id.operate_panel);
 		mainLayout = (RelativeLayout) findViewById(R.id.layout_main);
 		buttonLayout = (GridLayout) findViewById(R.id.button_layout);
-		textStatus = (TextView) findViewById(R.id.statusText);
-
+		textStatus = (TextView) findViewById(R.id.statusText);	
 		for (int i = 0; i < buttonLayout.getChildCount(); i++) {
-
-			Button button = (Button) buttonLayout.getChildAt(i);
+			
+			Button button = (Button)((LinearLayout)buttonLayout.getChildAt(i)).getChildAt(0);
+			
 			button.setOnClickListener(this);
 			button.setTag(i);
 		}
@@ -251,15 +251,18 @@ public class MainActivity extends Activity implements OnClickListener {
 		for (int i = 0; i < buttonLayout.getChildCount(); i++) {
 
 			boolean isCurrent=(i==Commands.deviceIndex);
-			Button button = (Button) buttonLayout.getChildAt(i);
+			Button button = (Button) ((LinearLayout)buttonLayout.getChildAt(i)).getChildAt(0);
 
-			
 			button.setEnabled(!AutoTestService.isConnected());
+					
 			button.setBackgroundColor(AutoTestService.isConnected()&&isCurrent ? Color.BLUE
 					:Color.LTGRAY);
 			int buttonIndex =Integer.parseInt( button.getTag().toString())+1;
 			button.setText(AutoTestService.isConnected() &&isCurrent? "Testing No."
 					+ buttonIndex : "Start No."+buttonIndex);
+			String summary=String.format("%s:%d", Settings.getServerHost(i),Settings.getPort(i));
+			TextView textSummary=(TextView)((LinearLayout)buttonLayout.getChildAt(i)).getChildAt(1);
+			textSummary.setText(summary);
 		}
 
 
@@ -270,9 +273,6 @@ public class MainActivity extends Activity implements OnClickListener {
 		progressLayout.setVisibility(View.GONE);
 		textStatus.setText("");
 		textStatus.append(getString(R.string.network) + Settings.getSSID());
-		textStatus.append("\n");
-		textStatus.append(getString(R.string.server) + Settings.getServerHost()
-				+ ":" + Settings.getPort());
 		updateButton();
 	}
 

@@ -3,8 +3,10 @@ package com.emdoor.autotest;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.util.Log;
 
 public class Settings {
+	private static final String TAG = null;
 	private static SharedPreferences prefs;
 	private static Context sContext;
 	public static void init(Context context)
@@ -34,21 +36,30 @@ public class Settings {
 		prefs.edit().putString("password", pwd).commit();
 	}
 	
-	public static String getServerHost(){
-		return prefs.getString("server_host",sContext.getString(R.string.def_server_host));
+	public static String getServerHost(int deviceIndex){
+		
+		String host=sContext.getResources().getStringArray(R.array.def_server_host_list)[deviceIndex];
+		return prefs.getString("server_host_"+deviceIndex,host);
 	}
 	
-	public static void setServerHost(String host){
-		prefs.edit().putString("server_host", host).commit();
+	public static void setServerHost(int deviceIndex,String host){
+		prefs.edit().putString("server_host_"+deviceIndex, host).commit();
 	}
 	
-	public static int getPort()
+	public static int getPort(int deviceIndex)
 	{
-		return prefs.getInt("server_port", sContext.getResources().getInteger(R.integer.def_server_port));
+		int port=0;
+		try{
+			port=sContext.getResources().getIntArray(R.array.def_server_port_list)[deviceIndex];
+		}catch(Exception e){
+			e.printStackTrace();
+			port=3001;
+		}
+		return prefs.getInt("server_port_"+deviceIndex, port);
 	}
 	
-	public static void setPort(int port){
-		prefs.edit().putInt("server_port", port).commit();
+	public static void setPort(int deviceIndex,int port){
+		prefs.edit().putInt("server_port_"+deviceIndex, port).commit();
 	}
 	
 	public static void setBLEDeviceMAC(String mac){

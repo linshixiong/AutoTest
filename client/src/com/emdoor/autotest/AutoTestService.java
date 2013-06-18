@@ -64,8 +64,8 @@ public class AutoTestService extends Service {
 
 	private void connectServer() {
 		if (client == null || !client.isConnected()) {
-			String host = Settings.getServerHost();
-			int port = Settings.getPort();
+			String host = Settings.getServerHost(Commands.deviceIndex);
+			int port = Settings.getPort(Commands.deviceIndex);
 			client = new TCPClient(host, port, this, handler);
 		}
 	}

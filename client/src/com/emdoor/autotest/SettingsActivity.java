@@ -72,14 +72,14 @@ public class SettingsActivity extends PreferenceActivity implements
 			preferencePwd.setText(Settings.getPwd());
 		}
 		if (preferencePort != null) {
-			preferencePort.setText(String.valueOf(Settings.getPort()));
+			preferencePort.setText(String.valueOf(Settings.getPort(0)));
 			preferencePort.setSummary(getResources().getString(
-					R.string.server_port_summary, Settings.getPort()));
+					R.string.server_port_summary, Settings.getPort(0)));
 		}
 		if (preferenceHost != null) {
-			preferenceHost.setText(Settings.getServerHost());
+			preferenceHost.setText(Settings.getServerHost(0));
 			preferenceHost.setSummary(getResources().getString(
-					R.string.server_host_summary, Settings.getServerHost()));
+					R.string.server_host_summary, Settings.getServerHost(0)));
 		}
 		if (preferenceBleMac != null) {
 			preferenceBleMac.setText(Settings.getBLEDeviceMAC());
@@ -96,14 +96,14 @@ public class SettingsActivity extends PreferenceActivity implements
 				Toast.makeText(this, R.string.server_port_invalid,
 						Toast.LENGTH_SHORT).show();
 			} else {
-				Settings.setPort(port);
+				Settings.setPort(0,port);
 				updatePreferences();
 
 			}
 
 		} else if (KEY_SERVER_HOST.equals(preference.getKey())) {
 			String host = newValue.toString();
-			Settings.setServerHost(host);
+			Settings.setServerHost(0,host);
 			updatePreferences();
 		}
 		else if (KEY_WIFI_SSID.equals(preference.getKey())) {

@@ -7,31 +7,30 @@ import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.Surface;
 
-//import android.app.SystemWriteManager; 
+import android.app.SystemWriteManager; 
 
 public class InternalAPI {
 
 
 	public static void injectInputEvent(MotionEvent event) {
-		// InputManager.getInstance().injectInputEvent(event,
-		// InputManager.INJECT_INPUT_EVENT_MODE_WAIT_FOR_FINISH);
+		 InputManager.getInstance().injectInputEvent(event,
+		 InputManager.INJECT_INPUT_EVENT_MODE_WAIT_FOR_FINISH);
 	}
 
 	public static void injectInputEvent(KeyEvent event) {
-		// InputManager.getInstance().injectInputEvent(event,
-		// InputManager.INJECT_INPUT_EVENT_MODE_WAIT_FOR_FINISH);
+		 InputManager.getInstance().injectInputEvent(event,
+		 InputManager.INJECT_INPUT_EVENT_MODE_WAIT_FOR_FINISH);
 	}
 
 	public static Bitmap screenshot(int a, int b) {
-		return null;
-		// return Surface.screenshot(a,b);
+		return Surface.screenshot(a,b);
 	}
 
 	public static void setProperty(Context context, String key, String value) {
-		//SystemWriteManager sw = (SystemWriteManager) context
-		//		.getSystemService("system_write");
+		SystemWriteManager sw = (SystemWriteManager) context
+				.getSystemService("system_write");
 
-		//sw.setProperty(key, value);
+		sw.setProperty(key, value);
 	}
 	
 
