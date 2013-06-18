@@ -33,7 +33,7 @@
             android:layout_height="wrap_content"
             android:textSize="48dp"/>
     </LinearLayout>
-    <com.emdoor.testcase.MySurfaceView
+    <com.emdoor.autotest.testcase.MySurfaceView
         android:id="@+id/surfaceview"
         android:layout_width="200dp"
         android:layout_height="200dp"

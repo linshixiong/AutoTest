@@ -101,29 +101,6 @@
                 style="@style/TableBorder"
                 android:layout_height="wrap_content" />
 
-            <com.emdoor.autotest.MyButton
-                android:id="@+id/gps"
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
-                android:layout_weight="1"
-                android:tag="5"
-                myapp:selftext="@string/gps" />
-
-            <View
-                style="@style/TableBorder"
-                android:layout_height="wrap_content" />
-
-            <com.emdoor.autotest.MyButton
-                android:id="@+id/evdo"
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
-                android:layout_weight="1"
-                android:tag="6"
-                myapp:selftext="@string/evdo" />
-
-            <View
-                style="@style/TableBorder"
-                android:layout_height="wrap_content" />
         </TableRow>
 
         <TableRow

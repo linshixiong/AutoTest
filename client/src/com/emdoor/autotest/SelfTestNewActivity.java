@@ -25,7 +25,7 @@ import com.emdoor.autotest.testcase.*;
 public class SelfTestNewActivity extends Activity {
 	/** Called when the activity is first created. */
 
-	MyButton lcd, touch, wifi, bluetooth, gps, evdo, usb, camera, gsensor,
+	MyButton lcd, touch, wifi, bluetooth,usb, camera, gsensor,
 			light, speaker, mic, tfcard, hdmi, battery, keyboard, version,
 			brightness;
 	Button test, close, clear, uninstall, recovery;
@@ -46,8 +46,7 @@ public class SelfTestNewActivity extends Activity {
 		touch = (MyButton) findViewById(R.id.touch);
 		wifi = (MyButton) findViewById(R.id.wifi);
 		bluetooth = (MyButton) findViewById(R.id.bluetooth);
-		gps = (MyButton) findViewById(R.id.gps);
-		evdo = (MyButton) findViewById(R.id.evdo);
+
 		usb = (MyButton) findViewById(R.id.usb);
 		camera = (MyButton) findViewById(R.id.camera);
 		gsensor = (MyButton) findViewById(R.id.gsensor);
@@ -319,26 +318,7 @@ public class SelfTestNewActivity extends Activity {
 			}
 
 		});
-		gps.setOnClickListener(myOnClickLinstener);
-		gps.checkBox.setOnClickListener(new OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				gps.setOnClickCheckBoxState(v);
-				config.setGPSDef(gps.isCheck);
-			}
-
-		});
-		evdo.setOnClickListener(myOnClickLinstener);
-		evdo.checkBox.setOnClickListener(new OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				evdo.setOnClickCheckBoxState(v);
-				config.setEVDODef(evdo.isCheck);
-			}
-
-		});
+		
 		usb.setOnClickListener(myOnClickLinstener);
 		usb.checkBox.setOnClickListener(new OnClickListener() {
 
@@ -504,12 +484,6 @@ public class SelfTestNewActivity extends Activity {
 			case R.id.hdmi:
 				testForHDMI();
 				break;
-			case R.id.gps:
-				testForGPS();
-				break;
-			case R.id.evdo:
-				testForEVDO();
-				break;
 			}
 		}
 
@@ -614,12 +588,6 @@ public class SelfTestNewActivity extends Activity {
 		bluetooth.setCheckBoxState(config.isBLUETOOTHDefSet());
 		setBackgroundforMyView(bluetooth, config.isBLUETOOTHTestOk());
 
-		gps.setCheckBoxState(config.isGPSDefSet());
-		setBackgroundforMyView(gps, config.isGPSTestOk());
-
-		evdo.setCheckBoxState(config.isEVDODefSet());
-		setBackgroundforMyView(evdo, config.isEVDOTestOk());
-		
 		usb.setCheckBoxState(config.isUSBDefSet());
 		setBackgroundforMyView(usb, config.isUSBTestOk());
 
