@@ -26,7 +26,7 @@ public class SelfTestNewActivity extends Activity {
 	/** Called when the activity is first created. */
 
 	MyButton lcd, touch, wifi, bluetooth,usb, camera, gsensor,
-			light, speaker, mic, tfcard, hdmi, battery, keyboard, version,
+			 speaker, mic, tfcard, hdmi, battery, keyboard, version,
 			brightness;
 	Button test, close, clear, uninstall, recovery;
 	Configuration config;
@@ -41,7 +41,7 @@ public class SelfTestNewActivity extends Activity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {	
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.main);
+		setContentView(R.layout.selftest);
 		lcd = (MyButton) findViewById(R.id.lcd);
 		touch = (MyButton) findViewById(R.id.touch);
 		wifi = (MyButton) findViewById(R.id.wifi);
@@ -50,7 +50,6 @@ public class SelfTestNewActivity extends Activity {
 		usb = (MyButton) findViewById(R.id.usb);
 		camera = (MyButton) findViewById(R.id.camera);
 		gsensor = (MyButton) findViewById(R.id.gsensor);
-		light = (MyButton) findViewById(R.id.lightsensor);
 		speaker = (MyButton) findViewById(R.id.speaker);
 		mic = (MyButton) findViewById(R.id.mic);
 		tfcard = (MyButton) findViewById(R.id.tfcard);
@@ -59,7 +58,8 @@ public class SelfTestNewActivity extends Activity {
 		keyboard = (MyButton) findViewById(R.id.keyboard);
 		version = (MyButton) findViewById(R.id.version);
 		brightness = (MyButton) findViewById(R.id.brightness);
-		config = new Configuration(this);
+		boolean semifinished=getIntent().getBooleanExtra("semifinished", false);
+		config = new Configuration(this,semifinished);
 
 		test = (Button) findViewById(R.id.test);
 		close = (Button) findViewById(R.id.close);
@@ -349,7 +349,6 @@ public class SelfTestNewActivity extends Activity {
 			}
 
 		});
-		light.setOnClickListener(myOnClickLinstener);
 		speaker.setOnClickListener(myOnClickLinstener);
 		speaker.checkBox.setOnClickListener(new OnClickListener() {
 

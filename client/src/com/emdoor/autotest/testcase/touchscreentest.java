@@ -76,12 +76,16 @@ public class touchscreentest extends Activity {
 	}
 
 	class ExplosionView extends ImageView {
+		private static final String TAG = "ExplosionView";
+
 		public ExplosionView(Context context) {
 			super(context);
 		}
 
 		// handle the location of the explosion
 		public void setLocation(int top, int left) {
+			
+			Log.d(TAG,"setLocation,top="+top+",left="+left);
 			this.setFrame(left, top, left + 40, top + 40);
 		}
 	}
@@ -112,7 +116,7 @@ public class touchscreentest extends Activity {
 		if(event.getPointerCount() > points){				
 			points = event.getPointerCount();
 			tv01.setText(String.format(getString(R.string.points), points));
-			if(points == 5){
+			if(points == 2){
 				btn01.setVisibility(btn01.VISIBLE);
 				config.setTOUCHTestOk(1);
 				touchscreentest.this.finish();	

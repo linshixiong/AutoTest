@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <array name="def_server_host_list" translatable="false">
         <item>192.168.1.200</item>
         <item>192.168.1.205</item>
@@ -7,7 +8,7 @@
         <item>192.168.1.215</item>
         <item>192.168.1.220</item>
         <item>192.168.1.225</item>
-    </array>  
+    </array>
     <array name="def_server_port_list" translatable="false">
         <item>3001</item>
         <item>3002</item>
@@ -15,8 +16,42 @@
         <item>3004</item>
         <item>3005</item>
         <item>3006</item>
-    </array>  
+    </array>
+
     <string name="def_wifi_ssid">MEEP2-ATE-001</string>
     <string name="def_wifi_pwd">0123456789</string>
     <string name="def_ble_device_mac">00:17:EA:8F:08:8A</string>
+
+    <bool name="def_semifinished_self_test_lcd">true</bool>
+    <bool name="def_semifinished_self_test_touch">true</bool>
+    <bool name="def_semifinished_self_test_wifi">true</bool>
+    <bool name="def_semifinished_self_test_usb">false</bool>
+    <bool name="def_semifinished_self_test_camera">false</bool>
+    <bool name="def_semifinished_self_test_gsensor">true</bool>
+    <bool name="def_semifinished_self_test_bluetooth">true</bool>
+    <bool name="def_semifinished_self_test_speaker">true</bool>
+    <bool name="def_semifinished_self_test_mic">false</bool>
+    <bool name="def_semifinished_self_test_tfcard">true</bool>
+    <bool name="def_semifinished_self_test_hdmi">true</bool>
+    <bool name="def_semifinished_self_test_battery">true</bool>
+    <bool name="def_semifinished_self_test_keyboard">false</bool>
+    <bool name="def_semifinished_self_test_version">false</bool>
+    <bool name="def_semifinished_self_test_brightness">true</bool>
+    
+    <bool name="def_finished_self_test_lcd">true</bool>
+    <bool name="def_finished_self_test_touch">true</bool>
+    <bool name="def_finished_self_test_wifi">true</bool>
+    <bool name="def_finished_self_test_usb">true</bool>
+    <bool name="def_finished_self_test_camera">true</bool>
+    <bool name="def_finished_self_test_gsensor">true</bool>
+    <bool name="def_finished_self_test_bluetooth">true</bool>
+    <bool name="def_finished_self_test_speaker">true</bool>
+    <bool name="def_finished_self_test_mic">true</bool>
+    <bool name="def_finished_self_test_tfcard">true</bool>
+    <bool name="def_finished_self_test_hdmi">true</bool>
+    <bool name="def_finished_self_test_battery">true</bool>
+    <bool name="def_finished_self_test_keyboard">true</bool>
+    <bool name="def_finished_self_test_version">true</bool>
+    <bool name="def_finished_self_test_brightness">true</bool>
+
 </resources>
