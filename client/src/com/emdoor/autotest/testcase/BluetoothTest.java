@@ -1,9 +1,5 @@
 package com.emdoor.autotest.testcase;
 
-import java.io.FileOutputStream;
-import java.io.PrintStream;
-import java.util.Set;
-
 import com.emdoor.autotest.Configuration;
 import com.emdoor.autotest.R;
 import android.app.Activity;
@@ -14,21 +10,15 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.net.Uri;
-import android.net.wifi.WifiInfo;
-import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.provider.Settings;
-import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.content.res.Resources;
 
 
 public class BluetoothTest extends Activity implements Runnable {
@@ -55,6 +45,7 @@ public class BluetoothTest extends Activity implements Runnable {
 	
 	private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
 
+		@Override
 		public void onReceive(Context context, Intent intent) {
 			String action = intent.getAction();
 			Log.d("action" , action);
@@ -90,7 +81,7 @@ public class BluetoothTest extends Activity implements Runnable {
 		filter.addAction(BluetoothAdapter.ACTION_STATE_CHANGED);  
 		
 		
-		btCheckOk.setVisibility(btCheckOk.INVISIBLE);
+		btCheckOk.setVisibility(View.INVISIBLE);
 		
 		btCheckOk.setOnClickListener(linstener);
 		btCheckFail.setOnClickListener(linstener);
@@ -162,6 +153,7 @@ public class BluetoothTest extends Activity implements Runnable {
 		super.onDestroy();
 	}
 	
+	@Override
 	public void run() {
 		// TODO Auto-generated method stub
 		while (!Thread.currentThread().isInterrupted() && !isStop) {

@@ -30,7 +30,7 @@ public class HdmiTest extends Activity implements Runnable , SurfaceHolder.Callb
 	
 	private Configuration config;
 	
-	private MediaPlayer mp;
+	//private MediaPlayer mp;
 	
 	LinearLayout LinearLayout01 = null;
 	
@@ -70,19 +70,12 @@ public class HdmiTest extends Activity implements Runnable , SurfaceHolder.Callb
 		
 		LinearLayout01 = (LinearLayout) findViewById(R.id.hdmi);
 		
-		//LinearLayout01.setBackgroundColor(Color.RED);
-		
 		surfaceView = (SurfaceView) findViewById(R.id.surfaceView);
 		surfaceHolder = surfaceView.getHolder();
 		surfaceHolder.addCallback(this);
 		surfaceHolder.setFixedSize(700, 500);
 		surfaceHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
-		
-		
-		//startHdmiTest();
-		
-		//T1 = new Thread(this);
-		//T1.start();
+
 		
 	}
 	
@@ -126,15 +119,6 @@ public class HdmiTest extends Activity implements Runnable , SurfaceHolder.Callb
 		
 	}
 	
-	private void startHdmiTest() {
-		// TODO Auto-generated method stub
-		mp = MediaPlayer.create(this,R.raw.speeker_test);
-		mp.start();
-		mp.setLooping(true);		
-		
-		
-	}	
-	
 	@Override
 	protected void onPause() {
 		// TODO Auto-generated method stub
@@ -147,12 +131,10 @@ public class HdmiTest extends Activity implements Runnable , SurfaceHolder.Callb
 	public void finish() {
 		// TODO Auto-generated method stub
 		super.finish();
-		//if(mp.isPlaying()){
-		//	mp.stop();
-		//}
 		isStop = true;
 	}
 
+	@Override
 	public void run() {
 		while (!Thread.currentThread().isInterrupted()) {
 			if (!isStop) {
@@ -199,11 +181,13 @@ public class HdmiTest extends Activity implements Runnable , SurfaceHolder.Callb
 		mediaPlayer.setDisplay(surfaceHolder);
 		try
 		{
-			mediaPlayer.setDataSource(HdmiTest.this, Uri.parse("android.resource://com.emdoor.selftest/"+R.raw.test));			
+			mediaPlayer.setDataSource(HdmiTest.this, Uri.parse("android.resource://com.emdoor.autotest/"+R.raw.test));			
 			mediaPlayer.prepare();			
 			mediaPlayer.start();
 		}
-		catch (Exception e){}
+		catch (Exception e){
+			e.printStackTrace();
+		}
 	}
 
 	@Override

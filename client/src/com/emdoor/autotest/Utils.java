@@ -34,6 +34,10 @@ import android.view.WindowManager;
 public class Utils {
 	private static final String TAG = "Utils";
 
+	
+	
+	
+	
 	public static String getVersion(Context context) throws NameNotFoundException {
 
 		PackageManager manager = context.getPackageManager();

@@ -13,7 +13,7 @@ public class MyReceiver extends BroadcastReceiver {
 			Intent activty=new Intent();
 			activty.setClass(context, MainActivity.class);
 			activty.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-			context.startActivity(activty);
+			//context.startActivity(activty);
 			
 		}
 		

@@ -1,93 +1,105 @@
 package com.emdoor.autotest.testcase;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.InputStream;
-import java.sql.Date;
-import java.text.SimpleDateFormat;
 
+import com.emdoor.autotest.CameraView;
 import com.emdoor.autotest.Configuration;
+import com.emdoor.autotest.Messages;
 import com.emdoor.autotest.R;
 import android.app.Activity;
-import android.content.ContentResolver;
-import android.content.Intent;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.net.Uri;
+import android.hardware.Camera.CameraInfo;
 import android.os.Bundle;
-import android.os.Environment;
-import android.provider.MediaStore;
+import android.os.Handler;
+import android.os.Message;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
+import android.widget.Toast;
 
-public class CameraTest extends Activity{ 
+public class CameraTest extends Activity {
 
-		
-		ImageView imageView;  
-	    Button cameraOk;  
-	    Button cameraFail; 
-	    Button cameraBack; 
-	    LinearLayout linerClick;
-	    Configuration config;
-	    private Bitmap myBitmap;
-	    boolean isPreview = false;  	    
-	    private byte[] mContent;
-	    private String strImgPath = "";
-	    private static final int RESULT_CAPTURE_IMAGE = 1;
-	  
-	    @Override  
-	    public void onCreate(Bundle savedInstanceState) {  
-	        super.onCreate(savedInstanceState);  
-	        setContentView(R.layout.camera);  
-	          
-	        imageView = (ImageView)findViewById(R.id.photo);  
-	        cameraOk = (Button) findViewById(R.id.btncamerabok);
-	        cameraFail = (Button) findViewById(R.id.btncamerafail);
-	        cameraBack = (Button) findViewById(R.id.btncameraback);
-	        linerClick = (LinearLayout) findViewById(R.id.linerclick);
-	        
-	        linerClick.setOnClickListener(new OnClickListener() {	
-	        	
-				public void onClick(View v) {
-					// TODO Auto-generated method stub
-					StartCamera();
-				}
-			});
-			
-			config = new Configuration(this);
-			
-			cameraOk.setOnClickListener(listener);	
-			cameraFail.setOnClickListener(listener);
-			cameraBack.setOnClickListener(listener);
+	ImageView imageView;
+	Button cameraOk;
+	Button cameraFail;
+	Button cameraBack;
+	Configuration config;
 
+	boolean isPreview = false;
+
+	private int cameraType = 1;
+	private boolean isBackCamera;
+	private CameraView cameraView;
+
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.camera);
+
+		imageView = (ImageView) findViewById(R.id.photo);
+		imageView.setOnClickListener(new OnClickListener() {
 			
-	        StartCamera(); 
-	          
-	    }
-	    
+			@Override
+			public void onClick(View v) {
+				cameraView.setVisibility(View.VISIBLE);
+				imageView.setVisibility(View.GONE);
+			}
+		});
+		cameraOk = (Button) findViewById(R.id.btncamerabok);
+		cameraFail = (Button) findViewById(R.id.btncamerafail);
+		cameraBack = (Button) findViewById(R.id.btncameraback);
+		cameraView = (CameraView) findViewById(R.id.camera_view);
+
+		cameraView.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				cameraView.takePicture();
+			}
+		});
+
+		config = new Configuration(this);
+
+		cameraOk.setOnClickListener(listener);
+		cameraFail.setOnClickListener(listener);
+		cameraBack.setOnClickListener(listener);
+		cameraType = getIntent().getIntExtra("camera_type", 1);
+		isBackCamera = (cameraType == 1);
+		cameraView.setCameraType(isBackCamera ? CameraInfo.CAMERA_FACING_BACK
+				: CameraInfo.CAMERA_FACING_FRONT);
+		cameraView.setHandler(handler);
+		Toast.makeText(this, "Press the screen to take photo",
+				Toast.LENGTH_LONG).show();
+
+	}
+
 	private final Button.OnClickListener listener = new Button.OnClickListener() {
+		@Override
 		public void onClick(View args0) {
 
-			/*
-			 * FileOutputStream out; // declare a // file PrintStream p; //
-			 * declare a print
-			 * 
-			 * try { out = new FileOutputStream("/tmp/lcd01.txt"); p = new
-			 * PrintStream(out); p.println("OK"); p.close(); } catch (Exception
-			 * e) { e.printStackTrace(); }
-			 */
 			if (args0.getId() == R.id.btncamerabok) {
-				config.setCAMERATestOk(1);
+				if (isBackCamera) {
+					config.setBackCameraTestOk(1);
+				} else {
+					config.setFrontCameraTestOk(1);
+				}
 			}
 			if (args0.getId() == R.id.btncamerafail) {
-				config.setCAMERATestOk(2);
+				if (isBackCamera) {
+					config.setBackCameraTestOk(2);
+				} else {
+					config.setFrontCameraTestOk(2);
+				}
 			}
-			if (args0.getId() == R.id.btncamerafail) {
-				config.setCAMERATestOk(0);
+			if (args0.getId() == R.id.btncameraback) {
+				if (isBackCamera) {
+					config.setBackCameraTestOk(0);
+				} else {
+					config.setFrontCameraTestOk(0);
+				}
 			}
 
 			finish();
@@ -95,50 +107,49 @@ public class CameraTest extends Activity{
 		}
 	};
 
-	private void StartCamera() {
-		// TODO Auto-generated method stub
-		Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
-		startActivityForResult(intent,1);
+	@Override
+	protected void onResume() {
 
+		super.onResume();
 	}
+
 	
-	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		super.onActivityResult(requestCode, resultCode, data);
-		ContentResolver contentResolver = getContentResolver();
+	private Handler handler=new Handler(){
 
-		if (resultCode == RESULT_OK) {
-			try {
-				Bundle extras = data.getExtras();
-				myBitmap = (Bitmap) extras.get("data");
-				imageView.setImageBitmap(myBitmap);
-				//imageView.setVisibility(View.VISIBLE);
+		@Override
+		public void handleMessage(Message msg) {
+			switch (msg.what) {
+			case Messages.MSG_PHOTO_TAKEN:
+				if(msg.obj!=null){
+					byte[] data=(byte[])msg.obj;
+					Bitmap bitmap=getPicFromBytes(data,null);
+					imageView.setVisibility(View.VISIBLE);
+					cameraView.setVisibility(View.GONE);
+				
+					imageView.setImageBitmap(bitmap);
+					
+				}
+				break;
 
-			} catch (Exception e) {
-				e.printStackTrace();
+			default:
+				break;
 			}
+			super.handleMessage(msg);
 		}
+		
+		
+	};
+	
+	
+	public static Bitmap getPicFromBytes(byte[] bytes,
+			BitmapFactory.Options opts) {
+		if (bytes != null)
+			if (opts != null)
+				return BitmapFactory.decodeByteArray(bytes, 0, bytes.length,
+						opts);
+			else
+				return BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+		return null;
 	}
-	
-	public static Bitmap getPicFromBytes(byte[] bytes, BitmapFactory.Options opts) {   
-        if (bytes != null)   
-            if (opts != null)   
-                return BitmapFactory.decodeByteArray(bytes, 0, bytes.length,opts);   
-            else   
-                return BitmapFactory.decodeByteArray(bytes, 0, bytes.length);   
-        return null;   
-    }  
-	
-	 public static byte[] readStream(InputStream in) throws Exception{  
-	     byte[] buffer  =new byte[1024];  
-	     int len  =-1;  
-	     ByteArrayOutputStream outStream = new ByteArrayOutputStream();  
-	       
-	     while((len=in.read(buffer))!=-1){  
-	         outStream.write(buffer, 0, len);  
-	     }  
-	     byte[] data  =outStream.toByteArray();  
-	     outStream.close();  
-	     in.close();  
-	     return data;  
-	 } 
+
 }

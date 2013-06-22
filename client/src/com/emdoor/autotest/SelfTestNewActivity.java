@@ -17,18 +17,15 @@ import android.widget.CheckedTextView;
 import android.provider.Settings;
 import android.os.PowerManager;
 
-
-
 import com.emdoor.autotest.R;
 import com.emdoor.autotest.testcase.*;
 
 public class SelfTestNewActivity extends Activity {
 	/** Called when the activity is first created. */
 
-	MyButton lcd, touch, wifi, bluetooth,usb, camera, gsensor,
-			 speaker, mic, tfcard, hdmi, battery, keyboard, version,
-			brightness;
-	Button test, close, clear, uninstall, recovery;
+	MyButton lcd, touch, wifi, bluetooth, usb, camera, front_camera, gsensor,
+			speaker, headset, mic, ext_mic, tfcard, hdmi, battery, brightness;
+	Button test, close, clear;
 	Configuration config;
 	Intent intent;
 	String TAG = "SelfTestNewActivity";
@@ -39,7 +36,7 @@ public class SelfTestNewActivity extends Activity {
 	 * @see android.app.Activity#onCreate(android.os.Bundle)
 	 */
 	@Override
-	public void onCreate(Bundle savedInstanceState) {	
+	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.selftest);
 		lcd = (MyButton) findViewById(R.id.lcd);
@@ -49,35 +46,33 @@ public class SelfTestNewActivity extends Activity {
 
 		usb = (MyButton) findViewById(R.id.usb);
 		camera = (MyButton) findViewById(R.id.camera);
+		front_camera = (MyButton) findViewById(R.id.front_camera);
 		gsensor = (MyButton) findViewById(R.id.gsensor);
 		speaker = (MyButton) findViewById(R.id.speaker);
+		headset = (MyButton) findViewById(R.id.headset);
 		mic = (MyButton) findViewById(R.id.mic);
+		ext_mic = (MyButton) findViewById(R.id.ext_mic);
 		tfcard = (MyButton) findViewById(R.id.tfcard);
 		hdmi = (MyButton) findViewById(R.id.hdmi);
 		battery = (MyButton) findViewById(R.id.battery);
-		keyboard = (MyButton) findViewById(R.id.keyboard);
-		version = (MyButton) findViewById(R.id.version);
 		brightness = (MyButton) findViewById(R.id.brightness);
-		boolean semifinished=getIntent().getBooleanExtra("semifinished", false);
-		config = new Configuration(this,semifinished);
+		boolean semifinished = getIntent().getBooleanExtra("semifinished",
+				false);
+		config = new Configuration(this, semifinished);
 
 		test = (Button) findViewById(R.id.test);
 		close = (Button) findViewById(R.id.close);
 		clear = (Button) findViewById(R.id.clear);
-		uninstall = (Button) findViewById(R.id.uninstall);
-		recovery = (Button) findViewById(R.id.recovery);
 		test.setOnClickListener(buttonClick);
 		close.setOnClickListener(buttonClick);
 		clear.setOnClickListener(buttonClick);
-		uninstall.setOnClickListener(buttonClick);
-		recovery.setOnClickListener(buttonClick);
 
 		refuseView();
 
 		setClick();
-		
-		Settings.System.putInt(this.getContentResolver(), "hdmi_auto_switch",
-                    1);
+
+		Settings.System
+				.putInt(this.getContentResolver(), "hdmi_auto_switch", 1);
 
 	}
 
@@ -96,12 +91,6 @@ public class SelfTestNewActivity extends Activity {
 			case R.id.clear:
 				clearData();
 				break;
-			case R.id.uninstall:
-				uninstallMySelf();
-				break;
-			case R.id.recovery:
-				startRecoveryMode();
-				break;
 			default:
 				break;
 			}
@@ -110,14 +99,16 @@ public class SelfTestNewActivity extends Activity {
 
 		private void startRecoveryMode() {
 			// TODO Auto-generated method stub
-			AlertDialog.Builder builder = new AlertDialog.Builder(SelfTestNewActivity.this);
+			AlertDialog.Builder builder = new AlertDialog.Builder(
+					SelfTestNewActivity.this);
 			builder.setTitle("reboot for recovery mode");
 			builder.setMessage("Are you sure you want to reboot for recovery mode?");
 			builder.setPositiveButton("YES",
 					new DialogInterface.OnClickListener() {
 						@Override
-						public void onClick(DialogInterface dialog, int which) {							
-							PowerManager pm = (PowerManager) SelfTestNewActivity.this.getSystemService(Context.POWER_SERVICE);
+						public void onClick(DialogInterface dialog, int which) {
+							PowerManager pm = (PowerManager) SelfTestNewActivity.this
+									.getSystemService(Context.POWER_SERVICE);
 							pm.reboot("recovery");
 						}
 					});
@@ -130,12 +121,13 @@ public class SelfTestNewActivity extends Activity {
 						}
 					});
 			builder.create().show();
-			
+
 		}
 
 		private void uninstallMySelf() {
 			// TODO Auto-generated method stub
-			AlertDialog.Builder builder = new AlertDialog.Builder(SelfTestNewActivity.this);
+			AlertDialog.Builder builder = new AlertDialog.Builder(
+					SelfTestNewActivity.this);
 			builder.setTitle("Uninstall");
 			builder.setMessage("Are you sure you want to uninstall?");
 			builder.setPositiveButton("YES",
@@ -143,9 +135,11 @@ public class SelfTestNewActivity extends Activity {
 
 						@Override
 						public void onClick(DialogInterface dialog, int which) {
-							Uri packageURI = Uri.parse("package:com.emdoor.selftest"); 
-							Intent uninstallIntent = new Intent(Intent.ACTION_DELETE, packageURI); 
-							startActivity(uninstallIntent); 
+							Uri packageURI = Uri
+									.parse("package:com.emdoor.selftest");
+							Intent uninstallIntent = new Intent(
+									Intent.ACTION_DELETE, packageURI);
+							startActivity(uninstallIntent);
 
 						}
 					});
@@ -158,12 +152,13 @@ public class SelfTestNewActivity extends Activity {
 						}
 					});
 			builder.create().show();
-			
+
 		}
 
 		private void clearData() {
 			// TODO Auto-generated method stub
-			AlertDialog.Builder builder = new AlertDialog.Builder(SelfTestNewActivity.this);
+			AlertDialog.Builder builder = new AlertDialog.Builder(
+					SelfTestNewActivity.this);
 			builder.setTitle("Clear the data");
 			builder.setMessage("Are you sure you want to clear?");
 			builder.setPositiveButton("YES",
@@ -185,12 +180,13 @@ public class SelfTestNewActivity extends Activity {
 						}
 					});
 			builder.create().show();
-			
+
 		}
 
 		private void stopTheView() {
 			// TODO Auto-generated method stub
-			AlertDialog.Builder builder = new AlertDialog.Builder(SelfTestNewActivity.this);
+			AlertDialog.Builder builder = new AlertDialog.Builder(
+					SelfTestNewActivity.this);
 			builder.setTitle("EXIT");
 			builder.setMessage("Are you sure you want to exit?");
 			builder.setPositiveButton("YES",
@@ -215,54 +211,61 @@ public class SelfTestNewActivity extends Activity {
 		}
 
 		private void startSelftest() {
-			// TODO Auto-generated method stub
-			
-			if (config.isBRIGHTNESSDefSet()) {
+
+			if (brightness.isCheck) {
 				testForBRIGHTNESS();
 			}
-			if (config.isVERSIONDefSet()) {
-				testForVERSION();
-			}
-			if (config.isKEYBOARDDefSet()) {
-				testForKEYBOARD();
-			}
-			if (config.isBATTERYDefSet()) {
+			if (battery.isCheck) {
 				testForBATTERY();
-			}			
-			if (config.isTFCARDDefSet()) {
+			}
+			if (hdmi.isCheck) {
+				testForHDMI();
+			}
+			if (tfcard.isCheck) {
 				testForSDCARD();
 			}
-			if (config.isSPEAKERDefSet()) {
+
+			if (ext_mic.isCheck) {
+				testForExtMIC();
+			}
+
+			if (mic.isCheck) {
+				testForMIC();
+			}
+
+			if (headset.isCheck) {
+				testForHeadset();
+			}
+
+			if (speaker.isCheck) {
 				testForSPEAKER();
 			}
-			if (config.isGSENSORDefSet()) {
+			if (gsensor.isCheck) {
 				testForGSENSOR();
 			}
-			if (config.isCAMERADefSet()) {
-				testForCAMERA();
+			if (camera.isCheck) {
+				testForCAMERA(1);
 			}
-			if (config.isUSBDefSet()) {
+			if (front_camera.isCheck) {
+				testForCAMERA(2);
+			}
+
+			if (usb.isCheck) {
 				testForUSB();
 			}
-			if (config.isEVDODefSet()) {
-				testForEVDO();
-			}
-			if (config.isGPSDefSet()) {
-				testForGPS();
-			}
-			if (config.isBLUETOOTHDefSet()) {
+
+			if (bluetooth.isCheck) {
 				testForBLUETOOTH();
-			}			
-			if (config.isWIFIDefSet()) {
+			}
+			if (wifi.isCheck) {
 				testForWIFI();
-			}	
-			if (config.isTOUCHDefSet()) {
+			}
+			if (touch.isCheck) {
 				testForTOUCH();
 			}
-			if (config.isLCDDefSet()) {
+			if (lcd.isCheck) {
 				testForLCD();
 			}
-			
 
 		}
 
@@ -274,6 +277,7 @@ public class SelfTestNewActivity extends Activity {
 		super.onResume();
 		Log.d(TAG, "STATE=" + config.isLCDTestOk());
 		refuseView();
+		config.saveResultFile();
 	}
 
 	private void setClick() {
@@ -318,7 +322,7 @@ public class SelfTestNewActivity extends Activity {
 			}
 
 		});
-		
+
 		usb.setOnClickListener(myOnClickLinstener);
 		usb.checkBox.setOnClickListener(new OnClickListener() {
 
@@ -335,10 +339,22 @@ public class SelfTestNewActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 				camera.setOnClickCheckBoxState(v);
-				config.setCAMERADef(camera.isCheck);
+				config.setBackCameraDef(camera.isCheck);
 			}
 
 		});
+
+		front_camera.setOnClickListener(myOnClickLinstener);
+		front_camera.checkBox.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				front_camera.setOnClickCheckBoxState(v);
+				config.setFrontCameraDef(front_camera.isCheck);
+			}
+
+		});
+
 		gsensor.setOnClickListener(myOnClickLinstener);
 		gsensor.checkBox.setOnClickListener(new OnClickListener() {
 
@@ -359,6 +375,18 @@ public class SelfTestNewActivity extends Activity {
 			}
 
 		});
+
+		headset.setOnClickListener(myOnClickLinstener);
+		headset.checkBox.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				headset.setOnClickCheckBoxState(v);
+				config.setHeadsetDef(headset.isCheck);
+			}
+
+		});
+
 		mic.setOnClickListener(myOnClickLinstener);
 		mic.checkBox.setOnClickListener(new OnClickListener() {
 
@@ -369,6 +397,18 @@ public class SelfTestNewActivity extends Activity {
 			}
 
 		});
+
+		ext_mic.setOnClickListener(myOnClickLinstener);
+		ext_mic.checkBox.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				ext_mic.setOnClickCheckBoxState(v);
+				config.setExtMICDef(ext_mic.isCheck);
+			}
+
+		});
+
 		tfcard.setOnClickListener(myOnClickLinstener);
 		tfcard.checkBox.setOnClickListener(new OnClickListener() {
 
@@ -396,26 +436,6 @@ public class SelfTestNewActivity extends Activity {
 			public void onClick(View v) {
 				battery.setOnClickCheckBoxState(v);
 				config.setBATTERYDef(battery.isCheck);
-			}
-
-		});
-		keyboard.setOnClickListener(myOnClickLinstener);
-		keyboard.checkBox.setOnClickListener(new OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				keyboard.setOnClickCheckBoxState(v);
-				config.setKEYBOARDDef(keyboard.isCheck);
-			}
-
-		});
-		version.setOnClickListener(myOnClickLinstener);
-		version.checkBox.setOnClickListener(new OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				version.setOnClickCheckBoxState(v);
-				config.setVERSIONDef(version.isCheck);
 			}
 
 		});
@@ -453,14 +473,11 @@ public class SelfTestNewActivity extends Activity {
 			case R.id.battery:
 				testForBATTERY();
 				break;
-			case R.id.keyboard:
-				testForKEYBOARD();
-				break;
-			case R.id.version:
-				testForVERSION();
-				break;
 			case R.id.camera:
-				testForCAMERA();
+				testForCAMERA(1);
+				break;
+			case R.id.front_camera:
+				testForCAMERA(2);
 				break;
 			case R.id.usb:
 				testForUSB();
@@ -476,9 +493,15 @@ public class SelfTestNewActivity extends Activity {
 				break;
 			case R.id.speaker:
 				testForSPEAKER();
-				break;				
+				break;
+			case R.id.headset:
+				testForHeadset();
+				break;
 			case R.id.mic:
 				testForMIC();
+				break;
+			case R.id.ext_mic:
+				testForExtMIC();
 				break;
 			case R.id.hdmi:
 				testForHDMI();
@@ -494,7 +517,7 @@ public class SelfTestNewActivity extends Activity {
 	}
 
 	private void testForTOUCH() {
-		intent = new Intent(SelfTestNewActivity.this, touchscreentest.class);
+		intent = new Intent(SelfTestNewActivity.this, TouchTestNew.class);
 		startActivity(intent);
 	}
 
@@ -508,8 +531,9 @@ public class SelfTestNewActivity extends Activity {
 		startActivity(intent);
 	}
 
-	private void testForCAMERA() {
+	private void testForCAMERA(int cameraType) {
 		intent = new Intent(SelfTestNewActivity.this, CameraTest.class);
+		intent.putExtra("camera_type", cameraType);
 		startActivity(intent);
 	}
 
@@ -524,12 +548,19 @@ public class SelfTestNewActivity extends Activity {
 	}
 
 	private void testForSDCARD() {
-		intent = new Intent(SelfTestNewActivity.this, Sdcard.class);
+		intent = new Intent(SelfTestNewActivity.this, MrioUsbTest.class);
+		intent.putExtra("isTFCard", true);
 		startActivity(intent);
 	}
 
 	private void testForSPEAKER() {
-		intent = new Intent(SelfTestNewActivity.this, Speeker.class);
+		intent = new Intent(SelfTestNewActivity.this, Speaker.class);
+		startActivity(intent);
+	}
+
+	private void testForHeadset() {
+		intent = new Intent(SelfTestNewActivity.this, Speaker.class);
+		intent.putExtra("isHeadset", true);
 		startActivity(intent);
 	}
 
@@ -552,23 +583,29 @@ public class SelfTestNewActivity extends Activity {
 		intent = new Intent(SelfTestNewActivity.this, KeyboardTest.class);
 		startActivity(intent);
 	}
-	
+
 	private void testForMIC() {
 		intent = new Intent(SelfTestNewActivity.this, SoundRecorder.class);
 		startActivity(intent);
 	}
-	
-	private void testForHDMI(){
+
+	private void testForExtMIC() {
+		intent = new Intent(SelfTestNewActivity.this, SoundRecorder.class);
+		intent.putExtra("ext_mic", true);
+		startActivity(intent);
+	}
+
+	private void testForHDMI() {
 		intent = new Intent(SelfTestNewActivity.this, HdmiTest.class);
 		startActivity(intent);
 	}
-	
-	private void testForGPS(){
+
+	private void testForGPS() {
 		intent = new Intent(SelfTestNewActivity.this, GpsTest.class);
 		startActivity(intent);
 	}
-	
-	private void testForEVDO(){
+
+	private void testForEVDO() {
 		intent = new Intent(SelfTestNewActivity.this, ThreeGTest.class);
 		startActivity(intent);
 	}
@@ -590,8 +627,11 @@ public class SelfTestNewActivity extends Activity {
 		usb.setCheckBoxState(config.isUSBDefSet());
 		setBackgroundforMyView(usb, config.isUSBTestOk());
 
-		camera.setCheckBoxState(config.isCAMERADefSet());
-		setBackgroundforMyView(camera, config.isCAMERATestOk());
+		camera.setCheckBoxState(config.isBackCameraDefSet());
+		setBackgroundforMyView(camera, config.isBackCameraTestOk());
+
+		front_camera.setCheckBoxState(config.isFrontCameraDefSet());
+		setBackgroundforMyView(front_camera, config.isFrontCameraTestOk());
 
 		gsensor.setCheckBoxState(config.isGSENSORDefSet());
 		setBackgroundforMyView(gsensor, config.isGSENSORTestOk());
@@ -599,8 +639,14 @@ public class SelfTestNewActivity extends Activity {
 		speaker.setCheckBoxState(config.isSPEAKERDefSet());
 		setBackgroundforMyView(speaker, config.isSPEAKERTestOk());
 
+		headset.setCheckBoxState(config.isHeadsetDefSet());
+		setBackgroundforMyView(headset, config.isHeadsetTestOk());
+
 		mic.setCheckBoxState(config.isMICDefSet());
 		setBackgroundforMyView(mic, config.isMICTestOk());
+
+		ext_mic.setCheckBoxState(config.isExtMICDefSet());
+		setBackgroundforMyView(ext_mic, config.isExtMICTestOk());
 
 		tfcard.setCheckBoxState(config.isTFCARDDefSet());
 		setBackgroundforMyView(tfcard, config.isTFCARDTestOk());
@@ -610,12 +656,6 @@ public class SelfTestNewActivity extends Activity {
 
 		battery.setCheckBoxState(config.isBATTERYDefSet());
 		setBackgroundforMyView(battery, config.isBATTERYTestOk());
-
-		keyboard.setCheckBoxState(config.isKEYBOARDDefSet());
-		setBackgroundforMyView(keyboard, config.isKEYBOARDTestOk());
-
-		version.setCheckBoxState(config.isVERSIONDefSet());
-		setBackgroundforMyView(version, config.isVERSIONTestOk());
 
 		brightness.setCheckBoxState(config.isBRIGHTNESSDefSet());
 		setBackgroundforMyView(brightness, config.isBRIGHTNESSTestOk());

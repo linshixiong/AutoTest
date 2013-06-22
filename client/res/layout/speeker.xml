@@ -5,7 +5,7 @@
     android:orientation="vertical" >
 
     <TextView
-        android:id="@+id/TextView_sdcard_01"
+        android:id="@+id/TextView_speaker_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/speeker_title" 

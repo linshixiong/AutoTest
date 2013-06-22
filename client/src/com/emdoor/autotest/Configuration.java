@@ -1,7 +1,14 @@
 package com.emdoor.autotest;
 
+import java.io.File;
+import java.io.StringWriter;
+
+import org.xmlpull.v1.XmlSerializer;
+
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Environment;
+import android.util.Xml;
 
 public class Configuration {
 	private SharedPreferences settings;
@@ -22,16 +29,23 @@ public class Configuration {
 	private static final String KEY_EVDO_DEF = "evdo_def";
 	private static final String KEY_USB_STATE = "usb";
 	private static final String KEY_USB_DEF = "usb_def";
-	private static final String KEY_CAMERA_STATE = "camera";
-	private static final String KEY_CAMERA_DEF = "camera_def";
+	private static final String KEY_BACK_CAMERA_STATE = "back_camera";
+	private static final String KEY_BACK_CAMERA_DEF = "back_camera_def";
+	private static final String KEY_FRONT_CAMERA_STATE = "front_camera";
+	private static final String KEY_FRONT_CAMERA_DEF = "front_camera_def";
+
 	private static final String KEY_GSENSOR_STATE = "gsensor";
 	private static final String KEY_GSENSOR_DEF = "gsensor_def";
 	private static final String KEY_LIGHT_STATE = "lightsensor";
 	private static final String KEY_LIGHT_DEF = "light_def";
 	private static final String KEY_SPEAKER_STATE = "speaker";
 	private static final String KEY_SPEAKER_DEF = "speaker_def";
+	private static final String KEY_HEADSET_STATE = "headset";
+	private static final String KEY_HEADSET_DEF = "headset_def";
 	private static final String KEY_MIC_STATE = "mic";
 	private static final String KEY_MIC_DEF = "mic_def";
+	private static final String KEY_EXT_MIC_STATE = "ext_mic";
+	private static final String KEY_EXT_MIC_DEF = "ext_mic_def";
 	private static final String KEY_TFCARD_STATE = "tfcard";
 	private static final String KEY_TFCARD_DEF = "tfcard_def";
 	private static final String KEY_HDMI_STATE = "hdmi";
@@ -44,6 +58,9 @@ public class Configuration {
 	private static final String KEY_VERSION_DEF = "version_def";
 	private static final String KEY_BRIGHTNESS_STATE = "brightness";
 	private static final String KEY_BRIGHTNESS_DEF = "brightness_def";
+
+	private static final File FILE_RESULT=new File("/sdcard/self_test/self_test_result.xml");
+	// private static final String KEY_CAMERA_STATE = null;
 
 	public Configuration(Context context, boolean semifinished) {
 		this.mContext = context;
@@ -60,6 +77,108 @@ public class Configuration {
 		editor = settings.edit();
 	}
 
+	public void saveResultFile() {
+		createXmlFile(FILE_RESULT);
+	}
+
+	private void createXmlFile(File file) {
+		XmlSerializer serializer = Xml.newSerializer();
+		StringWriter writer = new StringWriter();
+		try {
+			serializer.setOutput(writer);
+			serializer.startDocument("utf-8", null);
+
+			serializer.startTag("", "Results");
+
+			serializer.startTag("", "item");
+			serializer.attribute("", "name", "lcd");
+			serializer.attribute("", "result",String.valueOf(isLCDTestOk()));
+			serializer.endTag("", "item");
+			
+			serializer.startTag("", "item");
+			serializer.attribute("", "name", "touch");
+			serializer.attribute("", "result",String.valueOf(isTOUCHTestOk()));
+			serializer.endTag("", "item");
+			
+			serializer.startTag("", "item");
+			serializer.attribute("", "name", "wifi");
+			serializer.attribute("", "result",String.valueOf(isWIFITestOk()));
+			serializer.endTag("", "item");
+			
+			serializer.startTag("", "item");
+			serializer.attribute("", "name", "bluetooth");
+			serializer.attribute("", "result",String.valueOf(isBLUETOOTHTestOk()));
+			serializer.endTag("", "item");
+			
+			serializer.startTag("", "item");
+			serializer.attribute("", "name", "usb_storage");
+			serializer.attribute("", "result",String.valueOf(isUSBTestOk()));
+			serializer.endTag("", "item");
+			
+			serializer.startTag("", "item");
+			serializer.attribute("", "name", "front_camera");
+			serializer.attribute("", "result",String.valueOf(isFrontCameraTestOk()));
+			serializer.endTag("", "item");
+			
+			serializer.startTag("", "item");
+			serializer.attribute("", "name", "back_camera");
+			serializer.attribute("", "result",String.valueOf(isBackCameraTestOk()));
+			serializer.endTag("", "item");
+			
+			serializer.startTag("", "item");
+			serializer.attribute("", "name", "gsensor");
+			serializer.attribute("", "result",String.valueOf(isGSENSORTestOk()));
+			serializer.endTag("", "item");
+			
+			serializer.startTag("", "item");
+			serializer.attribute("", "name", "speaker");
+			serializer.attribute("", "result",String.valueOf(isSPEAKERTestOk()));
+			serializer.endTag("", "item");
+			
+			serializer.startTag("", "item");
+			serializer.attribute("", "name", "headset");
+			serializer.attribute("", "result",String.valueOf(isHeadsetTestOk()));
+			serializer.endTag("", "item");
+			
+			serializer.startTag("", "item");
+			serializer.attribute("", "name", "onboard_mic");
+			serializer.attribute("", "result",String.valueOf(isMICTestOk()));
+			serializer.endTag("", "item");
+			
+			serializer.startTag("", "item");
+			serializer.attribute("", "name", "external_mic");
+			serializer.attribute("", "result",String.valueOf(isExtMICTestOk()));
+			serializer.endTag("", "item");
+			
+			serializer.startTag("", "item");
+			serializer.attribute("", "name", "tfcard");
+			serializer.attribute("", "result",String.valueOf(isTFCARDTestOk()));
+			serializer.endTag("", "item");
+			
+			serializer.startTag("", "item");
+			serializer.attribute("", "name", "hdmi");
+			serializer.attribute("", "result",String.valueOf(isHDMITestOk()));
+			serializer.endTag("", "item");
+			
+			
+			serializer.startTag("", "item");
+			serializer.attribute("", "name", "charging");
+			serializer.attribute("", "result",String.valueOf(isBATTERYTestOk()));
+			serializer.endTag("", "item");
+			
+			serializer.startTag("", "item");
+			serializer.attribute("", "name", "brightness");
+			serializer.attribute("", "result",String.valueOf(isBRIGHTNESSTestOk()));
+			serializer.endTag("", "item");
+			
+			serializer.endTag("", "Results");
+			serializer.endDocument();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		Utils.writeTextToFile(file, writer.toString());
+	}
+
 	public int isLCDTestOk() {
 		return settings.getInt(KEY_LCD_STATE, 0);
 	}
@@ -72,8 +191,7 @@ public class Configuration {
 	public Boolean isLCDDefSet() {
 		return semifinished ? mContext.getResources().getBoolean(
 				R.bool.def_semifinished_self_test_lcd) : mContext
-				.getResources().getBoolean(
-						R.bool.def_finished_self_test_lcd);
+				.getResources().getBoolean(R.bool.def_finished_self_test_lcd);
 		// settings.getBoolean(KEY_LCD_DEF,true);
 	}
 
@@ -94,9 +212,8 @@ public class Configuration {
 	public Boolean isTOUCHDefSet() {
 		return semifinished ? mContext.getResources().getBoolean(
 				R.bool.def_semifinished_self_test_touch) : mContext
-				.getResources().getBoolean(
-						R.bool.def_finished_self_test_touch);
-		//return settings.getBoolean(KEY_TOUCH_DEF, true);
+				.getResources().getBoolean(R.bool.def_finished_self_test_touch);
+		// return settings.getBoolean(KEY_TOUCH_DEF, true);
 	}
 
 	public void setTOUCHDef(Boolean enable) {
@@ -116,9 +233,8 @@ public class Configuration {
 	public Boolean isWIFIDefSet() {
 		return semifinished ? mContext.getResources().getBoolean(
 				R.bool.def_semifinished_self_test_wifi) : mContext
-				.getResources().getBoolean(
-						R.bool.def_finished_self_test_wifi);
-		//return settings.getBoolean(KEY_WIFI_DEF, true);
+				.getResources().getBoolean(R.bool.def_finished_self_test_wifi);
+		// return settings.getBoolean(KEY_WIFI_DEF, true);
 	}
 
 	public void setWIFIDef(Boolean enable) {
@@ -140,7 +256,7 @@ public class Configuration {
 				R.bool.def_semifinished_self_test_bluetooth) : mContext
 				.getResources().getBoolean(
 						R.bool.def_finished_self_test_bluetooth);
-		//return settings.getBoolean(KEY_BLUETOOTH_DEF, false);
+		// return settings.getBoolean(KEY_BLUETOOTH_DEF, false);
 	}
 
 	public void setBLUETOOTHDef(Boolean enable) {
@@ -196,9 +312,8 @@ public class Configuration {
 	public Boolean isUSBDefSet() {
 		return semifinished ? mContext.getResources().getBoolean(
 				R.bool.def_semifinished_self_test_usb) : mContext
-				.getResources().getBoolean(
-						R.bool.def_finished_self_test_usb);
-		//return settings.getBoolean(KEY_USB_DEF, false);
+				.getResources().getBoolean(R.bool.def_finished_self_test_usb);
+		// return settings.getBoolean(KEY_USB_DEF, false);
 	}
 
 	public void setUSBDef(Boolean enable) {
@@ -206,25 +321,47 @@ public class Configuration {
 		editor.commit();
 	}
 
-	public int isCAMERATestOk() {
-		return settings.getInt(KEY_CAMERA_STATE, 0);
+	public int isBackCameraTestOk() {
+		return settings.getInt(KEY_BACK_CAMERA_STATE, 0);
 	}
 
-	public void setCAMERATestOk(int enable) {
-		editor.putInt(KEY_CAMERA_STATE, enable);
+	public void setBackCameraTestOk(int enable) {
+		editor.putInt(KEY_BACK_CAMERA_STATE, enable);
 		editor.commit();
 	}
 
-	public Boolean isCAMERADefSet() {
+	public Boolean isBackCameraDefSet() {
 		return semifinished ? mContext.getResources().getBoolean(
-				R.bool.def_semifinished_self_test_camera) : mContext
+				R.bool.def_semifinished_self_test_back_camera) : mContext
 				.getResources().getBoolean(
-						R.bool.def_finished_self_test_camera);
-		//return settings.getBoolean(KEY_CAMERA_DEF, false);
+						R.bool.def_finished_self_test_back_camera);
+		// return settings.getBoolean(KEY_CAMERA_DEF, false);
 	}
 
-	public void setCAMERADef(Boolean enable) {
-		editor.putBoolean(KEY_CAMERA_DEF, enable);
+	public void setBackCameraDef(Boolean enable) {
+		editor.putBoolean(KEY_BACK_CAMERA_DEF, enable);
+		editor.commit();
+	}
+
+	public int isFrontCameraTestOk() {
+		return settings.getInt(KEY_FRONT_CAMERA_STATE, 0);
+	}
+
+	public void setFrontCameraTestOk(int enable) {
+		editor.putInt(KEY_FRONT_CAMERA_STATE, enable);
+		editor.commit();
+	}
+
+	public Boolean isFrontCameraDefSet() {
+		return semifinished ? mContext.getResources().getBoolean(
+				R.bool.def_semifinished_self_test_front_camera) : mContext
+				.getResources().getBoolean(
+						R.bool.def_finished_self_test_front_camera);
+		// return settings.getBoolean(KEY_CAMERA_DEF, false);
+	}
+
+	public void setFrontCameraDef(Boolean enable) {
+		editor.putBoolean(KEY_FRONT_CAMERA_DEF, enable);
 		editor.commit();
 	}
 
@@ -239,10 +376,10 @@ public class Configuration {
 
 	public Boolean isGSENSORDefSet() {
 		return semifinished ? mContext.getResources().getBoolean(
-				R.bool.def_semifinished_self_test_camera) : mContext
+				R.bool.def_semifinished_self_test_gsensor) : mContext
 				.getResources().getBoolean(
-						R.bool.def_finished_self_test_camera);
-		//return settings.getBoolean(KEY_GSENSOR_DEF, true);
+						R.bool.def_finished_self_test_gsensor);
+		// return settings.getBoolean(KEY_GSENSOR_DEF, true);
 	}
 
 	public void setGSENSORDef(Boolean enable) {
@@ -282,11 +419,33 @@ public class Configuration {
 				R.bool.def_semifinished_self_test_speaker) : mContext
 				.getResources().getBoolean(
 						R.bool.def_finished_self_test_speaker);
-		//return settings.getBoolean(KEY_SPEAKER_DEF, true);
+		// return settings.getBoolean(KEY_SPEAKER_DEF, true);
 	}
 
 	public void setSPEAKERDef(Boolean enable) {
 		editor.putBoolean(KEY_SPEAKER_DEF, enable);
+		editor.commit();
+	}
+
+	public int isHeadsetTestOk() {
+		return settings.getInt(KEY_HEADSET_STATE, 0);
+	}
+
+	public void setHeadsetTestOk(int enable) {
+		editor.putInt(KEY_HEADSET_STATE, enable);
+		editor.commit();
+	}
+
+	public Boolean isHeadsetDefSet() {
+		return semifinished ? mContext.getResources().getBoolean(
+				R.bool.def_finished_self_test_headset) : mContext
+				.getResources().getBoolean(
+						R.bool.def_finished_self_test_headset);
+		// return settings.getBoolean(KEY_SPEAKER_DEF, true);
+	}
+
+	public void setHeadsetDef(Boolean enable) {
+		editor.putBoolean(KEY_HEADSET_DEF, enable);
 		editor.commit();
 	}
 
@@ -302,13 +461,34 @@ public class Configuration {
 	public Boolean isMICDefSet() {
 		return semifinished ? mContext.getResources().getBoolean(
 				R.bool.def_semifinished_self_test_mic) : mContext
-				.getResources().getBoolean(
-						R.bool.def_finished_self_test_mic);
-		//return settings.getBoolean(KEY_MIC_DEF, true);
+				.getResources().getBoolean(R.bool.def_finished_self_test_mic);
+		// return settings.getBoolean(KEY_MIC_DEF, true);
 	}
 
 	public void setMICDef(Boolean enable) {
 		editor.putBoolean(KEY_MIC_DEF, enable);
+		editor.commit();
+	}
+
+	public int isExtMICTestOk() {
+		return settings.getInt(KEY_EXT_MIC_STATE, 0);
+	}
+
+	public void setExtMICTestOk(int enable) {
+		editor.putInt(KEY_EXT_MIC_STATE, enable);
+		editor.commit();
+	}
+
+	public Boolean isExtMICDefSet() {
+		return semifinished ? mContext.getResources().getBoolean(
+				R.bool.def_semifinished_self_test_ext_mic) : mContext
+				.getResources().getBoolean(
+						R.bool.def_finished_self_test_ext_mic);
+		// return settings.getBoolean(KEY_MIC_DEF, true);
+	}
+
+	public void setExtMICDef(Boolean enable) {
+		editor.putBoolean(KEY_EXT_MIC_DEF, enable);
 		editor.commit();
 	}
 
@@ -324,9 +504,9 @@ public class Configuration {
 	public Boolean isTFCARDDefSet() {
 		return semifinished ? mContext.getResources().getBoolean(
 				R.bool.def_semifinished_self_test_tfcard) : mContext
-				.getResources().getBoolean(
-						R.bool.def_finished_self_test_tfcard);
-		//return settings.getBoolean(KEY_TFCARD_DEF, true);
+				.getResources()
+				.getBoolean(R.bool.def_finished_self_test_tfcard);
+		// return settings.getBoolean(KEY_TFCARD_DEF, true);
 	}
 
 	public void setTFCARDDef(Boolean enable) {
@@ -346,9 +526,8 @@ public class Configuration {
 	public Boolean isHDMIDefSet() {
 		return semifinished ? mContext.getResources().getBoolean(
 				R.bool.def_semifinished_self_test_hdmi) : mContext
-				.getResources().getBoolean(
-						R.bool.def_finished_self_test_hdmi);
-		//return settings.getBoolean(KEY_HDMI_DEF, false);
+				.getResources().getBoolean(R.bool.def_finished_self_test_hdmi);
+		// return settings.getBoolean(KEY_HDMI_DEF, false);
 	}
 
 	public void setHDMIDef(Boolean enable) {
@@ -370,7 +549,7 @@ public class Configuration {
 				R.bool.def_semifinished_self_test_battery) : mContext
 				.getResources().getBoolean(
 						R.bool.def_finished_self_test_battery);
-		//return settings.getBoolean(KEY_BATTERY_DEF, false);
+		// return settings.getBoolean(KEY_BATTERY_DEF, false);
 	}
 
 	public void setBATTERYDef(Boolean enable) {
@@ -392,7 +571,7 @@ public class Configuration {
 				R.bool.def_semifinished_self_test_keyboard) : mContext
 				.getResources().getBoolean(
 						R.bool.def_finished_self_test_keyboard);
-		//return settings.getBoolean(KEY_KEYBOARD_DEF, true);
+		// return settings.getBoolean(KEY_KEYBOARD_DEF, true);
 	}
 
 	public void setKEYBOARDDef(Boolean enable) {
@@ -414,7 +593,7 @@ public class Configuration {
 				R.bool.def_semifinished_self_test_version) : mContext
 				.getResources().getBoolean(
 						R.bool.def_finished_self_test_version);
-		//return settings.getBoolean(KEY_VERSION_DEF, false);
+		// return settings.getBoolean(KEY_VERSION_DEF, false);
 	}
 
 	public void setVERSIONDef(Boolean enable) {
@@ -436,7 +615,7 @@ public class Configuration {
 				R.bool.def_semifinished_self_test_brightness) : mContext
 				.getResources().getBoolean(
 						R.bool.def_finished_self_test_brightness);
-		//return settings.getBoolean(KEY_BRIGHTNESS_DEF, false);
+		// return settings.getBoolean(KEY_BRIGHTNESS_DEF, false);
 	}
 
 	public void setBRIGHTNESSDef(Boolean enable) {

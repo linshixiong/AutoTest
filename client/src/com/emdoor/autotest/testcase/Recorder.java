@@ -57,7 +57,7 @@ public class Recorder implements OnCompletionListener, OnErrorListener {
     
     MediaRecorder mRecorder = null;
     MediaPlayer mPlayer = null;
-    
+
     public Recorder() {
     }
     
@@ -147,7 +147,11 @@ public class Recorder implements OnCompletionListener, OnErrorListener {
         stop();
         
         if (mSampleFile == null) {
-            File sampleDir = Environment.getExternalStorageDirectory();
+            File sampleDir =new File( Environment.getExternalStorageDirectory(),"self_test");
+            if(!sampleDir.exists()){
+            	sampleDir.mkdir();
+            }
+            
             if (!sampleDir.canWrite()) // Workaround for broken sdcard support on the device.
                 sampleDir = new File("/sdcard/sdcard");
             

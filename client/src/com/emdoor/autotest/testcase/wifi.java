@@ -151,7 +151,7 @@ public class wifi extends Activity implements Runnable {
 				
 				Log.d("wifi" , "isconnect" + wifiUtil.isWifiConnect());
 
-				if (wifiUtil.isWifiConnect()) {									
+				if (wifiUtil.getWifiList()!=null&&wifiUtil.getWifiList().size()>0) {									
 					Message msg_listData = new Message();
 					msg_listData.what = MESSAGETYPE_02;
 					handler.sendMessage(msg_listData);

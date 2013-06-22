@@ -46,7 +46,7 @@ public class DeviceManager{
 		/* 获取总设备列表 */
 		totalDevicesList = new ArrayList<String>();
 		String[] volumeList;
-		manager = (StorageManager)mContext.getSystemService(Context.STORAGE_SERVICE);
+		//manager = (StorageManager)mContext.getSystemService(Context.STORAGE_SERVICE);
 		mStorageListHelper=new StorageListHelper(mContext);
 		volumeList = mStorageListHelper.getVolumePaths();
 		for(int i = 0; i < volumeList.length; i ++)
@@ -162,6 +162,29 @@ public class DeviceManager{
 		{
 			return true;
 		}
+		return false;
+	}
+	
+	public boolean isUSBStorageMounted(){
+		try 
+		{
+	        for(int i = 0; i < totalDevicesList.size(); i++)
+	        {
+	        	String state = mStorageListHelper.getVolumeState(totalDevicesList.get(i));
+	           	if(state.equals(Environment.MEDIA_MOUNTED))
+	           	{
+	           		String path=totalDevicesList.get(i);
+	           		Log.d(TAG,"totalDevicesList.get("+i+")="+path);
+	           		if(path!=null&&path.contains("/storage/external_storage/sda")){
+	           			return true;
+	           		}
+	           		
+	           	}
+	        }
+	    } catch (Exception rex) 
+	    {
+	    }
+	   
 		return false;
 	}
 	

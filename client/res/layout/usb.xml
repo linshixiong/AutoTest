@@ -3,14 +3,14 @@
     android:id="@+id/LinearLayout01"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:orientation="vertical">
+    android:orientation="vertical" >
 
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:orientation="horizontal" 
-        android:paddingTop="20dp">
+        android:orientation="horizontal"
+        android:paddingTop="20dp" >
 
         <TextView
             android:id="@+id/tvusb"
@@ -20,13 +20,13 @@
             android:textSize="30dp" >
         </TextView>
     </LinearLayout>
-    
-     <LinearLayout
+
+    <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:orientation="horizontal" 
-        android:paddingTop="20dp">
+        android:orientation="horizontal"
+        android:paddingTop="20dp" >
 
         <TextView
             android:id="@+id/tvusbinfo"
@@ -36,12 +36,13 @@
             android:textSize="30dp" >
         </TextView>
     </LinearLayout>
-    
+
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal" 
-        android:paddingTop="20dp">
+        android:orientation="horizontal"
+        android:paddingTop="20dp" >
+
         <TextView
             android:id="@+id/plugout"
             android:layout_width="wrap_content"
@@ -49,19 +50,26 @@
             android:text="@string/plugout"
             android:textSize="30dp" >
         </TextView>
+
         <TextView
             android:id="@+id/plugouttest"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="30dp" >
         </TextView>
+
+        <TextView
+            android:id="@+id/textView_storage_msg"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true" />
     </LinearLayout>
-    
+
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal" 
-        android:paddingTop="20dp">
+        android:orientation="horizontal"
+        android:paddingTop="20dp" >
 
         <TextView
             android:id="@+id/plugin"
@@ -70,6 +78,7 @@
             android:text="@string/plugin"
             android:textSize="30dp" >
         </TextView>
+
         <TextView
             android:id="@+id/plugintest"
             android:layout_width="wrap_content"
@@ -110,4 +119,5 @@
             android:text="@string/back" >
         </Button>
     </LinearLayout>
+
 </LinearLayout>

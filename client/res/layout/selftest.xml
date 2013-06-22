@@ -3,8 +3,8 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:layout_gravity="center_vertical"
-    android:orientation="vertical" 
-    android:background="#000000">
+    android:background="#000000"
+    android:orientation="vertical" >
 
     <TableLayout
         android:layout_width="fill_parent"
@@ -67,16 +67,18 @@
             <View
                 style="@style/TableBorder"
                 android:layout_height="wrap_content" />
-        </TableRow>
 
-        <TableRow
-            style="@style/horizontalline"
-            android:layout_width="fill_parent"
-            android:layout_height="3dp" >
+            <com.emdoor.autotest.MyButton
+                android:id="@+id/bluetooth"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:tag="4"
+                myapp:selftext="@string/bluetooth" />
 
             <View
-                style="@style/horizontalline"
-                android:layout_height="3dp" />
+                style="@style/TableBorder"
+                android:layout_height="wrap_content" />
         </TableRow>
 
         <TableRow
@@ -112,12 +114,24 @@
                 android:layout_height="wrap_content" />
 
             <com.emdoor.autotest.MyButton
+                android:id="@+id/front_camera"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:tag="19"
+                myapp:selftext="@string/font_camera" />
+
+            <View
+                style="@style/TableBorder"
+                android:layout_height="wrap_content" />
+
+            <com.emdoor.autotest.MyButton
                 android:id="@+id/camera"
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
                 android:layout_weight="1"
                 android:tag="8"
-                myapp:selftext="@string/camera" />
+                myapp:selftext="@string/back_camera" />
 
             <View
                 style="@style/TableBorder"
@@ -151,17 +165,6 @@
             android:layout_height="fill_parent"
             android:layout_weight="1"
             android:gravity="center" >
-    		<View
-                style="@style/TableBorder"
-                android:layout_height="wrap_content" />
-
-            <com.emdoor.autotest.MyButton
-                android:id="@+id/bluetooth"
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
-                android:layout_weight="1"
-                android:tag="4"
-                myapp:selftext="@string/bluetooth" />
 
             <View
                 style="@style/TableBorder"
@@ -180,12 +183,36 @@
                 android:layout_height="wrap_content" />
 
             <com.emdoor.autotest.MyButton
+                android:id="@+id/headset"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:tag="11"
+                myapp:selftext="@string/headset" />
+
+            <View
+                style="@style/TableBorder"
+                android:layout_height="wrap_content" />
+
+            <com.emdoor.autotest.MyButton
                 android:id="@+id/mic"
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
                 android:layout_weight="1"
                 android:tag="12"
-                myapp:selftext="@string/mic" />
+                myapp:selftext="@string/onboard_mic" />
+
+            <View
+                style="@style/TableBorder"
+                android:layout_height="wrap_content" />
+
+            <com.emdoor.autotest.MyButton
+                android:id="@+id/ext_mic"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:tag="12"
+                myapp:selftext="@string/ext_mic" />
 
             <View
                 style="@style/TableBorder"
@@ -247,51 +274,6 @@
             <View
                 style="@style/TableBorder"
                 android:layout_height="wrap_content" />
-        </TableRow>
-
-        <TableRow
-            style="@style/horizontalline"
-            android:layout_width="fill_parent"
-            android:layout_height="3dp" >
-
-            <View
-                style="@style/horizontalline"
-                android:layout_height="3dp" />
-        </TableRow>
-
-        <TableRow
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:layout_weight="1"
-            android:gravity="center" >
-
-            <View
-                style="@style/TableBorder"
-                android:layout_height="wrap_content" />
-
-            <com.emdoor.autotest.MyButton
-                android:id="@+id/keyboard"
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
-                android:layout_weight="1"
-                android:tag="16"
-                myapp:selftext="@string/keyboard" />
-
-            <View
-                style="@style/TableBorder"
-                android:layout_height="wrap_content" />
-
-            <com.emdoor.autotest.MyButton
-                android:id="@+id/version"
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
-                android:layout_weight="1"
-                android:tag="17"
-                myapp:selftext="@string/version" />
-
-            <View
-                style="@style/TableBorder"
-                android:layout_height="wrap_content" />
 
             <com.emdoor.autotest.MyButton
                 android:id="@+id/brightness"
@@ -334,6 +316,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:padding="5dp"
                 android:text="@string/test" />
 
             <Button
@@ -350,19 +333,6 @@
                 android:layout_weight="1"
                 android:text="@string/clear" />
 
-            <Button
-                android:id="@+id/uninstall"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/uninstall" />
-
-            <Button
-                android:id="@+id/recovery"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/recovery" />
         </TableRow>
     </TableLayout>
 

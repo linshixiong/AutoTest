@@ -11,15 +11,18 @@
     <string name="bluetooth">Bluetooth</string>
     <string name="gps">GPS</string>
     <string name="evdo">WCDMA</string>
-    <string name="camera">Camera</string>
-    <string name="usb">Mrio USB</string>
+    <string name="font_camera">Front Camera</string>
+    <string name="back_camera">Back Camera</string>
+    <string name="usb">USB Storage</string>
     <string name="gsensor">Gsensor</string>
     <string name="lightsensor">Lightsensor</string>
     <string name="speaker">Speaker</string>
-    <string name="mic">MIC</string>
+    <string name="headset">Headset</string>
+    <string name="onboard_mic">Onboard Mic</string>
+    <string name="ext_mic">External Mic</string>
     <string name="tfcard">TF Card</string>
     <string name="hdmi">HDMI</string>
-    <string name="battery">Battery</string>
+    <string name="battery">Charging</string>
     <string name="keyboard">Keyboard</string>
     <string name="version">Version</string>
     <string name="brightness">Brightness</string>
@@ -69,7 +72,7 @@
 	
 	<string name="tfcard_title">TFCard Test</string>
     <string name="speeker_title">Speeker Test</string>
-    
+     <string name="headset_title">Headset Test</string>
     <string name="left_speeker_disable">left disable</string>
     <string name="left_speeker_enable">left enable</string>
     <string name="right_speeker_disable">right disable</string>
@@ -77,9 +80,9 @@
 
     
     <string name="usbtest">Mrio USB Test </string>
-    <string name="usbinfo">Plug in usb and upplug usb</string>
-    <string name="plugout">Unplug usb test:</string>
-    <string name="plugin">Plug in usb test:</string>
+    <string name="usbinfo">Plug in and upplug storage device</string>
+    <string name="plugout">Unplug test:</string>
+    <string name="plugin">Plug in test:</string>
     
 	<string name="cameratest">Camera Test</string>
 	<string name="camerinfo">Click screen test it again.</string>

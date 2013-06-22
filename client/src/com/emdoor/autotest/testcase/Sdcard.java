@@ -36,7 +36,7 @@ public class Sdcard extends Activity implements OnClickListener {
 		msgTxt = (TextView) findViewById(R.id.TextView_sdcard_01);
 		
 		
-		if(DeviceManager.getInstance(null).isExternalSDCardMounted()){		
+		if(DeviceManager.getInstance(this).isExternalSDCardMounted()){		
 			Log.e("FAS", ".......................");
 			String path = "/storage/external_storage/sdcard1/";
 			StatFs fs = new StatFs(path);
