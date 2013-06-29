@@ -50,6 +50,9 @@ public class Speaker extends Activity implements OnClickListener {
 		}
 		if(isHeadset){
 			mp = MediaPlayer.create(this, R.raw.speeker_test);
+			IntentFilter filter = new IntentFilter();
+			filter.addAction("android.intent.action.HEADSET_PLUG");
+			registerReceiver(receiver, filter);
 		}else
 		{
 			mp = MediaPlayer.create(this, R.raw.audio_1k);
@@ -59,11 +62,9 @@ public class Speaker extends Activity implements OnClickListener {
 		mp.setLooping(true);
 		try {
 			mp.prepare();
-		} catch (IllegalStateException e) {
-			// TODO Auto-generated catch block
+		} catch (IllegalStateException e) {			
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -74,11 +75,7 @@ public class Speaker extends Activity implements OnClickListener {
 			findViewById(R.id.left_control).setVisibility(View.GONE);
 			findViewById(R.id.right_control).setVisibility(View.GONE);
 
-		} else {
-			IntentFilter filter = new IntentFilter();
-			filter.addAction("android.intent.action.HEADSET_PLUG");
-			registerReceiver(receiver, filter);
-		}
+		} 
 		if (!isHeadset) {
 			mp.start();
 		}
