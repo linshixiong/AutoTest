@@ -13,6 +13,7 @@ import com.emdoor.autotest.InternalAPI;
 import com.emdoor.autotest.R;
 
 import android.app.Activity;
+import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
@@ -191,12 +192,6 @@ public class lcd extends Activity implements Runnable {
 
 	@Override
 	protected void onDestroy() {
-		// TODO Auto-generated method stub
-		// isStop = true;
-
-		// T1.stop();
-
-		// T1 = null;
 
 		handler = null;
 
@@ -204,11 +199,7 @@ public class lcd extends Activity implements Runnable {
 
 		System.gc();
 		
-		
-		/*
-		if(SystemProperties.getBoolean("mbx.hideStatusBar.enable",false)!=false)
-			InternalAPI.setProperty(null,"mbx.hideStatusBar.enable","false");
-		*/
+		InternalAPI.setProperty(this, "vplayer.hideStatusBar.enable", "false");
 		super.onDestroy();
 	}
 	
@@ -217,9 +208,9 @@ public class lcd extends Activity implements Runnable {
 		// TODO Auto-generated method stub
 
 		super.onPause();
-		/*
-		if(SystemProperties.getBoolean("mbx.hideStatusBar.enable",false)!=true)
-			SystemProperties.set("mbx.hideStatusBar.enable","true");*/	
+		
+		InternalAPI.setProperty(this, "vplayer.hideStatusBar.enable", "true");
+
 	}
 
 
@@ -227,9 +218,8 @@ public class lcd extends Activity implements Runnable {
 	protected void onPause() {
 		// TODO Auto-generated method stub
 
-		super.onPause();/*
-		if(SystemProperties.getBoolean("mbx.hideStatusBar.enable",false)!=false)
-			SystemProperties.set("mbx.hideStatusBar.enable","false");*/
+		super.onPause();
+		InternalAPI.setProperty(this, "vplayer.hideStatusBar.enable", "false");
 	}
 
 	@Override
