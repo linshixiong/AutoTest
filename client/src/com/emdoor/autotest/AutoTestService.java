@@ -115,6 +115,11 @@ public class AutoTestService extends Service {
 					client.WriteByteArray(data);
 				}
 				break;
+				
+			case Messages.MSG_PHOTO_SHOT:
+				intent=new Intent(Intents.ACTION_TAKE_PHOTO);
+				sendBroadcast(intent);
+				break;
 			case Messages.MSG_PHOTO_TAKEN:
 				byte[] photo=(byte[])msg.obj;
 				if(photo!=null){

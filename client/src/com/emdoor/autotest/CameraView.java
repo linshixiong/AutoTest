@@ -48,10 +48,10 @@ public class CameraView extends SurfaceView implements SurfaceHolder.Callback,
 		this.cameraType = type;
 	}
 
-	public void setHandler(Handler handler){
-		this.handler=handler;
+	public void setHandler(Handler handler) {
+		this.handler = handler;
 	}
-	
+
 	@Override
 	public void surfaceCreated(SurfaceHolder holder) {// Surface生成事件的处理
 		try {
@@ -66,22 +66,22 @@ public class CameraView extends SurfaceView implements SurfaceHolder.Callback,
 	@Override
 	public void surfaceChanged(SurfaceHolder holder, int format, int width,
 			int height) {// Surface改变事件的处理
-		// Commands.buffCameraPhoto=null;
 		if (camera != null) {
 			Camera.Parameters parameters = camera.getParameters();
 			Log.d(TAG, "surfaceChanged width=" + width + ",height=" + height);
-			// parameters.setPreviewSize(320, 240);
 			if (cameraType == CameraInfo.CAMERA_FACING_BACK) {
 				parameters.setPictureSize(1600, 1200);
 			} else {
 				parameters.setPictureSize(640, 480);
 			}
-			// parameters.set
 			camera.setDisplayOrientation(Surface.ROTATION_0);
 			camera.enableShutterSound(true);
 			camera.setParameters(parameters);// 设置参数
 			camera.startPreview();// 开始预览
-			// takePicture();
+
+			if (auto) {
+				handler.sendEmptyMessageDelayed(Messages.MSG_PHOTO_SHOT, 1000);
+			}
 		} else {
 			Toast.makeText(getContext(), "camera open fail", Toast.LENGTH_SHORT)
 					.show();
@@ -90,7 +90,9 @@ public class CameraView extends SurfaceView implements SurfaceHolder.Callback,
 				msg.what = Messages.MSG_PHOTO_TAKEN;
 				handler.sendMessage(msg);
 			}
-			// ((Activity) getContext()).finish();
+			if (auto) {
+				((Activity) getContext()).finish();
+			}
 		}
 	}
 
@@ -104,7 +106,10 @@ public class CameraView extends SurfaceView implements SurfaceHolder.Callback,
 				msg.what = Messages.MSG_PHOTO_TAKEN;
 				handler.sendMessage(msg);
 			}
-			// ((Activity) getContext()).finish();
+			if (auto) {
+				((Activity) getContext()).finish();
+
+			}
 		}
 
 	}
@@ -112,18 +117,18 @@ public class CameraView extends SurfaceView implements SurfaceHolder.Callback,
 	@Override
 	public void onPictureTaken(byte[] data, Camera camera) {// 拍摄完成后保存照片
 		Log.d(TAG, "onPictureTaken,data length=" + data.length);
-		// Commands.buffCameraPhoto = data;
-
 		if (handler != null) {
 			Message msg = new Message();
 			msg.obj = data;
 			msg.what = Messages.MSG_PHOTO_TAKEN;
 			handler.sendMessage(msg);
 		}
-		// ((Activity) getContext()).finish();
-
-		camera.startPreview();
-
+		if(auto){
+			((Activity) getContext()).finish();
+		}
+		else{
+			camera.startPreview();
+		}
 	}
 
 	@Override
