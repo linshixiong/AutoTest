@@ -14,6 +14,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Resources;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -48,17 +49,23 @@ public class MrioUsbTest extends Activity {
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			String action = intent.getAction();
-			if (action.equals("android.intent.action.MEDIA_EJECT")) {
-				Log.d(TAG, "media eject");
+			if (action.equals(Intent.ACTION_MEDIA_EJECT)) {
+				Uri uri = intent.getData();
+
+				Log.d(TAG, "media unmounted ,volume=" + uri.getPath());
+
 				Message msg_listData = new Message();
 				msg_listData.what = MESSAGETYPE_02;
+				msg_listData.obj = uri.getPath();
 				handler.sendMessage(msg_listData);
 			}
-			if (action.equals("android.intent.action.MEDIA_MOUNTED")) {
-				Log.d(TAG, "media mounted");
-				Log.d("fadsfsadf", "fdsafads");
+			if (action.equals(Intent.ACTION_MEDIA_MOUNTED)) {
+				Uri uri = intent.getData();
+
+				Log.d(TAG, "media mounted, volume=" + uri.getPath());
 				Message msg_listData = new Message();
 				msg_listData.what = MESSAGETYPE_01;
+				msg_listData.obj = uri.getPath();
 				handler.sendMessage(msg_listData);
 			}
 
@@ -81,9 +88,9 @@ public class MrioUsbTest extends Activity {
 		BtnusbFail.setOnClickListener(listener);
 		BtnusbBack.setOnClickListener(listener);
 		isTFCard = getIntent().getBooleanExtra("isTFCard", false);
-		
-		
-		((TextView)findViewById(R.id.tvusb)).setText(isTFCard?"SD Card Test":"USB Storage Test");
+
+		((TextView) findViewById(R.id.tvusb)).setText(isTFCard ? "SD Card Test"
+				: "USB Storage Test");
 	}
 
 	private final Button.OnClickListener listener = new Button.OnClickListener() {
@@ -119,9 +126,9 @@ public class MrioUsbTest extends Activity {
 		public void handleMessage(Message message) {
 			switch (message.what) {
 			case MESSAGETYPE_01:
+				String path = message.obj.toString();
 				if (isTFCard) {
-					if (DeviceManager.getInstance(MrioUsbTest.this)
-							.isExternalSDCardMounted()) {
+					if (path.contains("storage/external_storage/sdcard")) {
 						plugin = true;
 						((TextView) findViewById(R.id.plugintest))
 								.setText("PASS");
@@ -129,8 +136,8 @@ public class MrioUsbTest extends Activity {
 					}
 				} else {
 
-					if (DeviceManager.getInstance(MrioUsbTest.this)
-							.isUSBStorageMounted()) {
+					if (!path.contains("sdcard")
+							&& path.contains("storage/external_storage/sd")) {
 						plugin = true;
 						((TextView) findViewById(R.id.plugintest))
 								.setText("PASS");
@@ -139,11 +146,24 @@ public class MrioUsbTest extends Activity {
 				}
 				break;
 			case MESSAGETYPE_02:
+				String path2 = message.obj.toString();
+				if (isTFCard) {
 
-				removeOk = true;
-				((TextView) findViewById(R.id.plugouttest)).setText("PASS");
-				checkIsPass();
-
+					if (path2.contains("storage/external_storage/sdcard")) {
+						removeOk = true;
+						((TextView) findViewById(R.id.plugouttest))
+								.setText("PASS");
+						checkIsPass();
+					}
+				} else {
+					if (!path2.contains("sdcard")
+							&& path2.contains("storage/external_storage/sd")) {
+						removeOk = true;
+						((TextView) findViewById(R.id.plugouttest))
+								.setText("PASS");
+						checkIsPass();
+					}
+				}
 				break;
 			}
 			super.handleMessage(message);
