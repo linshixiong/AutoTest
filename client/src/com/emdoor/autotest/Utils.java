@@ -48,7 +48,10 @@ public class Utils {
 	}
 
 	public static boolean writeTextToFile(File file, String text) {
-		try {
+		try {		
+			if(!file.getParentFile().exists()){
+				file.getParentFile().mkdirs();
+			}
 			OutputStream outstream = new FileOutputStream(file);
 			OutputStreamWriter out = new OutputStreamWriter(outstream);
 			out.write(text);
