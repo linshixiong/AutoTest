@@ -38,6 +38,7 @@ public class wifi extends Activity {
 	private boolean isTargetAPExist;
 	private static final int MESSAGETYPE_01 = 0x0002;
 	private static final int MESSAGETYPE_02 = 0x0004;
+	protected static final String TAG = "Wifi";
 	Thread T1 = null;
 	String tmpS = "";
 	ContentResolver cv;
@@ -50,7 +51,7 @@ public class wifi extends Activity {
 		setContentView(R.layout.wifi);
 
 		notifaction = (TextView) findViewById(R.id.noti);
-		
+
 		wifiCheckOk = (Button) findViewById(R.id.btnwifiok);
 		wifiCheckOk.setVisibility(View.INVISIBLE);
 		wifiCheckFail = (Button) findViewById(R.id.btnwififail);
@@ -106,9 +107,23 @@ public class wifi extends Activity {
 				notifaction.setText(prompt);
 				break;
 			case MESSAGETYPE_02:
-				notifaction.setText("pass");
-				config.setWIFITestOk(1);
+				int level = mWifiHelper
+						.getTargetRSSI(getString(R.string.def_selftest_wifi_ssid));
+				Log.d(TAG, "RSSI level=" + level);
+				if (level < getResources().getInteger(
+						R.integer.min_selftest_wifi_level)) {
+					notifaction.setText("fail");
+					config.setWIFITestOk(2);
+				} else {
+					notifaction.setText("pass");
+					config.setWIFITestOk(1);
+				}
+
+				
+
 				isStop = true;
+				wifi.this.finish();
+
 				break;
 			}
 			super.handleMessage(message);
@@ -123,11 +138,16 @@ public class wifi extends Activity {
 			return;
 		}
 
-		isTargetAPExist = mWifiHelper.isTargetAPExist(getString(R.string.def_selftest_wifi_ssid));
-
+		isTargetAPExist = mWifiHelper
+				.isTargetAPExist(getString(R.string.def_selftest_wifi_ssid));
+		Log.d(TAG, "isTargetAPExist 1=" + isTargetAPExist);
 		if (!isTargetAPExist) {
 			mWifiHelper.scanAPList();
 			return;
+		} else {
+
+			handler.sendEmptyMessageDelayed(MESSAGETYPE_02, 2000);
+
 		}
 
 	}
@@ -163,15 +183,24 @@ public class wifi extends Activity {
 			isTargetAPExist = false;
 			if (WifiManager.SCAN_RESULTS_AVAILABLE_ACTION.equals(intent
 					.getAction())) {
-				isTargetAPExist = mWifiHelper.isTargetAPExist(getString(R.string.def_selftest_wifi_ssid));
+				isTargetAPExist = mWifiHelper
+						.isTargetAPExist(getString(R.string.def_selftest_wifi_ssid));
+				Log.d(TAG, "isTargetAPExist 2=" + isTargetAPExist);
+				if (isTargetAPExist) {
+					handler.sendEmptyMessageDelayed(MESSAGETYPE_02, 2000);
+				}
 			} else if (WifiManager.WIFI_STATE_CHANGED_ACTION.equals(intent
 					.getAction())) {
 
 				if (mWifiHelper.getWifiManager().isWifiEnabled()) {
 
-					isTargetAPExist = mWifiHelper.isTargetAPExist(getString(R.string.def_selftest_wifi_ssid));
+					isTargetAPExist = mWifiHelper
+							.isTargetAPExist(getString(R.string.def_selftest_wifi_ssid));
+					Log.d(TAG, "isTargetAPExist 3=" + isTargetAPExist);
 					if (!isTargetAPExist) {
 						mWifiHelper.scanAPList();
+					} else {
+						handler.sendEmptyMessageDelayed(MESSAGETYPE_02, 2000);
 					}
 				}
 			}

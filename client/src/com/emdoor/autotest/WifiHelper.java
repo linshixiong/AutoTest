@@ -155,6 +155,22 @@ public class WifiHelper {
 		return false;
 	}
 	
+	public int getTargetRSSI(String ssid){
+		if(ssid==null){
+			return 0;
+		}
+		List<ScanResult> scanResults = mWifiManager.getScanResults();
+		if (scanResults == null) {
+			return 0;
+		}
+		for (ScanResult scanResult : scanResults) {
+			if (ssid.equals(scanResult.SSID)) {
+			  return scanResult.level;
+			}
+		}
+		return 0;
+	}
+	
 	public boolean connectWifi() {
 		String targetSSID=Settings.getSSID();
 		Log.d(TAG, "connecting to " + targetSSID + " securityType is "

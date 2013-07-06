@@ -23,8 +23,9 @@
     <string name="def_ble_device_mac">00:17:EA:8F:08:8A</string>
 
     <string name="def_selftest_wifi_ssid">emdoor_soft</string>
+    <integer name="min_selftest_wifi_level">-70</integer>
     <string name="def_selftest_bluetooth_mac">00:17:EA:8F:08:8A</string>
-    
+    <integer name="min_selftest_bluetooth_level">-70</integer>
     <bool name="def_semifinished_self_test_lcd">false</bool>
     <bool name="def_semifinished_self_test_touch">false</bool>
     <bool name="def_semifinished_self_test_wifi">true</bool>

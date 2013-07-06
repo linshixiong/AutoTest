@@ -20,8 +20,7 @@ import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-
-public class BluetoothTest extends Activity implements Runnable {
+public class BluetoothTest extends Activity {
 
 	private Button btCheckOk = null;
 	private Button btCheckFail = null;
@@ -33,7 +32,7 @@ public class BluetoothTest extends Activity implements Runnable {
 	private String notifaction_str;
 	int count = 0;
 	IntentFilter filter;
-	
+
 	BluetoothAdapter adapter;
 
 	private static final int MESSAGETYPE_01 = 0x0002;
@@ -43,19 +42,31 @@ public class BluetoothTest extends Activity implements Runnable {
 	Thread T1 = null;
 	String tmpS = "";
 	ContentResolver cv;
-	
+
 	private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
 
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			String action = intent.getAction();
-			Log.d("action" , action);
+			// Log.d(TAG , action);
 
+			
+			
 			if (BluetoothDevice.ACTION_FOUND.equals(action)) {
-				Message msg_listData = new Message();
-				msg_listData.what = MESSAGETYPE_03;
-				handler.sendMessage(msg_listData);
-				BluetoothTest.this.finish();
+
+				short rssi = intent.getShortExtra(BluetoothDevice.EXTRA_RSSI,(short)0);
+				BluetoothDevice device = intent
+						.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+				String name = intent.getStringExtra(BluetoothDevice.EXTRA_NAME);
+				
+				Log.d(TAG, "ACTION_FOUND,device address=" + device.getAddress()
+						+ ",name=" + name + ",rssi=" + rssi);
+						
+				
+				//Message msg_listData = new Message();
+				//msg_listData.what = MESSAGETYPE_03;
+				//handler.sendMessage(msg_listData);
+				//BluetoothTest.this.finish();
 			}
 		}
 	};
@@ -66,43 +77,39 @@ public class BluetoothTest extends Activity implements Runnable {
 		super.onCreate(savedInstanceState);
 
 		setContentView(R.layout.bluetooth);
-		
-		btCheckOk = (Button)findViewById(R.id.btnbtok);
-		btCheckFail = (Button)findViewById(R.id.btnbtfail);
-		btCheckBack = (Button)findViewById(R.id.btnbtback);
-		notifaction = (TextView)findViewById(R.id.bt_notify);
-		progressBar = (ProgressBar)findViewById(R.id.progressBar);
+
+		btCheckOk = (Button) findViewById(R.id.btnbtok);
+		btCheckFail = (Button) findViewById(R.id.btnbtfail);
+		btCheckBack = (Button) findViewById(R.id.btnbtback);
+		notifaction = (TextView) findViewById(R.id.bt_notify);
+		progressBar = (ProgressBar) findViewById(R.id.progressBar);
 		notifaction_str = "no bluetooth device found!";
-		
+
 		config = new Configuration(this);
 		filter = new IntentFilter();
-		filter.addAction(BluetoothDevice.ACTION_FOUND);  
-		filter.addAction(BluetoothDevice.ACTION_BOND_STATE_CHANGED);  
-		filter.addAction(BluetoothAdapter.ACTION_SCAN_MODE_CHANGED);  
-		filter.addAction(BluetoothAdapter.ACTION_STATE_CHANGED);  
-		
-		
+		filter.addAction(BluetoothDevice.ACTION_FOUND);
+		filter.addAction(BluetoothDevice.ACTION_BOND_STATE_CHANGED);
+		filter.addAction(BluetoothAdapter.ACTION_SCAN_MODE_CHANGED);
+		filter.addAction(BluetoothAdapter.ACTION_STATE_CHANGED);
+
 		btCheckOk.setVisibility(View.INVISIBLE);
-		
+
 		btCheckOk.setOnClickListener(linstener);
 		btCheckFail.setOnClickListener(linstener);
 		btCheckBack.setOnClickListener(linstener);
-		
-	    adapter= BluetoothAdapter.getDefaultAdapter();    
-	   
-		
-		T1 = new Thread(this);
-		T1.start();
-		
 
+		adapter = BluetoothAdapter.getDefaultAdapter();
+		if (!adapter.isEnabled()) {
+			adapter.enable();
+		}
+		adapter.startDiscovery();
 	}
-	
+
 	private final OnClickListener linstener = new OnClickListener() {
 
 		@Override
 		public void onClick(View v) {
-			// TODO Auto-generated method stub			
-			switch(v.getId()){
+			switch (v.getId()) {
 			case R.id.btnbtok:
 				config.setBLUETOOTHTestOk(1);
 				break;
@@ -116,13 +123,11 @@ public class BluetoothTest extends Activity implements Runnable {
 				config.setBLUETOOTHTestOk(0);
 				break;
 			}
-            isStop = true;
+			isStop = true;
 			BluetoothTest.this.finish();
 		}
-		
-		
-	};
 
+	};
 
 	private final Handler handler = new Handler() {
 		@Override
@@ -135,16 +140,16 @@ public class BluetoothTest extends Activity implements Runnable {
 			case MESSAGETYPE_02:
 				notifaction.setText("pass");
 				config.setBLUETOOTHTestOk(1);
-				isStop = true;	
+				isStop = true;
 				break;
 			case MESSAGETYPE_03:
 				notifaction.setText("ERROR!find bluetooth device time out!");
 				config.setBLUETOOTHTestOk(2);
-				isStop = true;	
+				isStop = true;
 				break;
-			}			
+			}
 			super.handleMessage(message);
-			
+
 		}
 	};
 
@@ -153,73 +158,54 @@ public class BluetoothTest extends Activity implements Runnable {
 		System.gc();
 		super.onDestroy();
 	}
-	
-	@Override
-	public void run() {
-		// TODO Auto-generated method stub
-		while (!Thread.currentThread().isInterrupted() && !isStop) {
-			try {
-				if(adapter == null)
-				{
-					Message msg_listData = new Message();
-					msg_listData.what = MESSAGETYPE_01;
-					handler.sendMessage(msg_listData);
-					Thread.sleep(5000);
-					BluetoothTest.this.finish();
-				}else{
-					if(!adapter.isEnabled()){  
-                        adapter.enable();
-                        Thread.sleep(3000);
-                         
-                    }		
-					
-			
-					Thread.sleep(3000);
-                    if((count++) > 20 && adapter.getAddress().equals("00:00:00:00:00:00")){
-                    	
-                    	Message msg_listData = new Message();
-    					msg_listData.what = MESSAGETYPE_03;
-    					handler.sendMessage(msg_listData);
-    					BluetoothTest.this.finish();
-                    }else if(adapter.getAddress() != null  && !adapter.getAddress().equals("00:00:00:00:00:00")){
-                    	Message msg_listData = new Message();
-    					msg_listData.what = MESSAGETYPE_02;
-                   	    BluetoothDevice device= adapter.getRemoteDevice("B0:D0:9C:58:D9:DE");
-                   	    
-                   	    if(device==null){
-                   	    	msg_listData.what = MESSAGETYPE_03; 	    	
-                   	    }else{
-                   	       Log.d(TAG,"find bluetooth device :"+	device.getName());
-                   	    }
-    					
-    					handler.sendMessage(msg_listData);
-    					BluetoothTest.this.finish();
-                    }
-				}	
-			}catch (InterruptedException e) {
-				Thread.currentThread().interrupt();
-			}
-		}
-	}
+
+	/*
+	 * @Override public void run() { // TODO Auto-generated method stub while
+	 * (!Thread.currentThread().isInterrupted() && !isStop) { try { if(adapter
+	 * == null) { Message msg_listData = new Message(); msg_listData.what =
+	 * MESSAGETYPE_01; handler.sendMessage(msg_listData); Thread.sleep(5000);
+	 * BluetoothTest.this.finish(); }else{ if(!adapter.isEnabled()){
+	 * adapter.enable(); Thread.sleep(3000);
+	 * 
+	 * }
+	 * 
+	 * 
+	 * Thread.sleep(3000); if((count++) > 20 &&
+	 * adapter.getAddress().equals("00:00:00:00:00:00")){
+	 * 
+	 * Message msg_listData = new Message(); msg_listData.what = MESSAGETYPE_03;
+	 * handler.sendMessage(msg_listData); BluetoothTest.this.finish(); }else
+	 * if(adapter.getAddress() != null &&
+	 * !adapter.getAddress().equals("00:00:00:00:00:00")){ Message msg_listData
+	 * = new Message(); msg_listData.what = MESSAGETYPE_02; BluetoothDevice
+	 * device= adapter.getRemoteDevice("B0:D0:9C:58:D9:DE");
+	 * 
+	 * if(device==null){ msg_listData.what = MESSAGETYPE_03; }else{
+	 * Log.d(TAG,"find bluetooth device :"+ device.getName()); }
+	 * 
+	 * handler.sendMessage(msg_listData); BluetoothTest.this.finish(); } }
+	 * }catch (InterruptedException e) { Thread.currentThread().interrupt(); } }
+	 * }
+	 */
 
 	@Override
 	public void finish() {
-		// TODO Auto-generated method stub		
-		super.finish();		
+		// TODO Auto-generated method stub
+		super.finish();
 	}
 
 	@Override
 	protected void onPause() {
 		// TODO Auto-generated method stub
 		super.onPause();
-		//unregisterReceiver(mReceiver);
+		unregisterReceiver(mReceiver);
 	}
 
 	@Override
 	protected void onResume() {
 		// TODO Auto-generated method stub
 		super.onResume();
-		//Log.d("fdsa" , "fdasfas");
-		//registerReceiver(mReceiver, filter);
+		// Log.d("fdsa" , "fdasfas");
+		registerReceiver(mReceiver, filter);
 	}
 }
