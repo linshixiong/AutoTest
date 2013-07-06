@@ -1,16 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/LinearLayout01"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:orientation="vertical">
+    android:layout_height="fill_parent" >
 
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:orientation="horizontal" 
-        android:paddingTop="20dp">
+        android:orientation="horizontal"
+        android:paddingTop="20dp" >
 
         <TextView
             android:id="@+id/tvwifi"
@@ -20,43 +19,20 @@
             android:textSize="30dp" >
         </TextView>
     </LinearLayout>
-    
+
+    <TextView
+        android:id="@+id/noti"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/wificheck"
+        android:layout_centerInParent="true"
+        android:textSize="25dp" />
+
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
-        android:orientation="vertical" 
-        android:paddingTop="20dp">
-
-        <TextView
-            android:id="@+id/noti"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/wificheck"
-            android:textSize="30dp" >
-        </TextView>
-    </LinearLayout>
-    
-    <LinearLayout
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:orientation="vertical" 
-        android:paddingTop="40dp">
-
-        <TextView
-            android:id="@+id/wifiinfo"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="18dp" >
-        </TextView>
-    </LinearLayout>
- 
-
-    <LinearLayout
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:layout_gravity="bottom"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentBottom="true"
         android:gravity="bottom"
         android:orientation="horizontal"
         android:paddingBottom="5dp" >
@@ -66,24 +42,21 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/pass" >
-        </Button>
+            android:text="@string/pass" />
 
         <Button
             android:id="@+id/btnwififail"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/fail" >
-        </Button>
+            android:text="@string/fail" />
 
         <Button
             android:id="@+id/btnwifiback"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/back" >
-        </Button>
+            android:text="@string/back" />
     </LinearLayout>
 
-</LinearLayout>
+</RelativeLayout>

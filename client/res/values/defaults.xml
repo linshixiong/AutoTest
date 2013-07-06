@@ -22,21 +22,24 @@
     <string name="def_wifi_pwd">0123456789</string>
     <string name="def_ble_device_mac">00:17:EA:8F:08:8A</string>
 
-    <bool name="def_semifinished_self_test_lcd">true</bool>
-    <bool name="def_semifinished_self_test_touch">true</bool>
+    <string name="def_selftest_wifi_ssid">emdoor_soft</string>
+    <string name="def_selftest_bluetooth_mac">00:17:EA:8F:08:8A</string>
+    
+    <bool name="def_semifinished_self_test_lcd">false</bool>
+    <bool name="def_semifinished_self_test_touch">false</bool>
     <bool name="def_semifinished_self_test_wifi">true</bool>
     <bool name="def_semifinished_self_test_usb">false</bool>
-    <bool name="def_semifinished_self_test_back_camera">true</bool>
- 	<bool name="def_semifinished_self_test_front_camera">true</bool>    
-    <bool name="def_semifinished_self_test_gsensor">true</bool>
+    <bool name="def_semifinished_self_test_back_camera">false</bool>
+ 	<bool name="def_semifinished_self_test_front_camera">false</bool>    
+    <bool name="def_semifinished_self_test_gsensor">false</bool>
     <bool name="def_semifinished_self_test_bluetooth">true</bool>
     <bool name="def_semifinished_self_test_speaker">true</bool>
     <bool name="def_semifinished_self_test_headset">true</bool>
-    <bool name="def_semifinished_self_test_mic">false</bool>
-    <bool name="def_semifinished_self_test_ext_mic">false</bool>
-    <bool name="def_semifinished_self_test_tfcard">true</bool>
+    <bool name="def_semifinished_self_test_mic">true</bool>
+    <bool name="def_semifinished_self_test_ext_mic">true</bool>
+    <bool name="def_semifinished_self_test_tfcard">false</bool>
     <bool name="def_semifinished_self_test_hdmi">false</bool>
-    <bool name="def_semifinished_self_test_battery">false</bool>
+    <bool name="def_semifinished_self_test_battery">true</bool>
     <bool name="def_semifinished_self_test_keyboard">false</bool>
     <bool name="def_semifinished_self_test_version">false</bool>
     <bool name="def_semifinished_self_test_brightness">false</bool>

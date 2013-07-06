@@ -138,6 +138,23 @@ public class WifiHelper {
 		return false;
 	}
 
+	public boolean isTargetAPExist(String ssid){
+		if(ssid==null){
+			return false;
+		}
+		List<ScanResult> scanResults = mWifiManager.getScanResults();
+		if (scanResults == null) {
+			return false;
+		}
+		for (ScanResult scanResult : scanResults) {
+			if (ssid.equals(scanResult.SSID)) {
+				securityType = getSecurity(scanResult);
+				return true;
+			}
+		}
+		return false;
+	}
+	
 	public boolean connectWifi() {
 		String targetSSID=Settings.getSSID();
 		Log.d(TAG, "connecting to " + targetSSID + " securityType is "

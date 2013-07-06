@@ -3,14 +3,14 @@
     android:id="@+id/LinearLayout01"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:orientation="vertical">
+    android:orientation="vertical" >
 
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:orientation="horizontal" 
-        android:paddingTop="20dp">
+        android:orientation="horizontal"
+        android:paddingTop="20dp" >
 
         <TextView
             android:id="@+id/tvbattery"
@@ -20,13 +20,13 @@
             android:textSize="30dp" >
         </TextView>
     </LinearLayout>
-    
+
     <TableLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:gravity="center" 
-        android:paddingTop="20dp">
-        
+        android:gravity="center"
+        android:paddingTop="20dp" >
+
         <TableRow
             android:layout_width="fill_parent"
             android:layout_height="fill_parent" >
@@ -46,6 +46,7 @@
                 android:textSize="30dp" >
             </TextView>
         </TableRow>
+
         <TableRow
             android:layout_width="fill_parent"
             android:layout_height="fill_parent" >
@@ -55,18 +56,37 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/valtage"
-                android:textSize="30dp"
-                android:visibility="gone" >
+                android:textSize="30dp" >
             </TextView>
 
             <TextView
                 android:id="@+id/voltage_count"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="30dp"
-                android:visibility="gone"  >
+                android:textSize="30dp" >
             </TextView>
         </TableRow>
+
+        <TableRow
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent" >
+
+            <TextView
+                android:id="@+id/percent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/percent"
+                android:textSize="30dp" >
+            </TextView>
+
+            <TextView
+                android:id="@+id/percent_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="30dp" >
+            </TextView>
+        </TableRow>
+
         <TableRow
             android:layout_width="fill_parent"
             android:layout_height="fill_parent" >
@@ -76,22 +96,21 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/current"
-                android:textSize="30dp" 
-                android:visibility="gone" >
+                android:textSize="30dp" >
             </TextView>
 
             <TextView
                 android:id="@+id/current_count"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="30dp"
-                android:visibility="gone"  >
+                android:textSize="30dp" >
             </TextView>
         </TableRow>
+
         <TableRow
             android:layout_width="fill_parent"
             android:layout_height="fill_parent" >
-            
+
             <TextView
                 android:id="@+id/capacity"
                 android:layout_width="wrap_content"
@@ -106,31 +125,31 @@
                 android:layout_height="wrap_content"
                 android:textSize="30dp" >
             </TextView>
-            
         </TableRow>
+
         <TableRow
             android:layout_width="fill_parent"
             android:layout_height="fill_parent" >
-			
+
             <TextView
                 android:id="@+id/plug"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/plug"
-                android:textSize="30dp" >
+                android:textSize="30dp"
+                android:visibility="gone" >
             </TextView>
 
             <TextView
                 android:id="@+id/plug_state"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="30dp" >
+                android:textSize="30dp"
+                android:visibility="gone" >
             </TextView>
-            
         </TableRow>
-
     </TableLayout>
-    
+
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"

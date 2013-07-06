@@ -20,13 +20,13 @@ public class Gsensor extends Activity implements OnClickListener,
 	Button failBtn, backBtn;
 	MySurfaceView myView;
 	Configuration config;
-	TextView curTxt, resultTxt;
+	TextView curTxt;
 	SensorManager mSensorManager;
 	Sensor sensor;
 	StringBuffer curResult = new StringBuffer();
 	String[] resultStrs = { "x axis points up(x:9,y:0,z:0)",
 			"y axis points up(x:0,y:9,z:0)", "z axis points up(x:0,y:0,z:9)" };
-	boolean xOk = false, yOk = false, zOk = false;
+	boolean leftOk = false, rightOk = false, topOk = false,bottomOK=false,centerOK=false;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -39,11 +39,7 @@ public class Gsensor extends Activity implements OnClickListener,
 		failBtn.setOnClickListener(this);
 		backBtn.setOnClickListener(this);
 		curTxt = (TextView) findViewById(R.id.textview_current_value);
-		resultTxt = (TextView) findViewById(R.id.textview_result);
-
-		//curResult = curResult.append(resultStrs[0]);
-		//resultTxt.setText(curResult.toString());
-
+		
 		mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
 		sensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
 
@@ -79,28 +75,31 @@ public class Gsensor extends Activity implements OnClickListener,
 		myView.setxOffset(x);
 		myView.setyOffset(y);
 
-		if (x >= 9&&!xOk) {
-			xOk = true;
-			//curResult.append(":pass \n");
-			//curResult.append(resultStrs[1]);
-			resultTxt.append("X OK\n");
+		if (x >= 8&&!leftOk) {
+			findViewById(R.id.left).setVisibility(View.VISIBLE);
+			leftOk=true;
+		}
+		
+		if(x<=-8&&!rightOk){
+			findViewById(R.id.right).setVisibility(View.VISIBLE);
+			rightOk=true;
+		}
+		
+		if (y >= 8&&!topOk) {
+			findViewById(R.id.top).setVisibility(View.VISIBLE);
+			topOk = true;
+		}
+		
+		if(y<=-8&&!bottomOK){
+			findViewById(R.id.bottom).setVisibility(View.VISIBLE);
+			bottomOK=true;
+		}
+		
+		if (z >= 8&&!centerOK) {
+			centerOK = true;		
 		}
 
-		if (y >= 9&&!yOk) {
-			yOk = true;
-			//curResult.append(":pass \n");
-			//curResult.append(resultStrs[2]);
-			resultTxt.append("Y OK\n");
-		}
-
-		if (z >= 9&&!zOk) {
-			zOk = true;
-			//curResult.append(":pass \n");
-			resultTxt.append("Z OK\n");
-			
-		}
-
-		if(xOk&&yOk&&zOk){
+		if(leftOk&&rightOk&&topOk&&bottomOK&&centerOK){
 			config.setGSENSORTestOk(1);
 			finish();
 		}
@@ -111,6 +110,7 @@ public class Gsensor extends Activity implements OnClickListener,
 		super.onResume();
 		mSensorManager.registerListener(this, sensor,
 				SensorManager.SENSOR_DELAY_NORMAL);
+		myView.setRun(true);
 	}
 
 	@Override

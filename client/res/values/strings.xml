@@ -22,7 +22,7 @@
     <string name="ext_mic">External Mic</string>
     <string name="tfcard">TF Card</string>
     <string name="hdmi">HDMI</string>
-    <string name="battery">Charging</string>
+    <string name="battery">Battery</string>
     <string name="keyboard">Keyboard</string>
     <string name="version">Version</string>
     <string name="brightness">Brightness</string>
@@ -35,12 +35,12 @@
     <string name="fail">fail</string>
     <string name="pass">pass</string>
     <string name="back">back</string>
-    <string name="lcd_title">lcd test</string>
+    <string name="lcd_title">LCD Test</string>
 	<string name="lcdinfo">Click screen for lcd test</string>
-    <string name="tochscreen">Touch test</string>
+    <string name="tochscreen">Touch Test</string>
     <string name="tochinfo">Do diagonal test before multi-touch point test</string>
     <string name="points">Max Point:%d</string>
-    <string name="wifitest">Wifi test</string>
+    <string name="wifitest">Wifi Test</string>
     <string name="wificheck">Wifi Environment checking </string>
 	
 	<string name="bttest">Bluetooth Test</string>
@@ -59,8 +59,9 @@
 	<string name="keyboardtest">Keyboard test</string>
 	
 	<string name="batterytest">Battery Information</string>
-	<string name="charging">Charge status:</string>
+	<string name="charging">Status:</string>
 	<string name="valtage">Valtage:</string>
+	<string name="percent">Percent:</string>
 	<string name="current">Current:</string>
 	<string name="capacity">Capacity:</string>
 	<string name="plug">Plug:</string>

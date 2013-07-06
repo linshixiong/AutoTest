@@ -39,6 +39,7 @@ public class BluetoothTest extends Activity implements Runnable {
 	private static final int MESSAGETYPE_01 = 0x0002;
 	private static final int MESSAGETYPE_02 = 0x0004;
 	private static final int MESSAGETYPE_03 = 0x0006;
+	private static final String TAG = "BluetoothTest";
 	Thread T1 = null;
 	String tmpS = "";
 	ContentResolver cv;
@@ -167,8 +168,6 @@ public class BluetoothTest extends Activity implements Runnable {
 					BluetoothTest.this.finish();
 				}else{
 					if(!adapter.isEnabled()){  
-						//Intent intent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-                        //startActivity(intent);	
                         adapter.enable();
                         Thread.sleep(3000);
                          
@@ -177,6 +176,7 @@ public class BluetoothTest extends Activity implements Runnable {
 			
 					Thread.sleep(3000);
                     if((count++) > 20 && adapter.getAddress().equals("00:00:00:00:00:00")){
+                    	
                     	Message msg_listData = new Message();
     					msg_listData.what = MESSAGETYPE_03;
     					handler.sendMessage(msg_listData);
@@ -184,6 +184,14 @@ public class BluetoothTest extends Activity implements Runnable {
                     }else if(adapter.getAddress() != null  && !adapter.getAddress().equals("00:00:00:00:00:00")){
                     	Message msg_listData = new Message();
     					msg_listData.what = MESSAGETYPE_02;
+                   	    BluetoothDevice device= adapter.getRemoteDevice("B0:D0:9C:58:D9:DE");
+                   	    
+                   	    if(device==null){
+                   	    	msg_listData.what = MESSAGETYPE_03; 	    	
+                   	    }else{
+                   	       Log.d(TAG,"find bluetooth device :"+	device.getName());
+                   	    }
+    					
     					handler.sendMessage(msg_listData);
     					BluetoothTest.this.finish();
                     }

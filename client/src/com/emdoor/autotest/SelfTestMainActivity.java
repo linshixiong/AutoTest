@@ -16,7 +16,7 @@ public class SelfTestMainActivity extends Activity implements OnClickListener {
 
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.selftest_main);
-
+		Settings.init(this);
 		semisTestButton = (Button) findViewById(R.id.button_semis);
 		semisTestButton.setOnClickListener(this);
 		endTestButton = (Button) findViewById(R.id.button_end);
